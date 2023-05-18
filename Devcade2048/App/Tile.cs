@@ -5,13 +5,15 @@ using MonoGame.Extended;
 
 namespace Devcade2048.App;
 
-internal class Tile
+public class Tile
 {
     public Vector2 Position { get; private set; }
     public int Value { get; }
 
     public Vector2? PreviousPosition { get; private set; } = null;
-    // public ??? mergedFrom { get; set; }
+    #nullable enable
+    public Tile[]? MergedFrom { get; set; } = null;
+    #nullable disable
 
     public Tile(Vector2 position) {
         Position = new Vector2(position.X, Position.Y);

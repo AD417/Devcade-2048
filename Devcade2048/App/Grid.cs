@@ -6,7 +6,7 @@ namespace Devcade2048.App;
 
 // Code shamelessly improvised from Gabriele Cirulli's 2048. 
 #nullable enable
-class Grid {
+public class Grid {
     public int Size { get; }
     public Tile?[,] Cells { get; }
 
@@ -24,7 +24,7 @@ class Grid {
 
     public Grid() : this(4) {}
 
-    public Tile?[,] Empty() {
+    private Tile?[,] Empty() {
         Tile?[,] cells = new Tile[Size,Size];
         for (int x = 0; x < Size; x++) {
             for (int y = 0; y < Size; y++) {
@@ -35,7 +35,7 @@ class Grid {
         return cells;
     }
 
-    public Tile?[,] FromState(Tile[,] state) {
+    private Tile?[,] FromState(Tile[,] state) {
         Tile?[,] cells = new Tile[Size, Size];
         for (int x = 0; x < Size; x++) {
             for (int y = 0; y < Size; y++) {
