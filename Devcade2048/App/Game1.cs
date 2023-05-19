@@ -108,7 +108,7 @@ public class Game1 : Game
 		Manager.Direction direction = InputManager.GetStickDirection();
 		if (graceFrames > 0) graceFrames--;
 		if (direction != Manager.Direction.None && graceFrames == 0) {
-			graceFrames = 20;
+			graceFrames = 10;
 
 			_GameData.Move(direction);
 			DebugRender.Write(_GameData.Grid);
@@ -130,12 +130,21 @@ public class Game1 : Game
 		// Batches all the draw calls for this frame, and then performs them all at once
 		_spriteBatch.Begin();
 		// TODO: Add your drawing code here
+
 		_spriteBatch.Draw(_GridTexture, new Vector2(10,290), Color.White);
-		for (int i = 0; i < 11; i++) {
-			int x = 12 + (i % 4) * 100;
-			int y = 292 + (i / 4) * 100;
-			_spriteBatch.Draw(_TileTextures[i], new Vector2(x,y), Color.White);
+		void drawTile(int x, int y, Tile t) {
+			if (t == null) return;
+			int drawX = 12 + x * 100;
+			int drawY = 292 + y * 100;
+			_spriteBatch.Draw(_TileTextures[t.TextureId], new Vector2(drawX, drawY), Color.White);
 		}
+		_GameData.Grid.EachCell(drawTile);
+
+		// for (int i = 0; i < 11; i++) {
+		// 	int x = 12 + (i % 4) * 100;
+		// 	int y = 292 + (i / 4) * 100;
+		// 	_spriteBatch.Draw(_TileTextures[i], new Vector2(x,y), Color.White);
+		// }
 		
 		_spriteBatch.End();
 

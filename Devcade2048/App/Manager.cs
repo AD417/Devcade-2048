@@ -59,10 +59,17 @@ public class Manager {
 
     public void AddRandomTile() {
         if (!Grid.CellsAvailable()) return;
-        int value = RNG.NextDouble() < Config.FourChance ? 4 : 2;
+        int value, id;
+        if (RNG.NextDouble() < Config.FourChance) {
+            value = 4;
+            id = 1;
+        } else {
+            value = 2;
+            id = 0;
+        }
         Vector2? available = Grid.RandomAvailableCell();
         if (available != null) {
-            Tile tile = new Tile((Vector2)available, value);
+            Tile tile = new Tile((Vector2)available, id, value);
             Grid.InsertTile(tile);
         }
     }
@@ -107,7 +114,7 @@ public class Manager {
             Tile next = Grid.CellContent(positions.Next);
 
             if (next != null && next.Value == tile.Value && next.MergedFrom == null) {
-                Tile merged = new Tile(positions.Next, tile.Value * 2);
+                Tile merged = new Tile(positions.Next, tile.TextureId + 1, tile.Value * 2);
                 merged.MergedFrom = new Tile[] {tile, next};
 
                 Grid.InsertTile(merged);

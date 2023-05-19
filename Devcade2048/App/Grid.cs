@@ -40,7 +40,7 @@ public class Grid {
         for (int x = 0; x < Size; x++) {
             for (int y = 0; y < Size; y++) {
                 Tile tile = state[x,y];
-                cells[x,y] = (tile != null) ? new Tile(tile.Position, tile.Value) : null;
+                cells[x,y] = (tile != null) ? new Tile(tile.Position, tile.TextureId, tile.Value) : null;
             }
         }
         return cells;
