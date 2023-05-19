@@ -63,6 +63,7 @@ public class Game1 : Game
 		#endregion
 		
 		// TODO: Add your initialization logic here
+		Animation.Reset();
 
 		windowSize = GraphicsDevice.Viewport.Bounds;
 		
@@ -93,6 +94,7 @@ public class Game1 : Game
 	protected override void Update(GameTime gameTime)
 	{
 		Input.Update(); // Updates the state of the input library
+		Animation.Increment(gameTime);
 
 		// Exit when both menu buttons are pressed (or escape for keyboard debugging)
 		// You can change this but it is suggested to keep the keybind of both menu
@@ -106,12 +108,11 @@ public class Game1 : Game
 
 		// TODO: Add your update logic here
 		Manager.Direction direction = InputManager.GetStickDirection();
-		if (graceFrames > 0) graceFrames--;
-		if (direction != Manager.Direction.None && graceFrames == 0) {
-			graceFrames = 10;
+		if (direction != Manager.Direction.None && Animation.IsComplete()) {
 
 			_GameData.Move(direction);
 			DebugRender.Write(_GameData.Grid);
+			Animation.Reset();
 		} else {
 			holding = false;
 		}
@@ -134,11 +135,31 @@ public class Game1 : Game
 		_spriteBatch.Draw(_GridTexture, new Vector2(10,290), Color.White);
 		void drawTile(int x, int y, Tile t) {
 			if (t == null) return;
-			int drawX = 12 + x * 100;
-			int drawY = 292 + y * 100;
-			_spriteBatch.Draw(_TileTextures[t.TextureId], new Vector2(drawX, drawY), Color.White);
+
+			Vector2 animPosition = t.Position;
+			int scale = 96;
+
+			if (t.PreviousPosition == null) scale = Animation.Scale();
+			else animPosition = Animation.Interpolate((Vector2)t.PreviousPosition, t.Position);
+
+			// Vector2 animPosition = t.Position;
+			// Rectangle rect = new Rectangle(0, 0, 96, 96);
+			// if (t.PreviousPosition != null) {
+			// 	animPosition = Animation.Interpolate((Vector2)t.PreviousPosition, t.Position);
+			// } else {
+			// 	int scale = Animation.Scale();
+			// 	rect = new Rectangle(0, 0, 96, 96);
+			// }
+			int drawX = (int) (12 + animPosition.X * 100);
+			int drawY = (int) (292 + animPosition.Y * 100);
+			// Texture, rectangle, color
+			Rectangle location = new Rectangle(drawX, drawY, scale, scale);
+			_spriteBatch.Draw(_TileTextures[t.TextureId], location, Color.White);
+			//_spriteBatch.Draw(_TileTextures[t.TextureId], new Vector2(drawX, drawY), Color.White, rect);
 		}
 		_GameData.Grid.EachCell(drawTile);
+
+		// _spriteBatch.Draw(_TileTextures[1], new Vector2(0,0), Color.White, );
 
 		// for (int i = 0; i < 11; i++) {
 		// 	int x = 12 + (i % 4) * 100;
