@@ -21,6 +21,9 @@ public class Game1 : Game
 	private Texture2D[] _TileTextures = new Texture2D[11];
 
 	private Manager _GameData { get; }
+
+	private int graceFrames { get; set; }
+	private bool holding { get; set; }
 	
 	/// <summary>
 	/// Game constructor
@@ -32,13 +35,10 @@ public class Game1 : Game
 		IsMouseVisible = false;
 
 		_GameData = new Manager(size: 4);
+		graceFrames = 0;
+		holding = false;
 
-		void write(int x, int y, Tile t) {
-			if (y == 0) Console.Write("\n");
-			if (t == null) Console.Write(". ");
-			else Console.Write(t.Value + " ");
-		}
-		_GameData.Grid.EachCell(write);
+		DebugRender.Write(_GameData.Grid);
 	}
 
 	/// <summary>
@@ -105,9 +105,16 @@ public class Game1 : Game
 		}
 
 		// TODO: Add your update logic here
-		
+		Manager.Direction direction = InputManager.GetStickDirection();
+		if (graceFrames > 0) graceFrames--;
+		if (direction != Manager.Direction.None && graceFrames == 0) {
+			graceFrames = 20;
 
-
+			_GameData.Move(direction);
+			DebugRender.Write(_GameData.Grid);
+		} else {
+			holding = false;
+		}
 
 		base.Update(gameTime);
 	}

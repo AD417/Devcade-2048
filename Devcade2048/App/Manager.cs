@@ -16,7 +16,7 @@ public class Manager {
 
     GameState State;
 
-    public enum Direction { Up, Down, Left, Right }
+    public enum Direction { Up, Down, Left, Right, None }
 
     internal class MoveData {
         public Vector2 Farthest { get; }
@@ -69,7 +69,6 @@ public class Manager {
 
     public void Actuate() {
         // TODO
-
     }
 
     public void PrepareTiles() {
@@ -90,6 +89,7 @@ public class Manager {
 
     public void Move(Direction direction) {
         if (IsGameTerminated()) return;
+        if (direction == Direction.None) return;
 
         Tile tile;
 
@@ -141,6 +141,7 @@ public class Manager {
             case Direction.Down:    return new Vector2(0, 1);
             case Direction.Left:    return new Vector2(-1, 0);
             case Direction.Right:   return new Vector2(1, 0);
+            case Direction.None:   return new Vector2(0, 0);
         }
         throw new IndexOutOfRangeException();
     }
