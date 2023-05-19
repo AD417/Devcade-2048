@@ -102,6 +102,7 @@ public class Grid {
 
     public void InsertTile(Tile tile) {
         Vector2 pos = tile.Position;
+        Console.WriteLine(pos);
         Cells[(int)pos.X,(int)pos.Y] = tile;
     }
 

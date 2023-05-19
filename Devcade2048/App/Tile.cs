@@ -16,7 +16,7 @@ public class Tile
     #nullable disable
 
     public Tile(Vector2 position) {
-        Position = new Vector2(position.X, Position.Y);
+        Position = position;
         Value = 2;
     }
 

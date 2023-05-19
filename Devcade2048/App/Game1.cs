@@ -19,6 +19,8 @@ public class Game1 : Game
 
 	private Texture2D _GridTexture;
 	private Texture2D[] _TileTextures = new Texture2D[11];
+
+	private Manager _GameData { get; }
 	
 	/// <summary>
 	/// Game constructor
@@ -28,6 +30,15 @@ public class Game1 : Game
 		_graphics = new GraphicsDeviceManager(this);
 		Content.RootDirectory = "Content";
 		IsMouseVisible = false;
+
+		_GameData = new Manager(size: 4);
+
+		void write(int x, int y, Tile t) {
+			if (y == 0) Console.Write("\n");
+			if (t == null) Console.Write(". ");
+			else Console.Write(t.Value + " ");
+		}
+		_GameData.Grid.EachCell(write);
 	}
 
 	/// <summary>
@@ -94,6 +105,9 @@ public class Game1 : Game
 		}
 
 		// TODO: Add your update logic here
+		
+
+
 
 		base.Update(gameTime);
 	}

@@ -58,11 +58,13 @@ public class Manager {
     }
 
     public void AddRandomTile() {
-        if (!this.Grid.CellsAvailable()) return;
+        if (!Grid.CellsAvailable()) return;
         int value = RNG.NextDouble() < Config.FourChance ? 4 : 2;
-        Tile tile = new Tile((Vector2)this.Grid.RandomAvailableCell(), value);
-
-        this.Grid.InsertTile(tile);
+        Vector2? available = Grid.RandomAvailableCell();
+        if (available != null) {
+            Tile tile = new Tile((Vector2)available, value);
+            Grid.InsertTile(tile);
+        }
     }
 
     public void Actuate() {
