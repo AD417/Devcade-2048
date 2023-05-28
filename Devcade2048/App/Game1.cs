@@ -19,6 +19,8 @@ public class Game1 : Game
 
 	private Texture2D _GridTexture;
 	private Texture2D[] _TileTextures = new Texture2D[11];
+	private Texture2D _MergeTexture;
+	private SpriteFont _ScoreFont;
 
 	private Manager _GameData { get; }
 
@@ -85,6 +87,8 @@ public class Game1 : Game
 			int powerOfTwo = (int) Math.Pow(2, i + 1);
 			_TileTextures[i] = Content.Load<Texture2D>($"{powerOfTwo.ToString("0000")} Tile");
 		}
+		_MergeTexture = Content.Load<Texture2D>("Merge Mask");
+		_ScoreFont = Content.Load<SpriteFont>("ComfortaaLight");
 	}
 
 	/// <summary>
@@ -130,11 +134,16 @@ public class Game1 : Game
 		
 		// Batches all the draw calls for this frame, and then performs them all at once
 		_spriteBatch.Begin();
-		// TODO: Add your drawing code here
 
 		_spriteBatch.Draw(_GridTexture, new Vector2(10,290), Color.White);
+		// TODO: figure out if I can move this code to the Tile class. 
 		void drawTile(int x, int y, Tile t) {
 			if (t == null) return;
+			bool isMerged = (t.MergedFrom != null && !Animation.IsComplete());
+			if (isMerged) {
+				drawTile(x, y, t.MergedFrom[0]);
+				drawTile(x, y, t.MergedFrom[1]);
+			}
 
 			Vector2 animPosition = t.Position;
 			int scale = 96;
@@ -142,6 +151,12 @@ public class Game1 : Game
 			if (t.PreviousPosition == null) scale = Animation.Scale();
 			else animPosition = Animation.Interpolate((Vector2)t.PreviousPosition, t.Position);
 
+			int drawX = (int) (12 + animPosition.X * 100) + (48 - scale / 2);
+			int drawY = (int) (292 + animPosition.Y * 100) + (48 - scale / 2);
+			// Texture, rectangle, color
+			Rectangle location = new Rectangle(drawX, drawY, scale, scale);
+			if (isMerged) _spriteBatch.Draw(_MergeTexture, location, Color.White);
+			_spriteBatch.Draw(_TileTextures[t.TextureId], location, Color.White);
 			// Vector2 animPosition = t.Position;
 			// Rectangle rect = new Rectangle(0, 0, 96, 96);
 			// if (t.PreviousPosition != null) {
@@ -150,15 +165,11 @@ public class Game1 : Game
 			// 	int scale = Animation.Scale();
 			// 	rect = new Rectangle(0, 0, 96, 96);
 			// }
-			int drawX = (int) (12 + animPosition.X * 100);
-			int drawY = (int) (292 + animPosition.Y * 100);
-			// Texture, rectangle, color
-			Rectangle location = new Rectangle(drawX, drawY, scale, scale);
-			_spriteBatch.Draw(_TileTextures[t.TextureId], location, Color.White);
 			//_spriteBatch.Draw(_TileTextures[t.TextureId], new Vector2(drawX, drawY), Color.White, rect);
 		}
 		_GameData.Grid.EachCell(drawTile);
 
+		// Debug tile rendering code. 
 		// _spriteBatch.Draw(_TileTextures[1], new Vector2(0,0), Color.White, );
 
 		// for (int i = 0; i < 11; i++) {
@@ -166,6 +177,11 @@ public class Game1 : Game
 		// 	int y = 292 + (i / 4) * 100;
 		// 	_spriteBatch.Draw(_TileTextures[i], new Vector2(x,y), Color.White);
 		// }
+		
+		String scoreStr = "Score: " + _GameData.Score.ToString().PadLeft(5);
+		int scoreWidth = (int)_ScoreFont.MeasureString(scoreStr).X;
+
+		_spriteBatch.DrawString(_ScoreFont, scoreStr, new Vector2(400 - scoreWidth,250), Color.Black);
 		
 		_spriteBatch.End();
 

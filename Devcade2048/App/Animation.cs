@@ -34,7 +34,7 @@ public static class Animation {
 
     public static int Scale() {
         if (Timer < TranslationCutoff) return 0;
-        if (Timer > new TimeSpan(2_500_000)) return 96;
+        if (IsComplete()) return 96;
         TimeSpan scaleTime = Timer - TranslationCutoff;
         TimeSpan fiftyMs = new TimeSpan(500_000);
 
