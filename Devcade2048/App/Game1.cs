@@ -24,8 +24,6 @@ public class Game1 : Game
 
 	private Manager _GameData { get; }
 
-	private int graceFrames { get; set; }
-	private bool holding { get; set; }
 	
 	/// <summary>
 	/// Game constructor
@@ -37,8 +35,6 @@ public class Game1 : Game
 		IsMouseVisible = false;
 
 		_GameData = new Manager(size: 4);
-		graceFrames = 0;
-		holding = false;
 
 		DebugRender.Write(_GameData.Grid);
 	}
@@ -117,8 +113,6 @@ public class Game1 : Game
 			_GameData.Move(direction);
 			DebugRender.Write(_GameData.Grid);
 			Animation.Reset();
-		} else {
-			holding = false;
 		}
 
 		base.Update(gameTime);
@@ -180,8 +174,18 @@ public class Game1 : Game
 		
 		String scoreStr = "Score: " + _GameData.Score.ToString().PadLeft(5);
 		int scoreWidth = (int)_ScoreFont.MeasureString(scoreStr).X;
-
-		_spriteBatch.DrawString(_ScoreFont, scoreStr, new Vector2(400 - scoreWidth,250), Color.Black);
+		_spriteBatch.DrawString(_ScoreFont, scoreStr, new Vector2(400 - scoreWidth, 250), Color.Black);
+		
+		if (_GameData.ScoreDelta != 0) {
+			String deltaStr = $"+{_GameData.ScoreDelta}";
+			int deltaWidth = (int)_ScoreFont.MeasureString(deltaStr).X;
+			_spriteBatch.DrawString(
+				_ScoreFont, 
+				deltaStr, 
+				new Vector2(400 - deltaWidth, 200), 
+				Color.Green
+			);
+		}
 		
 		_spriteBatch.End();
 

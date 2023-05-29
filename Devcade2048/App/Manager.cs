@@ -9,9 +9,9 @@ public class Manager {
     public Grid Grid { get; private set; }
     public int Score { get; private set; }
 
-    private static Random RNG = new Random();
+    public int ScoreDelta { get; private set; }
 
-    enum GameState { Playing, Lost, Won, Continuing, InMenu }
+    private static Random RNG = new Random();
     // TODO: figure out how to handle InMenu. 
 
     GameState State;
@@ -100,6 +100,7 @@ public class Manager {
 
         Tile tile;
 
+        ScoreDelta = 0;
         Vector2 vector = GetVector(direction);
         List<Vector2> traversal = BuildTraversals(vector);
         bool moved = false;
@@ -123,6 +124,7 @@ public class Manager {
                 tile.UpdatePosition(positions.Next);
 
                 Score += merged.Value;
+                ScoreDelta += merged.Value;
 
                 if (merged.Value == 2048) State = GameState.Won;
             } else {

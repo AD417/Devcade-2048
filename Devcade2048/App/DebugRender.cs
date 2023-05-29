@@ -9,7 +9,7 @@ public static class DebugRender {
 
         String[] rows = new String[grid.Size];
         void AddContent(int x, int y, Tile t) {
-            if (t != null) rows[y] += t.Value.ToString("####").PadLeft(4) + "  ";
+            if (t != null) rows[y] += t.Value.ToString().PadLeft(4) + "  ";
             else rows[y] += "  --  ";
         }
         grid.EachCell(AddContent);
