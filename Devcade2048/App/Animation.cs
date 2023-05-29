@@ -8,6 +8,7 @@ public static class Animation {
     private static readonly TimeSpan TranslationCutoff = TimeSpan.FromMilliseconds(150);
     private static readonly TimeSpan ScalingCutoff = TimeSpan.FromMilliseconds(250);
     private static readonly TimeSpan ScoreFadingCutoff = TimeSpan.FromMilliseconds(500);
+    private static readonly TimeSpan WinAnimationCutoff = TimeSpan.FromSeconds(2);
 
     public static void Increment(GameTime gameTime) {
         Timer += gameTime.ElapsedGameTime;
@@ -71,5 +72,27 @@ public static class Animation {
         g = (int) (c1.G * (1 - percent) + c2.G * percent);
         b = (int) (c1.B * (1 - percent) + c2.B * percent);
         return new Color(r,g,b);
+    }
+
+    public static bool IsWinComplete() {
+        return Timer > WinAnimationCutoff;
+    }
+
+    public static float InterpolateWin() {
+        if (!IsComplete()) return 0.0f;
+        if (IsWinComplete()) return 1.0f;
+        return (float) ((Timer - ScalingCutoff) / TimeSpan.FromSeconds(1.75));
+    }
+
+    public static int WinScale() {
+        if (!IsComplete()) return 0;
+        return 96 + (int)(304 * InterpolateWin());
+    }
+
+    public static Vector2 WinPosition(Vector2 pos) {
+        return new Vector2(
+            12 + pos.X * 100 * (1 - InterpolateWin()),
+            292 + pos.Y * 100 * (1 - InterpolateWin())
+        );
     }
 }

@@ -108,7 +108,11 @@ public class Game1 : Game
 
 		// TODO: Add your update logic here
 		Manager.Direction direction = InputManager.GetStickDirection();
-		if (direction != Manager.Direction.None && Animation.IsComplete()) {
+		if (
+			direction != Manager.Direction.None 
+		 && Animation.IsComplete() 
+		 && _GameData.State != GameState.Won
+		) {
 
 			_GameData.Move(direction);
 			DebugRender.Write(_GameData.Grid);
@@ -124,13 +128,13 @@ public class Game1 : Game
 	/// <param name="gameTime">This is the gameTime object you can use to get the time since last frame.</param>
 	protected override void Draw(GameTime gameTime)
 	{
-		GraphicsDevice.Clear(new Color(242, 194, 0));
+		GraphicsDevice.Clear(new Color(251, 194, 27));
 		
 		// Batches all the draw calls for this frame, and then performs them all at once
 		_spriteBatch.Begin();
 
 		_spriteBatch.Draw(_GridTexture, new Vector2(10,290), Color.White);
-		// TODO: figure out if I can move this code to the Tile class. 
+		// TODO: figure out if I can move this code to the Tile class.
 		void drawTile(int x, int y, Tile t) {
 			if (t == null) return;
 			bool isMerged = (t.MergedFrom != null && !Animation.IsComplete());
@@ -151,17 +155,28 @@ public class Game1 : Game
 			Rectangle location = new Rectangle(drawX, drawY, scale, scale);
 			if (isMerged) _spriteBatch.Draw(_MergeTexture, location, Color.White);
 			_spriteBatch.Draw(_TileTextures[t.TextureId], location, Color.White);
-			// Vector2 animPosition = t.Position;
-			// Rectangle rect = new Rectangle(0, 0, 96, 96);
-			// if (t.PreviousPosition != null) {
-			// 	animPosition = Animation.Interpolate((Vector2)t.PreviousPosition, t.Position);
-			// } else {
-			// 	int scale = Animation.Scale();
-			// 	rect = new Rectangle(0, 0, 96, 96);
-			// }
-			//_spriteBatch.Draw(_TileTextures[t.TextureId], new Vector2(drawX, drawY), Color.White, rect);
 		}
 		_GameData.Grid.EachCell(drawTile);
+
+		if (_GameData.State == GameState.Won) {
+			void resize2048Tile(int _x, int _y, Tile t) {
+				if (t is null || t.Value != 2048) return;
+				int scale = Animation.WinScale();
+				Vector2 pos = Animation.WinPosition(t.Position);
+				Rectangle location = new Rectangle((int)pos.X, (int)pos.Y, scale, scale);
+				_spriteBatch.Draw(_TileTextures[t.TextureId], location, Color.White);
+			}
+			_GameData.Grid.EachCell(resize2048Tile);
+
+			if (Animation.IsWinComplete()) {
+				_spriteBatch.DrawString(
+					_ScoreFont, 
+					"YOU WIN!", 
+					new Vector2(20, 700), 
+					Color.Black
+				);
+			}
+		}
 
 		// Debug tile rendering code. 
 		// _spriteBatch.Draw(_TileTextures[1], new Vector2(0,0), Color.White, );
@@ -183,7 +198,7 @@ public class Game1 : Game
 				_ScoreFont, 
 				deltaStr, 
 				new Vector2(400 - deltaWidth, 250 - Animation.ScoreDisplacement()), 
-				Animation.InterpolateColor(Color.Green, new Color(242, 194, 0))
+				Animation.InterpolateColor(Color.Green, new Color(251, 194, 27))
 			);
 		}
 		

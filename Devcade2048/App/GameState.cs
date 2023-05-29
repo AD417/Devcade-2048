@@ -2,7 +2,7 @@
 
 namespace Devcade2048.App;
 
-enum GameState { 
+public enum GameState { 
     InMenu,
     Playing, 
     Lost, 

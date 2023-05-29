@@ -14,7 +14,7 @@ public class Manager {
     private static Random RNG = new Random();
     // TODO: figure out how to handle InMenu. 
 
-    GameState State;
+    public GameState State;
 
     public enum Direction { Up, Down, Left, Right, None }
 
@@ -34,7 +34,7 @@ public class Manager {
     }
 
     public void Restart() {
-        Render.ContinueGame();
+        // Render.ContinueGame();
         State = GameState.Continuing;
     }
 
@@ -64,8 +64,8 @@ public class Manager {
             value = 4;
             id = 1;
         } else {
-            value = 2;
-            id = 0;
+            value = 128;
+            id = 6;
         }
         Vector2? available = Grid.RandomAvailableCell();
         if (available != null) {
