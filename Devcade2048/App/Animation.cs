@@ -5,7 +5,9 @@ namespace Devcade2048.App;
 
 public static class Animation {
     public static TimeSpan Timer { get; set; } = new TimeSpan();
-    private static TimeSpan TranslationCutoff = new TimeSpan(1_500_000);
+    private static readonly TimeSpan TranslationCutoff = TimeSpan.FromMilliseconds(150);
+    private static readonly TimeSpan ScalingCutoff = TimeSpan.FromMilliseconds(250);
+    private static readonly TimeSpan ScoreFadingCutoff = TimeSpan.FromMilliseconds(500);
 
     public static void Increment(GameTime gameTime) {
         Timer += gameTime.ElapsedGameTime;
@@ -16,7 +18,7 @@ public static class Animation {
     }
 
     public static bool IsComplete() {
-        return Timer > new TimeSpan(2_500_000);
+        return Timer > ScalingCutoff;
     }
 
     public static double TranslationFactor() {
@@ -24,7 +26,7 @@ public static class Animation {
         return Timer / TranslationCutoff;
     }
 
-    public static Vector2 Interpolate(Vector2 a, Vector2 b) {
+    public static Vector2 InterpolatePosition(Vector2 a, Vector2 b) {
         double percent = TranslationFactor();
         return new Vector2(
             (float) (a.X * (1 - percent) + b.X * percent),
@@ -32,11 +34,11 @@ public static class Animation {
         );
     }
 
-    public static int Scale() {
+    public static int NewTileScale() {
         if (Timer < TranslationCutoff) return 0;
         if (IsComplete()) return 96;
         TimeSpan scaleTime = Timer - TranslationCutoff;
-        TimeSpan fiftyMs = new TimeSpan(500_000);
+        TimeSpan fiftyMs = TimeSpan.FromMilliseconds(50);
 
         double scale = 1.0;
 
@@ -46,5 +48,28 @@ public static class Animation {
             scale = 1.2 * (scaleTime / fiftyMs);
         }
         return (int) (scale * 96);
+    }
+
+    public static bool IsScoreVisible() {
+        return Timer <= ScoreFadingCutoff;
+    }
+
+    public static int ScoreDisplacement() {
+        if (!IsScoreVisible()) return 80;
+        return (int) (80 * Timer / ScoreFadingCutoff);
+    }
+
+    public static Color InterpolateColor(Color c1, Color c2) {
+        if (!IsComplete()) return c1;
+        if (!IsScoreVisible()) return c2;
+
+        TimeSpan fadeTime = Timer - ScalingCutoff;
+        float percent = (float)(fadeTime / TimeSpan.FromMilliseconds(250));
+
+        int r, g, b;
+        r = (int) (c1.R * (1 - percent) + c2.R * percent);
+        g = (int) (c1.G * (1 - percent) + c2.G * percent);
+        b = (int) (c1.B * (1 - percent) + c2.B * percent);
+        return new Color(r,g,b);
     }
 }

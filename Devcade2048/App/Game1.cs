@@ -142,8 +142,8 @@ public class Game1 : Game
 			Vector2 animPosition = t.Position;
 			int scale = 96;
 
-			if (t.PreviousPosition == null) scale = Animation.Scale();
-			else animPosition = Animation.Interpolate((Vector2)t.PreviousPosition, t.Position);
+			if (t.PreviousPosition == null) scale = Animation.NewTileScale();
+			else animPosition = Animation.InterpolatePosition((Vector2)t.PreviousPosition, t.Position);
 
 			int drawX = (int) (12 + animPosition.X * 100) + (48 - scale / 2);
 			int drawY = (int) (292 + animPosition.Y * 100) + (48 - scale / 2);
@@ -176,14 +176,14 @@ public class Game1 : Game
 		int scoreWidth = (int)_ScoreFont.MeasureString(scoreStr).X;
 		_spriteBatch.DrawString(_ScoreFont, scoreStr, new Vector2(400 - scoreWidth, 250), Color.Black);
 		
-		if (_GameData.ScoreDelta != 0) {
+		if (_GameData.ScoreDelta != 0 && Animation.IsScoreVisible()) {
 			String deltaStr = $"+{_GameData.ScoreDelta}";
 			int deltaWidth = (int)_ScoreFont.MeasureString(deltaStr).X;
 			_spriteBatch.DrawString(
 				_ScoreFont, 
 				deltaStr, 
-				new Vector2(400 - deltaWidth, 200), 
-				Color.Green
+				new Vector2(400 - deltaWidth, 250 - Animation.ScoreDisplacement()), 
+				Animation.InterpolateColor(Color.Green, new Color(242, 194, 0))
 			);
 		}
 		
