@@ -45,6 +45,7 @@ public class Manager {
     public void Setup() {
         Grid = new Grid(Size);
         Score = 0;
+        ScoreDelta = 0;
         State = GameState.Playing;
         AddStartTiles();
 

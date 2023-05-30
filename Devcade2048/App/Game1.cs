@@ -17,6 +17,7 @@ public class Game1 : Game
 	/// </summary>
 	private Rectangle windowSize;
 
+	private Texture2D _TitleTexture;
 	private Texture2D _GridTexture;
 	private Texture2D[] _TileTextures = new Texture2D[13];
 	private Texture2D _MergeTexture;
@@ -79,6 +80,7 @@ public class Game1 : Game
 		// TODO: use this.Content to load your game content here
 		// ex:
 		// texture = Content.Load<Texture2D>("fileNameWithoutExtension");
+		_TitleTexture = Content.Load<Texture2D>("TitleBar");
 		_GridTexture = Content.Load<Texture2D>("2048Grid");
 		for (int i = 0; i < 11; i++) {
 			int powerOfTwo = (int) Math.Pow(2, i + 1);
@@ -144,6 +146,8 @@ public class Game1 : Game
 		
 		// Batches all the draw calls for this frame, and then performs them all at once
 		_spriteBatch.Begin();
+
+		_spriteBatch.Draw(_TitleTexture, new Vector2(60, 0), Color.White);
 
 		_spriteBatch.Draw(_GridTexture, new Vector2(10,290), Color.White);
 		DrawNormalTiles();
