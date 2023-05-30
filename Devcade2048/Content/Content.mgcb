@@ -181,13 +181,6 @@
 /processorParam:TextureFormat=Color
 /build:DED2 Blob.png
 
-#begin File.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:File.spritefont;ComfortaaLight.spritefont
-
 #begin Merge Mask.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -199,4 +192,11 @@
 /processorParam:MakeSquare=True
 /processorParam:TextureFormat=Color
 /build:Merge Mask.png
+
+#begin MonospaceTypewriter.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:MonospaceTypewriter.spritefont
 

@@ -87,7 +87,7 @@ public class Game1 : Game
 		_TileTextures[11] = Content.Load<Texture2D>("DED1 Blob");
 		_TileTextures[12] = Content.Load<Texture2D>("DED2 Blob");
 		_MergeTexture = Content.Load<Texture2D>("Merge Mask");
-		_ScoreFont = Content.Load<SpriteFont>("ComfortaaLight");
+		_ScoreFont = Content.Load<SpriteFont>("MonospaceTypewriter");
 	}
 
 	/// <summary>
