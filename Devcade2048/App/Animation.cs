@@ -9,6 +9,7 @@ public static class Animation {
     private static readonly TimeSpan ScalingCutoff = TimeSpan.FromMilliseconds(250);
     private static readonly TimeSpan ScoreFadingCutoff = TimeSpan.FromMilliseconds(500);
     private static readonly TimeSpan WinAnimationCutoff = TimeSpan.FromSeconds(2);
+    private static readonly TimeSpan LossAnimationCutoff = TimeSpan.FromSeconds(5);
 
     public static void Increment(GameTime gameTime) {
         Timer += gameTime.ElapsedGameTime;
@@ -96,9 +97,14 @@ public static class Animation {
         );
     }
 
+    public static bool IsLossComplete() {
+        return Timer > LossAnimationCutoff;
+    }
+
     public static int LossMaximumBlob() {
-        if (!IsComplete()) return -1;
-        if (IsWinComplete()) return 12;
-        return (int) (12 * (Timer - ScalingCutoff) / (WinAnimationCutoff - ScalingCutoff));
+        TimeSpan lossStart = TimeSpan.FromSeconds(2);
+        if (Timer < lossStart) return -1;
+        if (IsLossComplete()) return 12;
+        return (int) (12 * (Timer - lossStart) / (LossAnimationCutoff - lossStart));
     }
 }

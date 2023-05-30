@@ -136,7 +136,24 @@ public class Game1 : Game
 		_spriteBatch.Begin();
 
 		_spriteBatch.Draw(_GridTexture, new Vector2(10,290), Color.White);
-		// TODO: figure out if I can move this code to the Tile class.
+		DrawNormalTiles();
+
+		if (_GameData.State == GameState.Won) {
+			DrawWinAnimation();
+		}
+
+		if (_GameData.State == GameState.Lost) {
+			DrawLossAnimation();
+		}
+		
+		DrawScore();
+		
+		_spriteBatch.End();
+
+		base.Draw(gameTime);
+	}
+
+	private void DrawNormalTiles() {
 		void drawTile(int x, int y, Tile t) {
 			if (t == null) return;
 			bool isMerged = (t.MergedFrom != null && !Animation.IsComplete());
@@ -159,46 +176,57 @@ public class Game1 : Game
 			_spriteBatch.Draw(_TileTextures[t.TextureId], location, Color.White);
 		}
 		_GameData.Grid.EachCell(drawTile);
+	}
 
-		if (_GameData.State == GameState.Won) {
-			void resize2048Tile(int _x, int _y, Tile t) {
-				if (t is null || t.Value != 2048) return;
-				int scale = Animation.WinScale();
-				Vector2 pos = Animation.WinPosition(t.Position);
-				Rectangle location = new Rectangle((int)pos.X, (int)pos.Y, scale, scale);
-				_spriteBatch.Draw(_TileTextures[t.TextureId], location, Color.White);
-			}
-			_GameData.Grid.EachCell(resize2048Tile);
-
-			if (Animation.IsWinComplete()) {
-				_spriteBatch.DrawString(
-					_ScoreFont, 
-					"YOU WIN!", 
-					new Vector2(20, 700), 
-					Color.Black
-				);
-			}
+	private void DrawWinAnimation() {
+		void resize2048Tile(int _x, int _y, Tile t) {
+			if (t is null || t.Value != 2048) return;
+			int scale = Animation.WinScale();
+			Vector2 pos = Animation.WinPosition(t.Position);
+			Rectangle location = new Rectangle((int)pos.X, (int)pos.Y, scale, scale);
+			_spriteBatch.Draw(_TileTextures[t.TextureId], location, Color.White);
 		}
+		_GameData.Grid.EachCell(resize2048Tile);
 
-		if (_GameData.State == GameState.Lost) {
-			int maximumBlob = Animation.LossMaximumBlob();
-			void killBlobs(int _x, int _y, Tile t) {
-				// This should be impossible, but CYA. 
-				if (t is null) return;
-				if (t.TextureId > maximumBlob) return;
-				int deadBlobId = 11;
-				if (t.TextureId > 5) deadBlobId++;
-				Rectangle location = new Rectangle(
-					(int) (12 + t.Position.X * 100),
-					(int) (292 + t.Position.Y * 100),
-					96,
-					96
-				);
-				_spriteBatch.Draw(_TileTextures[deadBlobId], location, Color.White);
-			}
-			_GameData.Grid.EachCell(killBlobs);
+		if (Animation.IsWinComplete()) {
+			_spriteBatch.DrawString(
+				_ScoreFont, 
+				"YOU WIN!", 
+				new Vector2(20, 700), 
+				Color.Black
+			);
 		}
-		
+	}
+
+	private void DrawLossAnimation() {
+		int maximumBlob = Animation.LossMaximumBlob();
+		void killBlobs(int _x, int _y, Tile t) {
+			// This should be impossible, but CYA. 
+			if (t is null) return;
+			if (t.TextureId > maximumBlob) return;
+			int deadBlobId = 11;
+			if (t.TextureId > 3) deadBlobId = 12;
+			Rectangle location = new Rectangle(
+				(int) (12 + t.Position.X * 100),
+				(int) (292 + t.Position.Y * 100),
+				96,
+				96
+			);
+			_spriteBatch.Draw(_TileTextures[deadBlobId], location, Color.White);
+		}
+		_GameData.Grid.EachCell(killBlobs);
+
+		if (Animation.IsLossComplete()) {
+			_spriteBatch.DrawString(
+				_ScoreFont, 
+				"GAME OVER!",
+				new Vector2(20, 700),
+				Color.Black
+			);
+		}
+	}
+
+	private void DrawScore() {
 		String scoreStr = "Score: " + _GameData.Score.ToString().PadLeft(5);
 		int scoreWidth = (int)_ScoreFont.MeasureString(scoreStr).X;
 		_spriteBatch.DrawString(_ScoreFont, scoreStr, new Vector2(400 - scoreWidth, 250), Color.Black);
@@ -213,9 +241,6 @@ public class Game1 : Game
 				Animation.InterpolateColor(Color.Green, new Color(251, 194, 27))
 			);
 		}
-		
-		_spriteBatch.End();
-
-		base.Draw(gameTime);
 	}
+
 }
