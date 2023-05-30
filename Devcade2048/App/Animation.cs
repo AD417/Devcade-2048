@@ -95,4 +95,10 @@ public static class Animation {
             292 + pos.Y * 100 * (1 - InterpolateWin())
         );
     }
+
+    public static int LossMaximumBlob() {
+        if (!IsComplete()) return -1;
+        if (IsWinComplete()) return 12;
+        return (int) (12 * (Timer - ScalingCutoff) / (WinAnimationCutoff - ScalingCutoff));
+    }
 }

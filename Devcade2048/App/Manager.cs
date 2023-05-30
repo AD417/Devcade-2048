@@ -64,8 +64,8 @@ public class Manager {
             value = 4;
             id = 1;
         } else {
-            value = 128;
-            id = 6;
+            value = 2;
+            id = 0;
         }
         Vector2? available = Grid.RandomAvailableCell();
         if (available != null) {
@@ -191,13 +191,18 @@ public class Manager {
 
     private bool TileMatchesAvailable() {
         Tile tile;
-        foreach (Vector2 cell in BuildTraversals(new Vector2())) {
+        foreach (Vector2 cell in BuildTraversals(new Vector2(1, 0))) {
             tile = Grid.CellContent(cell);
             if (tile == null) continue;
             foreach (Direction dir in Enum.GetValues(typeof(Direction))) {
+                if (dir == Direction.None) continue;
                 Vector2 vector = GetVector(dir);
                 Tile other = this.Grid.CellContent(cell + vector);
-                if (other != null && other.Value == tile.Value) return true;
+                if (other != null && other.Value == tile.Value) {
+                    System.Console.Write(cell);
+                    System.Console.WriteLine(vector);
+                    return true;
+                }
             }
         }
         return false;

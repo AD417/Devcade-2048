@@ -18,7 +18,7 @@ public class Game1 : Game
 	private Rectangle windowSize;
 
 	private Texture2D _GridTexture;
-	private Texture2D[] _TileTextures = new Texture2D[11];
+	private Texture2D[] _TileTextures = new Texture2D[13];
 	private Texture2D _MergeTexture;
 	private SpriteFont _ScoreFont;
 
@@ -83,6 +83,8 @@ public class Game1 : Game
 			int powerOfTwo = (int) Math.Pow(2, i + 1);
 			_TileTextures[i] = Content.Load<Texture2D>($"{powerOfTwo.ToString("0000")} Tile");
 		}
+		_TileTextures[11] = Content.Load<Texture2D>("DED1 Blob");
+		_TileTextures[12] = Content.Load<Texture2D>("DED2 Blob");
 		_MergeTexture = Content.Load<Texture2D>("Merge Mask");
 		_ScoreFont = Content.Load<SpriteFont>("ComfortaaLight");
 	}
@@ -111,7 +113,7 @@ public class Game1 : Game
 		if (
 			direction != Manager.Direction.None 
 		 && Animation.IsComplete() 
-		 && _GameData.State != GameState.Won
+		 && _GameData.State == GameState.Playing
 		) {
 
 			_GameData.Move(direction);
@@ -178,14 +180,24 @@ public class Game1 : Game
 			}
 		}
 
-		// Debug tile rendering code. 
-		// _spriteBatch.Draw(_TileTextures[1], new Vector2(0,0), Color.White, );
-
-		// for (int i = 0; i < 11; i++) {
-		// 	int x = 12 + (i % 4) * 100;
-		// 	int y = 292 + (i / 4) * 100;
-		// 	_spriteBatch.Draw(_TileTextures[i], new Vector2(x,y), Color.White);
-		// }
+		if (_GameData.State == GameState.Lost) {
+			int maximumBlob = Animation.LossMaximumBlob();
+			void killBlobs(int _x, int _y, Tile t) {
+				// This should be impossible, but CYA. 
+				if (t is null) return;
+				if (t.TextureId > maximumBlob) return;
+				int deadBlobId = 11;
+				if (t.TextureId > 5) deadBlobId++;
+				Rectangle location = new Rectangle(
+					(int) (12 + t.Position.X * 100),
+					(int) (292 + t.Position.Y * 100),
+					96,
+					96
+				);
+				_spriteBatch.Draw(_TileTextures[deadBlobId], location, Color.White);
+			}
+			_GameData.Grid.EachCell(killBlobs);
+		}
 		
 		String scoreStr = "Score: " + _GameData.Score.ToString().PadLeft(5);
 		int scoreWidth = (int)_ScoreFont.MeasureString(scoreStr).X;
