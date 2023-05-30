@@ -132,13 +132,16 @@ public class Manager {
             }
 
             if (cell != tile.Position) moved = true;
-
+            HighScoreTracker.Update(Score);
         }
 
         if (moved) {
             AddRandomTile();
 
-            if (!this.MovesAvailable()) State = GameState.Lost;
+            if (!this.MovesAvailable()) {
+                State = GameState.Lost;
+                HighScoreTracker.Save();
+            }
 
             Actuate();
         }

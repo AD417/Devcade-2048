@@ -35,6 +35,7 @@ public class Game1 : Game
 		IsMouseVisible = false;
 
 		_GameData = new Manager(size: 4);
+		HighScoreTracker.Load();
 
 		DebugRender.Write(_GameData.Grid);
 	}
@@ -118,6 +119,15 @@ public class Game1 : Game
 
 			_GameData.Move(direction);
 			DebugRender.Write(_GameData.Grid);
+			Animation.Reset();
+		}
+
+		if (
+			Animation.IsComplete() 
+		 && (Keyboard.GetState().IsKeyDown(Keys.R) || Input.GetButton(1, Input.ArcadeButtons.A1))
+		) {
+			HighScoreTracker.Save();
+			_GameData.Setup();
 			Animation.Reset();
 		}
 
@@ -229,7 +239,11 @@ public class Game1 : Game
 	private void DrawScore() {
 		String scoreStr = "Score: " + _GameData.Score.ToString().PadLeft(5);
 		int scoreWidth = (int)_ScoreFont.MeasureString(scoreStr).X;
-		_spriteBatch.DrawString(_ScoreFont, scoreStr, new Vector2(400 - scoreWidth, 250), Color.Black);
+		_spriteBatch.DrawString(_ScoreFont, scoreStr, new Vector2(400 - scoreWidth, 200), Color.Black);
+
+		String highScoreStr = "Best: " + HighScoreTracker.HighScore.ToString().PadLeft(5);
+		int highScoreWidth = (int)_ScoreFont.MeasureString(highScoreStr).X;
+		_spriteBatch.DrawString(_ScoreFont, highScoreStr, new Vector2(400 - highScoreWidth, 250), Color.Black);
 		
 		if (_GameData.ScoreDelta != 0 && Animation.IsScoreVisible()) {
 			String deltaStr = $"+{_GameData.ScoreDelta}";
@@ -237,7 +251,7 @@ public class Game1 : Game
 			_spriteBatch.DrawString(
 				_ScoreFont, 
 				deltaStr, 
-				new Vector2(400 - deltaWidth, 250 - Animation.ScoreDisplacement()), 
+				new Vector2(400 - deltaWidth, 200 - Animation.ScoreDisplacement()), 
 				Animation.InterpolateColor(Color.Green, new Color(251, 194, 27))
 			);
 		}

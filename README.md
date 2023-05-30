@@ -6,13 +6,15 @@ Classic 2048, ported to the Devcade gaming system.
 - Basic controls and movement
 - Merge behaviour
 - Current score
-- Recent score changes
+- Recent score change
+- High scores (Though not persistently.)
 - Blobs.
+- Win screen. (The blobs are ruining everything)
+- Lose screen. (Blob is dead. Blob remains dead. etc.)
+- Restart
 
 ## Stuff to implement:
 
-- Win screen. (The blobs are ruining everything)
-- A method of restarting.
 - Main menu
 - Credits
 - More themes (Eg: Original 2048 theme)
