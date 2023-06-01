@@ -183,6 +183,7 @@ public class Game1 : Game
 		Display.Scores();
 
 		if (_GameData.State == GameState.Won) {
+			Display.Win();
 			DrawWinAnimation();
 		}
 

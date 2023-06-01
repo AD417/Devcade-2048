@@ -48,6 +48,18 @@ public static class Animation {
         }
     }
 
+    private static void CheckEndCompletion() {
+        if (Timer < EndTime) return;
+        Timer = new TimeSpan();
+        switch (State) {
+            case AnimationState.ToWon:
+            case AnimationState.ToLost:
+            default: 
+                State = AnimationState.WaitingForInput;
+                break;
+        }
+    }
+
     private static void CheckFadeCompletion() {
         if (Timer < FadeTime) return;
         Timer = new TimeSpan();
@@ -67,11 +79,6 @@ public static class Animation {
             case AnimationState.FromInfo:
                 State = AnimationState.ToMenu;
                 break;
-            case AnimationState.ResetFromWin:
-            case AnimationState.ResetFromLost:
-            default: 
-                State = AnimationState.WaitingForInput;
-                break;
         }
     }
 
@@ -85,7 +92,12 @@ public static class Animation {
         if (Timer < SpawnTime) return;
         Timer = new TimeSpan(0);
         State = AnimationState.WaitingForInput;
-        Display.manager.State++;
+        if (Display.manager.State == GameState.Lost) {
+            State = AnimationState.ToLost;
+        }
+        if (Display.manager.State == GameState.Won) {
+            State = AnimationState.ToWon;
+        }
     }
 
     // Basic stats for 
@@ -106,6 +118,10 @@ public static class Animation {
 
             case AnimationState.Spawning:
                 return Timer / SpawnTime;
+
+            case AnimationState.ToWon:
+            case AnimationState.ToLost:
+                return Timer / EndTime;
 
             default:
                 return 1.0;
@@ -170,7 +186,7 @@ public static class Animation {
         return (int) (96 * scaleFactor);
     }
 
-    public static Vector2 TilePosition(Tile t) {
+    private static Vector2 TilePosition(Tile t) {
         Vector2 currentPos = ToScreenPosition(t.Position);
         
         if (State != AnimationState.Moving) return currentPos;
@@ -190,6 +206,24 @@ public static class Animation {
         return new Rectangle(
             (int) currentPos.X,
             (int) currentPos.Y,
+            scale,
+            scale
+        );
+    }
+
+
+    // Win and Loss States
+    private static double WinScale() {
+        if (State != AnimationState.ToWon) return 1.0;
+        return PercentComplete() * PercentComplete();
+    }
+
+    public static Rectangle PositionOfWinTile(Tile t) {
+        System.Console.WriteLine(State);
+        int scale = (int) (96 + 304 * WinScale());
+        return new Rectangle(
+            (int) (12 + t.Position.X * 100 * (1 - WinScale())),
+            (int) (292 + t.Position.Y * 100 * (1 - WinScale())),
             scale,
             scale
         );

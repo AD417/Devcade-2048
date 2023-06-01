@@ -36,6 +36,18 @@ public static class Display {
         manager.Grid.EachCell((int _x, int _y, Tile t) => drawTile(t));
     }
 
+    public static void Win() {
+        if (manager.State != GameState.Won) return;
+        if (Animation.UpdatingGrid()) return;
+        void drawWin(Tile t) {
+            if (t is null || t.Value != 2048) return;
+            Rectangle location = Animation.PositionOfWinTile(t);
+
+            sprite.Draw(Asset.Tile[t.TextureId], location, Color.White);
+        }
+        manager.Grid.EachCell((int _x, int _y, Tile t) => drawWin(t));
+    }
+
     public static void addScore(ScoreDelta score) {
         ScoreContainer.Add(score);
     }
