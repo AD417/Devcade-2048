@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Devcade;
 using System;
+using Devcade2048.App.Render;
 
 // MAKE SURE YOU RENAME ALL PROJECT FILES FROM DevcadeGame TO YOUR YOUR GAME NAME
 namespace Devcade2048.App;
@@ -17,12 +18,6 @@ public class Game1 : Game
 	/// </summary>
 	private Rectangle windowSize;
 
-	private Texture2D _TitleTexture;
-	private Texture2D _GridTexture;
-	private Texture2D[] _TileTextures = new Texture2D[13];
-	private Texture2D _MergeTexture;
-	private SpriteFont _ScoreFont;
-
 	private Manager _GameData { get; }
 
 	
@@ -36,7 +31,6 @@ public class Game1 : Game
 		IsMouseVisible = false;
 
 		_GameData = new Manager(size: 4);
-		HighScoreTracker.Load();
 
 		DebugRender.Write(_GameData.Grid);
 	}
@@ -62,8 +56,7 @@ public class Game1 : Game
 #endif
 		#endregion
 		
-		// TODO: Add your initialization logic here
-		Animation.Reset();
+		// Add initialization logic here
 
 		windowSize = GraphicsDevice.Viewport.Bounds;
 		
@@ -77,19 +70,28 @@ public class Game1 : Game
 	{
 		_spriteBatch = new SpriteBatch(GraphicsDevice);
 
+		HighScoreTracker.Load();
+		
 		// TODO: use this.Content to load your game content here
 		// ex:
 		// texture = Content.Load<Texture2D>("fileNameWithoutExtension");
-		_TitleTexture = Content.Load<Texture2D>("TitleBar");
-		_GridTexture = Content.Load<Texture2D>("2048Grid");
+
+		Asset.Title = Content.Load<Texture2D>("TitleBar");
+
+		Asset.Menu[0] = Content.Load<Texture2D>("BlobStart");
+		Asset.Menu[1] = Content.Load<Texture2D>("BlobInfo");
+		Asset.Menu[2] = Content.Load<Texture2D>("BlobCredits");
+
+		Asset.Grid = Content.Load<Texture2D>("2048Grid");
 		for (int i = 0; i < 11; i++) {
 			int powerOfTwo = (int) Math.Pow(2, i + 1);
-			_TileTextures[i] = Content.Load<Texture2D>($"{powerOfTwo.ToString("0000")} Tile");
+			Asset.Tile[i] = Content.Load<Texture2D>($"{powerOfTwo.ToString("0000")} Tile");
 		}
-		_TileTextures[11] = Content.Load<Texture2D>("DED1 Blob");
-		_TileTextures[12] = Content.Load<Texture2D>("DED2 Blob");
-		_MergeTexture = Content.Load<Texture2D>("Merge Mask");
-		_ScoreFont = Content.Load<SpriteFont>("MonospaceTypewriter");
+		Asset.LoseTile[0] = Content.Load<Texture2D>("DED1 Blob");
+		Asset.LoseTile[1] = Content.Load<Texture2D>("DED2 Blob");
+		Asset.Score = Content.Load<SpriteFont>("MonospaceTypewriter");
+
+		Display.Initialize(_spriteBatch, _GameData);
 	}
 
 	/// <summary>
@@ -99,7 +101,6 @@ public class Game1 : Game
 	protected override void Update(GameTime gameTime)
 	{
 		Input.Update(); // Updates the state of the input library
-		Animation.Increment(gameTime);
 
 		// Exit when both menu buttons are pressed (or escape for keyboard debugging)
 		// You can change this but it is suggested to keep the keybind of both menu
@@ -115,22 +116,21 @@ public class Game1 : Game
 		Manager.Direction direction = InputManager.GetStickDirection();
 		if (
 			direction != Manager.Direction.None 
-		 && Animation.IsComplete() 
+		 && Render.Animation.AcceptInput()
 		 && _GameData.State == GameState.Playing
 		) {
 
 			_GameData.Move(direction);
 			DebugRender.Write(_GameData.Grid);
-			Animation.Reset();
 		}
 
 		if (
-			Animation.IsComplete() 
+			Render.Animation.AcceptInput()
 		 && (Keyboard.GetState().IsKeyDown(Keys.R) || Input.GetButton(1, Input.ArcadeButtons.A1))
 		) {
 			HighScoreTracker.Save();
 			_GameData.Setup();
-			Animation.Reset();
+			Render.Animation.ChangeStateTo(AnimationState.Spawning);
 		}
 
 		base.Update(gameTime);
@@ -143,122 +143,35 @@ public class Game1 : Game
 	protected override void Draw(GameTime gameTime)
 	{
 		GraphicsDevice.Clear(new Color(251, 194, 27));
+		Render.Animation.Increment(gameTime);
+		ScoreContainer.Increment(gameTime);
 		
 		// Batches all the draw calls for this frame, and then performs them all at once
 		_spriteBatch.Begin();
 
-		_spriteBatch.Draw(_TitleTexture, new Vector2(60, 0), Color.White);
+		Display.Title();
 
-		_spriteBatch.Draw(_GridTexture, new Vector2(10,290), Color.White);
-		DrawNormalTiles();
+		bool inGame = (
+			_GameData.State == GameState.Playing
+		 || _GameData.State == GameState.Continuing
+		 || _GameData.State == GameState.Won
+		 || _GameData.State == GameState.Lost
+		);
 
-		if (_GameData.State == GameState.Won) {
-			DrawWinAnimation();
-		}
-
-		if (_GameData.State == GameState.Lost) {
-			DrawLossAnimation();
-		}
-		
-		DrawScore();
+		if (inGame) DrawGame();
+		else Display.Menu();
 		
 		_spriteBatch.End();
 
 		base.Draw(gameTime);
 	}
 
-	private void DrawNormalTiles() {
-		void drawTile(int x, int y, Tile t) {
-			if (t == null) return;
-			bool isMerged = (t.MergedFrom != null && !Animation.IsComplete());
-			if (isMerged) {
-				drawTile(x, y, t.MergedFrom[0]);
-				drawTile(x, y, t.MergedFrom[1]);
-			}
+	private void DrawGame() {
+		_spriteBatch.Draw(Asset.Grid, new Vector2(10,290), Color.White);
 
-			Vector2 animPosition = t.Position;
-			int scale = 96;
-
-			if (t.PreviousPosition == null) scale = Animation.NewTileScale();
-			else animPosition = Animation.InterpolatePosition((Vector2)t.PreviousPosition, t.Position);
-
-			int drawX = (int) (12 + animPosition.X * 100) + (48 - scale / 2);
-			int drawY = (int) (292 + animPosition.Y * 100) + (48 - scale / 2);
-			// Texture, rectangle, color
-			Rectangle location = new Rectangle(drawX, drawY, scale, scale);
-			if (isMerged) _spriteBatch.Draw(_MergeTexture, location, Color.White);
-			_spriteBatch.Draw(_TileTextures[t.TextureId], location, Color.White);
-		}
-		_GameData.Grid.EachCell(drawTile);
+		Display.AllTiles();
+		Display.Scores();
+		if (_GameData.State == GameState.Won) Display.Win();
+		if (_GameData.State == GameState.Lost) Display.Lose();
 	}
-
-	private void DrawWinAnimation() {
-		void resize2048Tile(int _x, int _y, Tile t) {
-			if (t is null || t.Value != 2048) return;
-			int scale = Animation.WinScale();
-			Vector2 pos = Animation.WinPosition(t.Position);
-			Rectangle location = new Rectangle((int)pos.X, (int)pos.Y, scale, scale);
-			_spriteBatch.Draw(_TileTextures[t.TextureId], location, Color.White);
-		}
-		_GameData.Grid.EachCell(resize2048Tile);
-
-		if (Animation.IsWinComplete()) {
-			_spriteBatch.DrawString(
-				_ScoreFont, 
-				"YOU WIN!", 
-				new Vector2(20, 700), 
-				Color.Black
-			);
-		}
-	}
-
-	private void DrawLossAnimation() {
-		int maximumBlob = Animation.LossMaximumBlob();
-		void killBlobs(int _x, int _y, Tile t) {
-			// This should be impossible, but CYA. 
-			if (t is null) return;
-			if (t.TextureId > maximumBlob) return;
-			int deadBlobId = 11;
-			if (t.TextureId > 3) deadBlobId = 12;
-			Rectangle location = new Rectangle(
-				(int) (12 + t.Position.X * 100),
-				(int) (292 + t.Position.Y * 100),
-				96,
-				96
-			);
-			_spriteBatch.Draw(_TileTextures[deadBlobId], location, Color.White);
-		}
-		_GameData.Grid.EachCell(killBlobs);
-
-		if (Animation.IsLossComplete()) {
-			_spriteBatch.DrawString(
-				_ScoreFont, 
-				"GAME OVER!",
-				new Vector2(20, 700),
-				Color.Black
-			);
-		}
-	}
-
-	private void DrawScore() {
-		String scoreStr = "Score: " + _GameData.Score.ToString().PadLeft(5);
-		int scoreWidth = (int)_ScoreFont.MeasureString(scoreStr).X;
-		_spriteBatch.DrawString(_ScoreFont, scoreStr, new Vector2(400 - scoreWidth, 200), Color.Black);
-
-		String highScoreStr = "Best: " + HighScoreTracker.HighScore.ToString().PadLeft(5);
-		int highScoreWidth = (int)_ScoreFont.MeasureString(highScoreStr).X;
-		_spriteBatch.DrawString(_ScoreFont, highScoreStr, new Vector2(400 - highScoreWidth, 250), Color.Black);
-		
-		if (_GameData.ScoreDelta != 0 && Animation.IsScoreVisible()) {
-			String deltaStr = $"+{_GameData.ScoreDelta}";
-			int deltaWidth = (int)_ScoreFont.MeasureString(deltaStr).X;
-			_spriteBatch.DrawString(
-				_ScoreFont, 
-				deltaStr, 
-				new Vector2(400 - deltaWidth, 200 - Animation.ScoreDisplacement()), 
-				Animation.InterpolateColor(Color.Green, new Color(251, 194, 27))
-			);
-		}
-	}
-
 }

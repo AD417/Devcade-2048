@@ -2,6 +2,8 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 
+using Devcade2048.App.Render;
+
 namespace Devcade2048.App;
 
 public class Manager {
@@ -31,6 +33,7 @@ public class Manager {
     public Manager(int size) {
         Size = size;
         Setup();
+        State = GameState.InMenu;
     }
 
     public void Restart() {
@@ -143,7 +146,9 @@ public class Manager {
                 State = GameState.Lost;
                 HighScoreTracker.Save();
             }
+            if (ScoreDelta > 0) ScoreContainer.Add(ScoreDelta);
 
+			Render.Animation.ChangeStateTo(AnimationState.Moving);
             Actuate();
         }
     }
