@@ -10,9 +10,10 @@ public static class Animation {
 
     private static readonly TimeSpan FadeTime = TimeSpan.FromMilliseconds(500);
     private static readonly TimeSpan MoveTime = TimeSpan.FromMilliseconds(150);
-    private static readonly TimeSpan SpawnTime = TimeSpan.FromMilliseconds(200);
+    private static readonly TimeSpan SpawnTime = TimeSpan.FromMilliseconds(100);
     private static readonly TimeSpan EndTime = TimeSpan.FromMilliseconds(3000);
 
+    // Internal updates to Timer.
     public static void ChangeStateTo(AnimationState newState) {
         State = newState;
         Timer = new TimeSpan();
@@ -87,6 +88,7 @@ public static class Animation {
         State = AnimationState.WaitingForInput;
     }
 
+    // Basic stats for 
     public static double PercentComplete() {
         switch (State) {
             case AnimationState.ToMenu:
@@ -112,6 +114,12 @@ public static class Animation {
 
     public static bool AcceptInput() {
         return State == AnimationState.WaitingForInput;
+    }
+    public static bool UpdatingGrid() {
+        return (
+            State == AnimationState.Moving 
+         || State == AnimationState.Spawning
+        );
     }
 
     // Fading animation parameters:
@@ -147,6 +155,20 @@ public static class Animation {
             (int) (292 + pos.Y * 100)
         );
     }
+
+    private static int ScaleTile(Tile t) {
+        if (t.PreviousPosition != null) return 96;
+        if (State == AnimationState.Moving) return 0;
+        if (State != AnimationState.Spawning) return 96;
+
+        double scaleFactor = PercentComplete();
+        if (t.MergedFrom is null) return (int) (96 * scaleFactor);
+
+        scaleFactor *= 2;
+        if (scaleFactor > 1) scaleFactor = (2 - scaleFactor) * 0.25 + 1;
+        return (int) (96 * scaleFactor);
+    }
+
     public static Rectangle PositionOfTile(Tile t) {
         int scale = 96;
         Vector2 currentPos = ToScreenPosition(t.Position);
@@ -157,7 +179,7 @@ public static class Animation {
             oldPos = ToScreenPosition((Vector2)t.PreviousPosition);
         }
 
-        if (State != AnimationState.Moving && State != AnimationState.Spawning) {
+        if (!UpdatingGrid()) {
             return new Rectangle(
                 (int)currentPos.X, (int)currentPos.Y, scale, scale
             );
@@ -167,11 +189,15 @@ public static class Animation {
         if (State == AnimationState.Moving) {
             currentPos = oldPos * (float)(1 - percent) + currentPos * (float)percent;
         }
-        if (t.PreviousPosition == null) {
+        /*
+        if (t.PreviousPosition is null) {
             if (State == AnimationState.Moving) scale = 0;
             else scale = (int) (scale * percent);
             currentPos += new Vector2(48 - scale/2, 48 - scale/2);
-        }
+        } */
+
+        scale = ScaleTile(t);
+        currentPos += new Vector2(48 - scale/2, 48 - scale/2);
         
         return new Rectangle(
             (int) currentPos.X,
