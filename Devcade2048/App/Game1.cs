@@ -144,6 +144,7 @@ public class Game1 : Game
 	{
 		GraphicsDevice.Clear(new Color(251, 194, 27));
 		Render.Animation.Increment(gameTime);
+		ScoreContainer.Increment(gameTime);
 		
 		// Batches all the draw calls for this frame, and then performs them all at once
 		_spriteBatch.Begin();
@@ -179,6 +180,7 @@ public class Game1 : Game
 		_spriteBatch.Draw(Asset.Grid, new Vector2(10,290), Color.White);
 		// DrawNormalTiles();
 		Display.AllTiles();
+		Display.Scores();
 
 		if (_GameData.State == GameState.Won) {
 			DrawWinAnimation();
@@ -188,7 +190,7 @@ public class Game1 : Game
 			DrawLossAnimation();
 		}
 		
-		DrawScore();
+		// DrawScore();
 	}
 
 	private void DrawNormalTiles() {
@@ -265,15 +267,15 @@ public class Game1 : Game
 	}
 
 	private void DrawScore() {
-		String scoreStr = "Score: " + _GameData.Score.ToString().PadLeft(5);
+		String scoreStr = "Score: " + _GameData.Score.ToString().PadLeft(4);
 		int scoreWidth = (int)Asset.Score.MeasureString(scoreStr).X;
 		_spriteBatch.DrawString(Asset.Score, scoreStr, new Vector2(400 - scoreWidth, 200), Color.Black);
 
-		String highScoreStr = "Best: " + HighScoreTracker.HighScore.ToString().PadLeft(5);
+		String highScoreStr = "Best: " + HighScoreTracker.HighScore.ToString().PadLeft(4);
 		int highScoreWidth = (int)Asset.Score.MeasureString(highScoreStr).X;
 		_spriteBatch.DrawString(Asset.Score, highScoreStr, new Vector2(400 - highScoreWidth, 250), Color.Black);
 		
-		if (_GameData.ScoreDelta != 0 && Animation.IsScoreVisible()) {
+		/*if (_GameData.ScoreDelta != 0 && Animation.IsScoreVisible()) {
 			String deltaStr = $"+{_GameData.ScoreDelta}";
 			int deltaWidth = (int)Asset.Score.MeasureString(deltaStr).X;
 			_spriteBatch.DrawString(
@@ -282,7 +284,8 @@ public class Game1 : Game
 				new Vector2(400 - deltaWidth, 200 - Animation.ScoreDisplacement()), 
 				Animation.InterpolateColor(Color.Green, new Color(251, 194, 27))
 			);
-		}
+		} */
+		// Display.Scores();
 	}
 
 }

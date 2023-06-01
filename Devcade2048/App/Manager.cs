@@ -146,6 +146,7 @@ public class Manager {
                 State = GameState.Lost;
                 HighScoreTracker.Save();
             }
+            if (ScoreDelta > 0) ScoreContainer.Add(ScoreDelta);
 
 			Render.Animation.ChangeStateTo(AnimationState.Moving);
             Actuate();

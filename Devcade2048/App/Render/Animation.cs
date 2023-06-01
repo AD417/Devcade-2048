@@ -84,8 +84,8 @@ public static class Animation {
     private static void CheckSpawnCompletion() {
         if (Timer < SpawnTime) return;
         Timer = new TimeSpan(0);
-        // TODO: Handle losing or winning.
         State = AnimationState.WaitingForInput;
+        Display.manager.State++;
     }
 
     // Basic stats for 
@@ -148,6 +148,7 @@ public static class Animation {
         return new Color(r, g, b);
     }
 
+
     // Tile management
     private static Vector2 ToScreenPosition(Vector2 pos) {
         return new Vector2(
@@ -156,7 +157,7 @@ public static class Animation {
         );
     }
 
-    private static int ScaleTile(Tile t) {
+    private static int TileScale(Tile t) {
         if (t.PreviousPosition != null) return 96;
         if (State == AnimationState.Moving) return 0;
         if (State != AnimationState.Spawning) return 96;
@@ -169,34 +170,21 @@ public static class Animation {
         return (int) (96 * scaleFactor);
     }
 
-    public static Rectangle PositionOfTile(Tile t) {
-        int scale = 96;
+    public static Vector2 TilePosition(Tile t) {
         Vector2 currentPos = ToScreenPosition(t.Position);
-        Vector2 oldPos;
-        if (t.PreviousPosition is null) {
-            oldPos = currentPos;
-        } else {
-            oldPos = ToScreenPosition((Vector2)t.PreviousPosition);
-        }
+        
+        if (State != AnimationState.Moving) return currentPos;
+        if (t.PreviousPosition is null) return currentPos;
 
-        if (!UpdatingGrid()) {
-            return new Rectangle(
-                (int)currentPos.X, (int)currentPos.Y, scale, scale
-            );
-        }
+        Vector2 oldPos = ToScreenPosition((Vector2)t.PreviousPosition);
+        float percent = (float) PercentComplete();
 
-        double percent = PercentComplete();
-        if (State == AnimationState.Moving) {
-            currentPos = oldPos * (float)(1 - percent) + currentPos * (float)percent;
-        }
-        /*
-        if (t.PreviousPosition is null) {
-            if (State == AnimationState.Moving) scale = 0;
-            else scale = (int) (scale * percent);
-            currentPos += new Vector2(48 - scale/2, 48 - scale/2);
-        } */
+        return oldPos * (1 - percent) + currentPos * percent;
+    }
 
-        scale = ScaleTile(t);
+    public static Rectangle PositionOfTile(Tile t) {
+        Vector2 currentPos = TilePosition(t);
+        int scale = TileScale(t);
         currentPos += new Vector2(48 - scale/2, 48 - scale/2);
         
         return new Rectangle(
