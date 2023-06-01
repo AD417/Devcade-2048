@@ -57,8 +57,6 @@ public class Game1 : Game
 		#endregion
 		
 		// Add initialization logic here
-		Animation.Reset();
-		HighScoreTracker.Load();
 
 		windowSize = GraphicsDevice.Viewport.Bounds;
 		
@@ -72,6 +70,8 @@ public class Game1 : Game
 	{
 		_spriteBatch = new SpriteBatch(GraphicsDevice);
 
+		HighScoreTracker.Load();
+		
 		// TODO: use this.Content to load your game content here
 		// ex:
 		// texture = Content.Load<Texture2D>("fileNameWithoutExtension");
@@ -159,133 +159,19 @@ public class Game1 : Game
 		);
 
 		if (inGame) DrawGame();
-		else DrawMenu();
+		else Display.Menu();
 		
 		_spriteBatch.End();
 
 		base.Draw(gameTime);
 	}
 
-	private void DrawMenu() {
-		// Midpoint of screen is (210, 490);
-		// 210 - 192 = 18 
-
-		_spriteBatch.Draw(Asset.Menu[0], new Vector2(9, 300), Color.White);
-		_spriteBatch.Draw(Asset.Menu[1], new Vector2(219, 300), Color.White);
-		_spriteBatch.Draw(Asset.Menu[2], new Vector2(114, 500), Color.White);
-	}
-
 	private void DrawGame() {
-
 		_spriteBatch.Draw(Asset.Grid, new Vector2(10,290), Color.White);
-		// DrawNormalTiles();
+
 		Display.AllTiles();
 		Display.Scores();
-
-		if (_GameData.State == GameState.Won) {
-			Display.Win();
-		}
-
-		if (_GameData.State == GameState.Lost) {
-			Display.Lose();
-		}
-		
-		// DrawScore();
+		if (_GameData.State == GameState.Won) Display.Win();
+		if (_GameData.State == GameState.Lost) Display.Lose();
 	}
-
-	private void DrawNormalTiles() {
-		void drawTile(int x, int y, Tile t) {
-			if (t == null) return;
-			bool isMerged = (t.MergedFrom != null && !Animation.IsComplete());
-			if (isMerged) {
-				drawTile(x, y, t.MergedFrom[0]);
-				drawTile(x, y, t.MergedFrom[1]);
-			}
-
-			Vector2 animPosition = t.Position;
-			int scale = 96;
-
-			if (t.PreviousPosition == null) scale = Animation.NewTileScale();
-			else animPosition = Animation.InterpolatePosition((Vector2)t.PreviousPosition, t.Position);
-
-			int drawX = (int) (12 + animPosition.X * 100) + (48 - scale / 2);
-			int drawY = (int) (292 + animPosition.Y * 100) + (48 - scale / 2);
-			// Texture, rectangle, color
-			Rectangle location = new Rectangle(drawX, drawY, scale, scale);
-			// if (isMerged) _spriteBatch.Draw(Asset.MergeBG, location, Color.White);
-			_spriteBatch.Draw(Asset.Tile[t.TextureId], location, Color.White);
-		}
-		_GameData.Grid.EachCell(drawTile);
-	}
-
-	private void DrawWinAnimation() {
-		void resize2048Tile(int _x, int _y, Tile t) {
-			if (t is null || t.Value != 2048) return;
-			int scale = Animation.WinScale();
-			Vector2 pos = Animation.WinPosition(t.Position);
-			Rectangle location = new Rectangle((int)pos.X, (int)pos.Y, scale, scale);
-			_spriteBatch.Draw(Asset.Tile[t.TextureId], location, Color.White);
-		}
-		_GameData.Grid.EachCell(resize2048Tile);
-
-		if (Animation.IsWinComplete()) {
-			_spriteBatch.DrawString(
-				Asset.Score, 
-				"YOU WIN!", 
-				new Vector2(20, 700), 
-				Color.Black
-			);
-		}
-	}
-
-	private void DrawLossAnimation() {
-		int maximumBlob = Animation.LossMaximumBlob();
-		void killBlobs(int _x, int _y, Tile t) {
-			// This should be impossible, but CYA. 
-			if (t is null) return;
-			if (t.TextureId > maximumBlob) return;
-			int deadBlobId = 0;
-			if (t.TextureId > 3) deadBlobId = 1;
-			Rectangle location = new Rectangle(
-				(int) (12 + t.Position.X * 100),
-				(int) (292 + t.Position.Y * 100),
-				96,
-				96
-			);
-			_spriteBatch.Draw(Asset.LoseTile[deadBlobId], location, Color.White);
-		}
-		_GameData.Grid.EachCell(killBlobs);
-
-		if (Animation.IsLossComplete()) {
-			_spriteBatch.DrawString(
-				Asset.Score, 
-				"GAME OVER!",
-				new Vector2(20, 700),
-				Color.Black
-			);
-		}
-	}
-
-	private void DrawScore() {
-		String scoreStr = "Score: " + _GameData.Score.ToString().PadLeft(4);
-		int scoreWidth = (int)Asset.Score.MeasureString(scoreStr).X;
-		_spriteBatch.DrawString(Asset.Score, scoreStr, new Vector2(400 - scoreWidth, 200), Color.Black);
-
-		String highScoreStr = "Best: " + HighScoreTracker.HighScore.ToString().PadLeft(4);
-		int highScoreWidth = (int)Asset.Score.MeasureString(highScoreStr).X;
-		_spriteBatch.DrawString(Asset.Score, highScoreStr, new Vector2(400 - highScoreWidth, 250), Color.Black);
-		
-		/*if (_GameData.ScoreDelta != 0 && Animation.IsScoreVisible()) {
-			String deltaStr = $"+{_GameData.ScoreDelta}";
-			int deltaWidth = (int)Asset.Score.MeasureString(deltaStr).X;
-			_spriteBatch.DrawString(
-				Asset.Score, 
-				deltaStr, 
-				new Vector2(400 - deltaWidth, 200 - Animation.ScoreDisplacement()), 
-				Animation.InterpolateColor(Color.Green, new Color(251, 194, 27))
-			);
-		} */
-		// Display.Scores();
-	}
-
 }

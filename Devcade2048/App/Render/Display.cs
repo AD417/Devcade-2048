@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -17,13 +16,11 @@ public static class Display {
         sprite.Draw(Asset.Title, new Vector2(60, 0), Color.White);
     }
 
+
     public static void AllTiles() {
         void drawTile(Tile t) {
             if (t is null) return;
-            bool renderMerge = t.MergedFrom != null && (
-                Animation.State == AnimationState.Moving 
-             || Animation.State == AnimationState.Spawning
-            );
+            bool renderMerge = t.MergedFrom != null && Animation.UpdatingGrid();
             if (renderMerge) {
                 drawTile(t.MergedFrom[0]);
                 drawTile(t.MergedFrom[1]);
@@ -103,4 +100,13 @@ public static class Display {
             );
         }
     }
+
+
+    public static void Menu() {
+		sprite.Draw(Asset.Menu[0], new Vector2(9, 300), Color.White);
+		sprite.Draw(Asset.Menu[1], new Vector2(219, 300), Color.White);
+		sprite.Draw(Asset.Menu[2], new Vector2(114, 500), Color.White);
+    }
+
+
 }
