@@ -184,11 +184,10 @@ public class Game1 : Game
 
 		if (_GameData.State == GameState.Won) {
 			Display.Win();
-			DrawWinAnimation();
 		}
 
 		if (_GameData.State == GameState.Lost) {
-			DrawLossAnimation();
+			Display.Lose();
 		}
 		
 		// DrawScore();

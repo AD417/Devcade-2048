@@ -68,8 +68,8 @@ public class Manager {
             value = 4;
             id = 1;
         } else {
-            value = 1024;
-            id = 9;
+            value = 2;
+            id = 0;
         }
         Vector2? available = Grid.RandomAvailableCell();
         if (available != null) {

@@ -31,7 +31,9 @@ public static class Display {
 
             Rectangle location = Animation.PositionOfTile(t);
 
-            sprite.Draw(Asset.Tile[t.TextureId], location, Color.White);
+            Texture2D blob = DetermineBlob(t);
+
+            sprite.Draw(blob, location, Color.White);
         }
         manager.Grid.EachCell((int _x, int _y, Tile t) => drawTile(t));
     }
@@ -49,6 +51,20 @@ public static class Display {
         if (Animation.State == AnimationState.WaitingForInput) {
             sprite.DrawString(Asset.Score, "YOU WIN!", new Vector2(20, 700), Color.Black);
         }
+    }
+
+    public static void Lose() {
+        if (manager.State != GameState.Lost) return;
+        if (Animation.State != AnimationState.WaitingForInput) return;
+        sprite.DrawString(Asset.Score, "GAME OVER!", new Vector2(20, 700), Color.Black);
+    }
+
+    private static Texture2D DetermineBlob(Tile t) {
+        if (manager.State != GameState.Lost) return Asset.Tile[t.TextureId];
+        if (t.TextureId > Animation.BiggestLossTile()) return Asset.Tile[t.TextureId];
+        int loseTileId = 0;
+        if (t.TextureId > 5) loseTileId++;
+        return Asset.LoseTile[loseTileId];
     }
 
     public static void addScore(ScoreDelta score) {

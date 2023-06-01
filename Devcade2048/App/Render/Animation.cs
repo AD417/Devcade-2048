@@ -233,4 +233,11 @@ public static class Animation {
         );
     }
 
+    public static int BiggestLossTile() {
+        if (State == AnimationState.WaitingForInput) return 12;
+        if (State != AnimationState.ToLost) return -1;
+
+        return (int) ((PercentComplete() - 0.5) * 20);
+    }
+
 }
