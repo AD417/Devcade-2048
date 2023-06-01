@@ -21,6 +21,7 @@ public enum AnimationState {
 
     // Endgame animations
     ToWon,
+    EasterEgg,
     ToLost,
     ResetFromWin, 
     ResetFromLost,

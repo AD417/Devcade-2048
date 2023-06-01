@@ -45,7 +45,7 @@ public static class Display {
             sprite.Draw(Asset.Tile[t.TextureId], location, Color.White);
         }
         manager.Grid.EachCell((int _x, int _y, Tile t) => drawWin(t));
-        if (Animation.State == AnimationState.WaitingForInput) {
+        if (Animation.AcceptInput()) {
             sprite.DrawString(Asset.Score, "YOU WIN!", new Vector2(20, 700), Color.Black);
         }
     }

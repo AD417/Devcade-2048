@@ -55,13 +55,11 @@ public static class Animation {
 
     private static void CheckEndCompletion() {
         if (Timer < EndTime) return;
-        Timer = new TimeSpan();
-        switch (State) {
-            case AnimationState.ToWon:
-            case AnimationState.ToLost:
-            default: 
-                State = AnimationState.WaitingForInput;
-                break;
+        if (State != AnimationState.ToWon || new Random().NextDouble() <= 0.95) {
+            Timer = new TimeSpan();
+            State = AnimationState.WaitingForInput;
+        } else {
+            State = AnimationState.EasterEgg;
         }
     }
 
@@ -126,6 +124,7 @@ public static class Animation {
 
             case AnimationState.ToWon:
             case AnimationState.ToLost:
+            case AnimationState.EasterEgg:
                 return Timer / EndTime;
 
             default:
@@ -134,7 +133,10 @@ public static class Animation {
     }
 
     public static bool AcceptInput() {
-        return State == AnimationState.WaitingForInput;
+        return (
+            State == AnimationState.WaitingForInput
+         || State == AnimationState.EasterEgg
+        );
     }
     public static bool UpdatingGrid() {
         return (
@@ -219,7 +221,12 @@ public static class Animation {
 
     // Win and Loss States
     private static double WinScale() {
-        if (State != AnimationState.ToWon) return 1.0;
+        if (
+            State != AnimationState.ToWon 
+         && State != AnimationState.EasterEgg
+        ) {
+            return 1.0;
+        }
         return PercentComplete() * PercentComplete() * PercentComplete();
     }
 
