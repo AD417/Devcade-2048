@@ -21,12 +21,17 @@ public static class Animation {
 
     public static void Increment(GameTime gt) {
         Timer += gt.ElapsedGameTime;
-        checkCompletion();
+        CheckCompletion();
     }
 
-    private static void checkCompletion() {
+    private static void CheckCompletion() {
         switch (State) {
             case AnimationState.WaitingForInput: return;
+
+            case AnimationState.ToWon:
+            case AnimationState.ToLost:
+                CheckEndCompletion();
+                break;
 
             case AnimationState.ToMenu:
             case AnimationState.ToGame:
@@ -215,11 +220,10 @@ public static class Animation {
     // Win and Loss States
     private static double WinScale() {
         if (State != AnimationState.ToWon) return 1.0;
-        return PercentComplete() * PercentComplete();
+        return PercentComplete() * PercentComplete() * PercentComplete();
     }
 
     public static Rectangle PositionOfWinTile(Tile t) {
-        System.Console.WriteLine(State);
         int scale = (int) (96 + 304 * WinScale());
         return new Rectangle(
             (int) (12 + t.Position.X * 100 * (1 - WinScale())),
