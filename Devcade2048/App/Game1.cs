@@ -89,7 +89,7 @@ public class Game1 : Game
 		}
 		Asset.LoseTile[0] = Content.Load<Texture2D>("DED1 Blob");
 		Asset.LoseTile[1] = Content.Load<Texture2D>("DED2 Blob");
-		Asset.Score = Content.Load<SpriteFont>("MonospaceTypewriter");
+		Asset.ScoreFont = Content.Load<SpriteFont>("MonospaceTypewriter");
 
 		Display.Initialize(_spriteBatch, _GameData);
 	}

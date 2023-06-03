@@ -47,7 +47,7 @@ public static class Display {
         }
         manager.Grid.EachCell((int _x, int _y, Tile t) => drawWin(t));
         if (Animation.AcceptInput()) {
-            sprite.DrawString(Asset.Score, "YOU WIN!", new Vector2(20, 700), Color.Black);
+            sprite.DrawString(Asset.ScoreFont, "YOU WIN!", new Vector2(20, 700), Color.Black);
         }
     }
 
@@ -60,7 +60,7 @@ public static class Display {
     public static void Lose() {
         if (manager.State != GameState.Lost) return;
         if (Animation.State != AnimationState.WaitingForInput) return;
-        sprite.DrawString(Asset.Score, "GAME OVER!", new Vector2(20, 700), Color.Black);
+        sprite.DrawString(Asset.ScoreFont, "GAME OVER!", new Vector2(20, 700), Color.Black);
     }
 
     private static Texture2D DetermineBlob(Tile t) {
@@ -77,9 +77,9 @@ public static class Display {
 
     public static void Scores() {
 		string scoreStr = "Score: " + manager.Score.ToString().PadLeft(5);
-		int scoreWidth = (int)Asset.Score.MeasureString(scoreStr).X;
+		int scoreWidth = (int)Asset.ScoreFont.MeasureString(scoreStr).X;
 		sprite.DrawString(
-            Asset.Score, 
+            Asset.ScoreFont, 
             scoreStr, 
             new Vector2(400 - scoreWidth, 200), 
             Color.Black
@@ -87,9 +87,9 @@ public static class Display {
 
 		string highScoreStr = 
             "Best: " + HighScoreTracker.HighScore.ToString().PadLeft(5);
-		int highScoreWidth = (int)Asset.Score.MeasureString(highScoreStr).X;
+		int highScoreWidth = (int)Asset.ScoreFont.MeasureString(highScoreStr).X;
 		sprite.DrawString(
-            Asset.Score, 
+            Asset.ScoreFont, 
             highScoreStr, 
             new Vector2(400 - highScoreWidth, 250), 
             Color.Black
@@ -97,10 +97,10 @@ public static class Display {
 
         foreach (ScoreDelta score in ScoreContainer.scores) {
             string deltaStr = "+" + score.ToString();
-            int width = (int) Asset.Score.MeasureString(deltaStr).X;
+            int width = (int) Asset.ScoreFont.MeasureString(deltaStr).X;
             Vector2 position = new Vector2(400 - width, 200 - score.ShiftUp());
             sprite.DrawString(
-                Asset.Score, 
+                Asset.ScoreFont, 
                 deltaStr, 
                 position, 
                 score.DrawColor()
