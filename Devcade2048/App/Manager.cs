@@ -37,7 +37,6 @@ public class Manager {
     }
 
     public void Restart() {
-        // Render.ContinueGame();
         State = GameState.Continuing;
     }
 
@@ -148,7 +147,7 @@ public class Manager {
             }
             if (ScoreDelta > 0) ScoreContainer.Add(ScoreDelta);
 
-			Render.Animation.ChangeStateTo(AnimationState.Moving);
+			Animation.ChangeStateTo(AnimationState.Moving);
             Actuate();
         }
     }

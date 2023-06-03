@@ -7,6 +7,8 @@ namespace Devcade2048.App.Render;
 public static class Animation {
     internal static TimeSpan Timer;
     public static AnimationState State { get; private set; } = AnimationState.WaitingForInput;
+    public static AnimationState LastState { get; private set; } = AnimationState.WaitingForInput;
+    public static bool JustChanged { get; private set; } = false;
 
     private static readonly TimeSpan TransitionTime = TimeSpan.FromMilliseconds(1000);
     private static readonly TimeSpan MoveTime = TimeSpan.FromMilliseconds(150);
@@ -15,12 +17,15 @@ public static class Animation {
 
     // Internal updates to Timer.
     public static void ChangeStateTo(AnimationState newState) {
+        LastState = State;
         State = newState;
+        JustChanged = true;
         Timer = new TimeSpan();
     }
 
     public static void Increment(GameTime gt) {
         Timer += gt.ElapsedGameTime;
+        JustChanged = false;
         CheckCompletion();
     }
 
@@ -55,6 +60,8 @@ public static class Animation {
 
     private static void CheckEndCompletion() {
         if (Timer < EndTime) return;
+        LastState = State;
+        JustChanged = true;
         if (State != AnimationState.ToWon || new Random().NextDouble() <= 0.95) {
             Timer = new TimeSpan();
             State = AnimationState.WaitingForInput;
@@ -66,6 +73,8 @@ public static class Animation {
     private static void CheckTransitionCompletion() {
         if (Timer < TransitionTime) return;
         Timer = new TimeSpan();
+        LastState = State;
+        JustChanged = true;
         switch (State) {
             case AnimationState.ToMenu:
             case AnimationState.ToInfo:
@@ -89,12 +98,16 @@ public static class Animation {
 
     private static void CheckMoveCompletion() {
         if (Timer < MoveTime) return;
+        LastState = State;
+        JustChanged = true;
         Timer = new TimeSpan();
         State = AnimationState.Spawning;
     }
 
     private static void CheckSpawnCompletion() {
         if (Timer < SpawnTime) return;
+        LastState = State;
+        JustChanged = true;
         Timer = new TimeSpan(0);
         State = AnimationState.WaitingForInput;
         if (Display.manager.State == GameState.Lost) {
@@ -106,6 +119,21 @@ public static class Animation {
     }
 
     // General stats.
+    public static bool StateIsAny(params AnimationState[] states) {
+        foreach (AnimationState state in states) {
+            if (state == State) return true;
+        }
+        return false;
+    }
+    
+    public static bool StateWasAny(params AnimationState[] states) {
+        foreach (AnimationState state in states) {
+            if (state == LastState) return true;
+        }
+        return false;
+
+    }
+
     public static double PercentComplete() {
         switch (State) {
             case AnimationState.ToMenu:
@@ -135,26 +163,25 @@ public static class Animation {
     }
 
     public static bool AcceptInput() {
-        return (
-            State == AnimationState.WaitingForInput
-         || State == AnimationState.EasterEgg
+        return StateIsAny(
+            AnimationState.WaitingForInput,
+            AnimationState.EasterEgg
         );
     }
     public static bool UpdatingGrid() {
-        return (
-            State == AnimationState.Moving 
-         || State == AnimationState.Spawning
+        return StateIsAny(
+            AnimationState.Moving,
+            AnimationState.Spawning
         );
     }
 
     public static bool RenderingTiles() {
-        return !(
-            Animation.State == AnimationState.ResetFromLost
-         || Animation.State == AnimationState.ResetFromWin
+        return !StateIsAny(
+            AnimationState.ResetFromLost,
+            AnimationState.ResetFromWin
         );
     }
 
-    // Fading animation parameters:
     public static double Opacity() {
         double percent = PercentComplete();
         switch (State) {
@@ -170,100 +197,4 @@ public static class Animation {
                 return 1.0;
         }
     }
-
-    public static Color TextColorFade(Color c) {
-        int r = 251, g = 194, b = 27;
-        double opacity = Opacity();
-        r = (int) (c.R * (1 - opacity) + r * opacity);
-        g = (int) (c.G * (1 - opacity) + g * opacity);
-        b = (int) (c.B * (1 - opacity) + b * opacity);
-        return new Color(r, g, b);
-    }
-
-
-    // Tile management
-    private static Vector2 ToScreenPosition(Vector2 pos) {
-        return new Vector2(
-            (int) (12 + pos.X * 100),
-            (int) (292 + pos.Y * 100)
-        );
-    }
-
-    private static int TileScale(Tile t) {
-        if (t.PreviousPosition != null) return 96;
-        if (State == AnimationState.Moving) return 0;
-        if (State != AnimationState.Spawning) return 96;
-
-        double scaleFactor = PercentComplete();
-        if (t.MergedFrom is null) return (int) (96 * scaleFactor);
-
-        scaleFactor *= 2;
-        if (scaleFactor > 1) scaleFactor = (2 - scaleFactor) * 0.25 + 1;
-        return (int) (96 * scaleFactor);
-    }
-
-    private static Vector2 TilePosition(Tile t) {
-        Vector2 currentPos = ToScreenPosition(t.Position);
-        
-        if (State != AnimationState.Moving) return currentPos;
-        if (t.PreviousPosition is null) return currentPos;
-
-        Vector2 oldPos = ToScreenPosition((Vector2)t.PreviousPosition);
-        float percent = (float) PercentComplete();
-
-        return oldPos * (1 - percent) + currentPos * percent;
-    }
-
-    public static Rectangle PositionOfTile(Tile t) {
-        Vector2 currentPos = TilePosition(t);
-        int scale = TileScale(t);
-        currentPos += new Vector2(48 - scale/2, 48 - scale/2);
-        
-        return new Rectangle(
-            (int) currentPos.X,
-            (int) currentPos.Y,
-            scale,
-            scale
-        );
-    }
-
-
-    // Win and Loss States
-    private static double WinScale() {
-        if (
-            State != AnimationState.ToWon 
-         && State != AnimationState.EasterEgg
-         && State != AnimationState.ResetFromWin
-        ) {
-            return 1.0;
-        }
-        if (State != AnimationState.ResetFromWin) {
-            return PercentComplete() * PercentComplete() * PercentComplete();
-        }
-        double percent = 1 - PercentComplete();
-        return percent * percent * percent;
-    }
-
-    public static Rectangle PositionOfWinTile(Tile t) {
-        int scale = (int) (96 + 304 * WinScale());
-        return new Rectangle(
-            (int) (12 + t.Position.X * 100 * (1 - WinScale())),
-            (int) (292 + t.Position.Y * 100 * (1 - WinScale())),
-            scale,
-            scale
-        );
-    }
-    
-    public static Rectangle PositionOfWinTile() {
-        int scale = (int) (400 * WinScale());
-        return new Rectangle(212 - scale / 2, 492 - scale / 2, scale, scale);
-    }
-
-    public static int BiggestLossTile() {
-        if (State == AnimationState.WaitingForInput) return 12;
-        if (State != AnimationState.ToLost) return -1;
-
-        return (int) ((PercentComplete() - 0.5) * 20);
-    }
-
 }

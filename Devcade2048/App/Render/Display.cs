@@ -27,7 +27,7 @@ public static class Display {
                 drawTile(t.MergedFrom[1]);
             }
 
-            Rectangle location = Animation.PositionOfTile(t);
+            Rectangle location = RenderMath.PositionOfTile(t);
 
             Texture2D blob = DetermineBlob(t);
 
@@ -41,7 +41,7 @@ public static class Display {
         if (Animation.UpdatingGrid()) return;
         void drawWin(Tile t) {
             if (t is null || t.Value != 2048) return;
-            Rectangle location = Animation.PositionOfWinTile(t);
+            Rectangle location = RenderMath.PositionOfWinTile(t);
 
             sprite.Draw(Asset.Tile[t.TextureId], location, Color.White);
         }
@@ -53,7 +53,7 @@ public static class Display {
 
     public static void WinReset() {
         if (Animation.State != AnimationState.ResetFromWin) return;
-        Rectangle location = Animation.PositionOfWinTile();
+        Rectangle location = RenderMath.PositionOfWinTile();
         sprite.Draw(Asset.Tile[10], location, Color.White);
     }
 
@@ -65,7 +65,7 @@ public static class Display {
 
     private static Texture2D DetermineBlob(Tile t) {
         if (manager.State != GameState.Lost) return Asset.Tile[t.TextureId];
-        if (t.TextureId > Animation.BiggestLossTile()) return Asset.Tile[t.TextureId];
+        if (t.TextureId > RenderMath.BiggestLossTile()) return Asset.Tile[t.TextureId];
         int loseTileId = 0;
         if (t.TextureId > 5) loseTileId++;
         return Asset.LoseTile[loseTileId];
