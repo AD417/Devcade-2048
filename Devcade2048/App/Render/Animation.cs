@@ -8,10 +8,10 @@ public static class Animation {
     internal static TimeSpan Timer;
     public static AnimationState State { get; private set; } = AnimationState.WaitingForInput;
 
-    private static readonly TimeSpan FadeTime = TimeSpan.FromMilliseconds(500);
+    private static readonly TimeSpan TransitionTime = TimeSpan.FromMilliseconds(1000);
     private static readonly TimeSpan MoveTime = TimeSpan.FromMilliseconds(150);
     private static readonly TimeSpan SpawnTime = TimeSpan.FromMilliseconds(100);
-    private static readonly TimeSpan EndTime = TimeSpan.FromMilliseconds(3000);
+    private static readonly TimeSpan EndTime = TimeSpan.FromMilliseconds(2000);
 
     // Internal updates to Timer.
     public static void ChangeStateTo(AnimationState newState) {
@@ -41,7 +41,7 @@ public static class Animation {
             case AnimationState.FromInfo:
             case AnimationState.ResetFromWin:
             case AnimationState.ResetFromLost:
-                CheckFadeCompletion();
+                CheckTransitionCompletion();
                 break;
             
             case AnimationState.Moving: 
@@ -63,8 +63,8 @@ public static class Animation {
         }
     }
 
-    private static void CheckFadeCompletion() {
-        if (Timer < FadeTime) return;
+    private static void CheckTransitionCompletion() {
+        if (Timer < TransitionTime) return;
         Timer = new TimeSpan();
         switch (State) {
             case AnimationState.ToMenu:
@@ -72,6 +72,8 @@ public static class Animation {
                 State = AnimationState.WaitingForInput;
                 break;
             case AnimationState.ToGame:
+            case AnimationState.ResetFromWin:
+            case AnimationState.ResetFromLost:
                 State = AnimationState.Spawning;
                 break;
             case AnimationState.FromMenu:
@@ -103,7 +105,7 @@ public static class Animation {
         }
     }
 
-    // Basic stats for 
+    // General stats.
     public static double PercentComplete() {
         switch (State) {
             case AnimationState.ToMenu:
@@ -114,7 +116,7 @@ public static class Animation {
             case AnimationState.FromInfo:
             case AnimationState.ResetFromWin:
             case AnimationState.ResetFromLost:
-                return Timer / FadeTime;
+                return Timer / TransitionTime;
 
             case AnimationState.Moving:
                 return Timer / MoveTime;
@@ -142,6 +144,13 @@ public static class Animation {
         return (
             State == AnimationState.Moving 
          || State == AnimationState.Spawning
+        );
+    }
+
+    public static bool RenderingTiles() {
+        return !(
+            Animation.State == AnimationState.ResetFromLost
+         || Animation.State == AnimationState.ResetFromWin
         );
     }
 
@@ -224,10 +233,15 @@ public static class Animation {
         if (
             State != AnimationState.ToWon 
          && State != AnimationState.EasterEgg
+         && State != AnimationState.ResetFromWin
         ) {
             return 1.0;
         }
-        return PercentComplete() * PercentComplete() * PercentComplete();
+        if (State != AnimationState.ResetFromWin) {
+            return PercentComplete() * PercentComplete() * PercentComplete();
+        }
+        double percent = 1 - PercentComplete();
+        return percent * percent * percent;
     }
 
     public static Rectangle PositionOfWinTile(Tile t) {
@@ -238,6 +252,11 @@ public static class Animation {
             scale,
             scale
         );
+    }
+    
+    public static Rectangle PositionOfWinTile() {
+        int scale = (int) (400 * WinScale());
+        return new Rectangle(212 - scale / 2, 492 - scale / 2, scale, scale);
     }
 
     public static int BiggestLossTile() {

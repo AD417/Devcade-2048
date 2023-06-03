@@ -116,7 +116,7 @@ public class Game1 : Game
 		Manager.Direction direction = InputManager.GetStickDirection();
 		if (
 			direction != Manager.Direction.None 
-		 && Render.Animation.AcceptInput()
+		 && Animation.AcceptInput()
 		 && _GameData.State == GameState.Playing
 		) {
 
@@ -125,15 +125,32 @@ public class Game1 : Game
 		}
 
 		if (
-			Render.Animation.AcceptInput()
+		 	Animation.AcceptInput()
 		 && (Keyboard.GetState().IsKeyDown(Keys.R) || Input.GetButton(1, Input.ArcadeButtons.A1))
 		) {
-			HighScoreTracker.Save();
-			_GameData.Setup();
-			Render.Animation.ChangeStateTo(AnimationState.Spawning);
+			Reset();
 		}
 
 		base.Update(gameTime);
+	}
+
+	private void Reset() {
+		HighScoreTracker.Save();
+		switch (_GameData.State) {
+			case GameState.Continuing:
+			case GameState.Playing:
+			case GameState.InMenu:
+				Animation.ChangeStateTo(AnimationState.Spawning);
+				break;
+			case GameState.Won:
+				Animation.ChangeStateTo(AnimationState.ResetFromWin);
+				break;
+			case GameState.Lost:
+				Animation.ChangeStateTo(AnimationState.ResetFromLost);
+				break;
+		}
+		_GameData.Setup();
+
 	}
 
 	/// <summary>
@@ -143,7 +160,7 @@ public class Game1 : Game
 	protected override void Draw(GameTime gameTime)
 	{
 		GraphicsDevice.Clear(new Color(251, 194, 27));
-		Render.Animation.Increment(gameTime);
+	 	Animation.Increment(gameTime);
 		ScoreContainer.Increment(gameTime);
 		
 		// Batches all the draw calls for this frame, and then performs them all at once
@@ -172,6 +189,7 @@ public class Game1 : Game
 		Display.AllTiles();
 		Display.Scores();
 		if (_GameData.State == GameState.Won) Display.Win();
+		if (Animation.State == AnimationState.ResetFromWin) Display.WinReset();
 		if (_GameData.State == GameState.Lost) Display.Lose();
 	}
 }

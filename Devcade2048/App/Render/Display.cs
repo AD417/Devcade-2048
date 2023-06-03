@@ -18,6 +18,7 @@ public static class Display {
 
 
     public static void AllTiles() {
+        if (!Animation.RenderingTiles()) return;
         void drawTile(Tile t) {
             if (t is null) return;
             bool renderMerge = t.MergedFrom != null && Animation.UpdatingGrid();
@@ -48,6 +49,12 @@ public static class Display {
         if (Animation.AcceptInput()) {
             sprite.DrawString(Asset.Score, "YOU WIN!", new Vector2(20, 700), Color.Black);
         }
+    }
+
+    public static void WinReset() {
+        if (Animation.State != AnimationState.ResetFromWin) return;
+        Rectangle location = Animation.PositionOfWinTile();
+        sprite.Draw(Asset.Tile[10], location, Color.White);
     }
 
     public static void Lose() {
