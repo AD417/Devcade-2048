@@ -89,7 +89,7 @@ public class Game1 : Game
 		}
 		Asset.LoseTile[0] = Content.Load<Texture2D>("DED1 Blob");
 		Asset.LoseTile[1] = Content.Load<Texture2D>("DED2 Blob");
-		Asset.Score = Content.Load<SpriteFont>("MonospaceTypewriter");
+		Asset.ScoreFont = Content.Load<SpriteFont>("MonospaceTypewriter");
 
 		Display.Initialize(_spriteBatch, _GameData);
 	}
@@ -130,13 +130,15 @@ public class Game1 : Game
 		) {
 			Reset();
 		}
+		if (Animation.ResetGrid()) _GameData.Setup();
 
 		base.Update(gameTime);
 	}
 
 	private void Reset() {
 		HighScoreTracker.Save();
-		switch (_GameData.State) {
+		Animation.BeginReset(_GameData);
+		/*switch (_GameData.State) {
 			case GameState.Continuing:
 			case GameState.Playing:
 			case GameState.InMenu:
@@ -149,7 +151,7 @@ public class Game1 : Game
 				Animation.ChangeStateTo(AnimationState.ResetFromLost);
 				break;
 		}
-		_GameData.Setup();
+		_GameData.Setup(); */
 
 	}
 
@@ -159,9 +161,8 @@ public class Game1 : Game
 	/// <param name="gameTime">This is the gameTime object you can use to get the time since last frame.</param>
 	protected override void Draw(GameTime gameTime)
 	{
+		// System.Console.WriteLine(Animation.State);
 		GraphicsDevice.Clear(new Color(251, 194, 27));
-	 	Animation.Increment(gameTime);
-		ScoreContainer.Increment(gameTime);
 		
 		// Batches all the draw calls for this frame, and then performs them all at once
 		_spriteBatch.Begin();
@@ -179,6 +180,9 @@ public class Game1 : Game
 		else Display.Menu();
 		
 		_spriteBatch.End();
+
+		ScoreContainer.Increment(gameTime);
+	 	Animation.Increment(gameTime);
 
 		base.Draw(gameTime);
 	}
