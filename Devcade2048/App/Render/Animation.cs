@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 
 namespace Devcade2048.App.Render;
 
-// Yes, yes, there already exists this, but the other one is getting nuked soon. 
 public static class Animation {
     internal static TimeSpan Timer;
     public static AnimationState State { get; private set; } = AnimationState.WaitingForInput;
@@ -67,6 +66,7 @@ public static class Animation {
             case AnimationState.FromGame:
             case AnimationState.FromInfo:
             case AnimationState.ResetFromWin:
+            case AnimationState.ContinueFromWin:
             case AnimationState.ResetFromLost:
             case AnimationState.ResetFromNormal:
                 CheckTransitionCompletion();
@@ -100,6 +100,7 @@ public static class Animation {
         JustChanged = true;
         switch (State) {
             case AnimationState.ToMenu:
+            case AnimationState.ContinueFromWin:
             case AnimationState.ToInfo:
                 State = AnimationState.WaitingForInput;
                 break;
@@ -167,6 +168,7 @@ public static class Animation {
             case AnimationState.FromGame:
             case AnimationState.FromInfo:
             case AnimationState.ResetFromWin:
+            case AnimationState.ContinueFromWin:
             case AnimationState.ResetFromLost:
             case AnimationState.ResetFromNormal:
                 return Timer / TransitionTime;
@@ -211,6 +213,14 @@ public static class Animation {
             State == AnimationState.Spawning 
          && JustChanged 
          && StateWasAny(AnimationState.ResetFromWin, AnimationState.ResetFromLost, AnimationState.ResetFromNormal)
+        );
+    }
+
+    public static bool ContinueGame() {
+        return (
+            State == AnimationState.WaitingForInput
+         && JustChanged
+         && LastState == AnimationState.ContinueFromWin
         );
     }
     public static double Opacity() {

@@ -36,7 +36,7 @@ public class Manager {
         State = GameState.InMenu;
     }
 
-    public void Restart() {
+    public void Continue() {
         State = GameState.Continuing;
     }
 
@@ -129,7 +129,7 @@ public class Manager {
                 Score += merged.Value;
                 ScoreDelta += merged.Value;
 
-                if (merged.Value == 2048) State = GameState.Won;
+                if (merged.Value == 2048 && State == GameState.Playing) State = GameState.Won;
             } else {
                 MoveTile(tile, positions.Farthest);
             }

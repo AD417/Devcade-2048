@@ -118,7 +118,7 @@ public class Game1 : Game
 		if (
 			direction != Manager.Direction.None 
 		 && Animation.AcceptInput()
-		 && _GameData.State == GameState.Playing
+		 && (_GameData.State == GameState.Playing || _GameData.State == GameState.Continuing)
 		) {
 
 			_GameData.Move(direction);
@@ -131,7 +131,17 @@ public class Game1 : Game
 		) {
 			Reset();
 		}
+
+		if (
+			Animation.AcceptInput()
+		 && _GameData.State == GameState.Won
+		 && (Keyboard.GetState().IsKeyDown(Keys.C) || Input.GetButton(1, Input.ArcadeButtons.A4))
+		) {
+			Continue();
+		}
+
 		if (Animation.ResetGrid()) _GameData.Setup();
+		if (Animation.ContinueGame()) _GameData.Continue();
 
 		base.Update(gameTime);
 	}
@@ -139,7 +149,10 @@ public class Game1 : Game
 	private void Reset() {
 		HighScoreTracker.Save();
 		Animation.BeginReset(_GameData);
+	}
 
+	private void Continue() {
+		Animation.ChangeStateTo(AnimationState.ContinueFromWin);
 	}
 
 	/// <summary>

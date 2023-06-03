@@ -50,6 +50,8 @@ public static class Display {
             sprite.DrawString(Asset.ScoreFont, "YOU WIN!", new Vector2(20, 700), Color.Black);
             sprite.Draw(Asset.Button, new Vector2(20, 720), Color.Red);
             sprite.DrawString(Asset.ScoreFont, "Play again", new Vector2(125, 750), Color.Red);
+            sprite.Draw(Asset.Button, new Vector2(20, 800), Color.White);
+            sprite.DrawString(Asset.ScoreFont, "Continue", new Vector2(125, 830), Color.White);
         }
     }
 

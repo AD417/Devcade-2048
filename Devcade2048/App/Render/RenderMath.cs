@@ -80,15 +80,20 @@ public static class RenderMath {
         if (!Animation.StateIsAny(
             AnimationState.ToWon, 
             AnimationState.EasterEgg, 
-            AnimationState.ResetFromWin
+            AnimationState.ResetFromWin,
+            AnimationState.ContinueFromWin
         )) {
             return 1.0;
         }
-        if (Animation.State != AnimationState.ResetFromWin) {
-            return Math.Pow(Animation.PercentComplete(), 3);
+        double percent = Animation.PercentComplete();
+        if (Animation.State == AnimationState.ResetFromWin) {
+            percent = 1 - percent;
+            return Math.Pow(percent, 3);
         }
-        double percent = 1 - Animation.PercentComplete();
-        return percent * percent * percent;
+        if (Animation.State == AnimationState.ContinueFromWin) {
+            return 1 - Math.Pow(percent, 3);
+        }
+        return Math.Pow(percent, 3);
     }
 
     public static Rectangle PositionOfWinTile(Tile t) {

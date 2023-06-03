@@ -24,6 +24,7 @@ public enum AnimationState {
     EasterEgg,
     ToLost,
     ResetFromWin, 
+    ContinueFromWin,
     ResetFromLost,
     ResetFromNormal,
 }
