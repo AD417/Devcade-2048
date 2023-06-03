@@ -38,7 +38,7 @@ public static class Display {
 
     public static void Win() {
         if (manager.State != GameState.Won) return;
-        if (Animation.UpdatingGrid()) return;
+        if (Animation.UpdatingGrid() || Animation.State == AnimationState.ResetFromWin) return;
         void drawWin(Tile t) {
             if (t is null || t.Value != 2048) return;
             Rectangle location = RenderMath.PositionOfWinTile(t);
@@ -48,6 +48,8 @@ public static class Display {
         manager.Grid.EachCell((int _x, int _y, Tile t) => drawWin(t));
         if (Animation.AcceptInput()) {
             sprite.DrawString(Asset.ScoreFont, "YOU WIN!", new Vector2(20, 700), Color.Black);
+            sprite.Draw(Asset.Button, new Vector2(20, 720), Color.Red);
+            sprite.DrawString(Asset.ScoreFont, "Play again", new Vector2(125, 750), Color.Red);
         }
     }
 
@@ -61,6 +63,8 @@ public static class Display {
         if (manager.State != GameState.Lost) return;
         if (Animation.State != AnimationState.WaitingForInput) return;
         sprite.DrawString(Asset.ScoreFont, "GAME OVER!", new Vector2(20, 700), Color.Black);
+            sprite.Draw(Asset.Button, new Vector2(20, 720), Color.Red);
+            sprite.DrawString(Asset.ScoreFont, "Try again", new Vector2(125, 750), Color.Red);
     }
 
     private static Texture2D DetermineBlob(Tile t) {

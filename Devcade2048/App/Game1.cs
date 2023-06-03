@@ -81,6 +81,7 @@ public class Game1 : Game
 		Asset.Menu[0] = Content.Load<Texture2D>("BlobStart");
 		Asset.Menu[1] = Content.Load<Texture2D>("BlobInfo");
 		Asset.Menu[2] = Content.Load<Texture2D>("BlobCredits");
+		Asset.Button = Content.Load<Texture2D>("BUTTON");
 
 		Asset.Grid = Content.Load<Texture2D>("2048Grid");
 		for (int i = 0; i < 11; i++) {
@@ -138,20 +139,6 @@ public class Game1 : Game
 	private void Reset() {
 		HighScoreTracker.Save();
 		Animation.BeginReset(_GameData);
-		/*switch (_GameData.State) {
-			case GameState.Continuing:
-			case GameState.Playing:
-			case GameState.InMenu:
-				Animation.ChangeStateTo(AnimationState.Spawning);
-				break;
-			case GameState.Won:
-				Animation.ChangeStateTo(AnimationState.ResetFromWin);
-				break;
-			case GameState.Lost:
-				Animation.ChangeStateTo(AnimationState.ResetFromLost);
-				break;
-		}
-		_GameData.Setup(); */
 
 	}
 
