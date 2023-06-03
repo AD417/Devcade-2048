@@ -25,4 +25,5 @@ public enum AnimationState {
     ToLost,
     ResetFromWin, 
     ResetFromLost,
+    ResetFromNormal,
 }

@@ -23,16 +23,30 @@ public static class RenderMath {
     }
 
     private static int TileScale(Tile t) {
+        if (Animation.StateIsAny(
+            AnimationState.ResetFromLost, 
+            AnimationState.ResetFromNormal
+        )) {
+            return ResetTileScale();
+        }
         if (t.PreviousPosition != null) return 96;
+
         if (Animation.State == AnimationState.Moving) return 0;
         if (Animation.State != AnimationState.Spawning) return 96;
 
         double scaleFactor = Animation.PercentComplete();
+
+
         if (t.MergedFrom is null) return (int) (96 * scaleFactor);
 
         scaleFactor *= 2;
         if (scaleFactor > 1) scaleFactor = (2 - scaleFactor) * 0.25 + 1;
         return (int) (96 * scaleFactor);
+    }
+
+    private static int ResetTileScale() {
+        double scaleFactor = 1 - Animation.PercentComplete();
+        return (int) (96 * scaleFactor * scaleFactor);
     }
 
     private static Vector2 TilePosition(Tile t) {
@@ -51,7 +65,7 @@ public static class RenderMath {
         Vector2 currentPos = TilePosition(t);
         int scale = TileScale(t);
         currentPos += new Vector2(48 - scale/2, 48 - scale/2);
-        
+
         return new Rectangle(
             (int) currentPos.X,
             (int) currentPos.Y,
@@ -93,7 +107,7 @@ public static class RenderMath {
     }
 
     public static int BiggestLossTile() {
-        if (Animation.State == AnimationState.WaitingForInput) return 12;
+        if (Animation.StateIsAny(AnimationState.WaitingForInput, AnimationState.ResetFromLost)) return 12;
         if (Animation.State != AnimationState.ToLost) return -1;
 
         return (int) ((Animation.PercentComplete() - 0.5) * 20);

@@ -23,6 +23,28 @@ public static class Animation {
         Timer = new TimeSpan();
     }
 
+    public static void BeginReset(Manager man) {
+        if (!AcceptInput()) return;
+        switch (man.State) {
+            case GameState.Won:
+                ChangeStateTo(AnimationState.ResetFromWin);
+                break;
+            case GameState.Lost:
+                ChangeStateTo(AnimationState.ResetFromLost);
+                break;
+            case GameState.Playing:
+            case GameState.Continuing:
+                ChangeStateTo(AnimationState.ResetFromNormal);
+                break;
+            default:
+            // Short circuit the reset animation that means nothing here.
+            // TODO: change it to "Transition to the game". 
+                man.Setup();
+                ChangeStateTo(AnimationState.Spawning);
+                break;
+        }
+    }
+
     public static void Increment(GameTime gt) {
         Timer += gt.ElapsedGameTime;
         JustChanged = false;
@@ -46,6 +68,7 @@ public static class Animation {
             case AnimationState.FromInfo:
             case AnimationState.ResetFromWin:
             case AnimationState.ResetFromLost:
+            case AnimationState.ResetFromNormal:
                 CheckTransitionCompletion();
                 break;
             
@@ -83,6 +106,7 @@ public static class Animation {
             case AnimationState.ToGame:
             case AnimationState.ResetFromWin:
             case AnimationState.ResetFromLost:
+            case AnimationState.ResetFromNormal:
                 State = AnimationState.Spawning;
                 break;
             case AnimationState.FromMenu:
@@ -144,6 +168,7 @@ public static class Animation {
             case AnimationState.FromInfo:
             case AnimationState.ResetFromWin:
             case AnimationState.ResetFromLost:
+            case AnimationState.ResetFromNormal:
                 return Timer / TransitionTime;
 
             case AnimationState.Moving:
@@ -177,11 +202,17 @@ public static class Animation {
 
     public static bool RenderingTiles() {
         return !StateIsAny(
-            AnimationState.ResetFromLost,
             AnimationState.ResetFromWin
         );
     }
 
+    public static bool ResetGrid() {
+        return (
+            State == AnimationState.Spawning 
+         && JustChanged 
+         && StateWasAny(AnimationState.ResetFromWin, AnimationState.ResetFromLost, AnimationState.ResetFromNormal)
+        );
+    }
     public static double Opacity() {
         double percent = PercentComplete();
         switch (State) {
