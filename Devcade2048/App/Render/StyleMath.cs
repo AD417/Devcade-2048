@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace Devcade2048.App.Render;
 
-public static class RenderMath {
+public static class StyleMath {
     // Color management
     public static Color Interpolate(Color c1, Color c2, double percent) {
         int r, g, b;
@@ -16,7 +16,7 @@ public static class RenderMath {
     public static Color GetBackgroundColor() {
         if (Animation.State != AnimationState.InitFadeIn) return new Color(251, 194, 27);
         double opacity = Animation.FastEnd(2);
-        return RenderMath.Interpolate(new Color(0,0,0), new Color(251, 194, 27), opacity);
+        return StyleMath.Interpolate(new Color(0,0,0), new Color(251, 194, 27), opacity);
     }
 
     public static Color GetInitialBrightness() {
@@ -30,6 +30,14 @@ public static class RenderMath {
             (int) (12 + pos.X * 100),
             (int) (292 + pos.Y * 100)
         );
+    }
+
+
+    public static Vector2 Interpolate(Vector2 v1, Vector2 v2, double percent) {
+        float x, y;
+        x = (float) (v1.X * (1 - percent) + v2.X * percent);
+        y = (float) (v1.Y * (1 - percent) + v2.Y * percent);
+        return new Vector2(x, y);
     }
 
     private static int TileScale(Tile t) {

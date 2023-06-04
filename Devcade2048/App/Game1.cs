@@ -114,6 +114,26 @@ public class Game1 : Game
 		}
 
 		// TODO: Add your update logic here
+		// System.Console.WriteLine(_GameData.State);
+		// System.Console.WriteLine(Animation.State);
+		switch (_GameData.State) {
+			case GameState.Continuing:
+			case GameState.Lost:
+			case GameState.Playing:
+			case GameState.Won:
+				UpdateGame(gameTime);
+				break;
+			case GameState.InCredits:
+			case GameState.InHelp:
+			case GameState.InMenu:
+				UpdateMenu(gameTime);
+				break;
+		}
+
+		base.Update(gameTime);
+	}
+
+	private void UpdateGame(GameTime gameTime) {
 		Manager.Direction direction = InputManager.GetStickDirection();
 		if (
 			direction != Manager.Direction.None 
@@ -142,8 +162,6 @@ public class Game1 : Game
 
 		if (Animation.ResetGrid()) _GameData.Setup();
 		if (Animation.ContinueGame()) _GameData.Continue();
-
-		base.Update(gameTime);
 	}
 
 	private void Reset() {
@@ -155,6 +173,21 @@ public class Game1 : Game
 		Animation.ChangeStateTo(AnimationState.ContinueFromWin);
 	}
 
+
+	private void UpdateMenu(GameTime gameTime) {
+		if (
+		 	Animation.AcceptInput()
+		 && (Keyboard.GetState().IsKeyDown(Keys.R) || Input.GetButton(1, Input.ArcadeButtons.A1))
+		) {
+			StartGame();
+		}
+	}
+
+	private void StartGame() {
+		// _GameData.State = GameState.Playing;
+		Animation.ChangeStateTo(AnimationState.FromMenu);
+	}
+
 	/// <summary>
 	/// Your main draw loop. This runs once every frame, over and over.
 	/// </summary>
@@ -162,7 +195,7 @@ public class Game1 : Game
 	protected override void Draw(GameTime gameTime)
 	{
 		// System.Console.WriteLine(Animation.State);
-		GraphicsDevice.Clear(RenderMath.GetBackgroundColor());
+		GraphicsDevice.Clear(StyleMath.GetBackgroundColor());
 		
 		// Batches all the draw calls for this frame, and then performs them all at once
 		_spriteBatch.Begin();
@@ -184,12 +217,16 @@ public class Game1 : Game
 		ScoreContainer.Increment(gameTime);
 	 	Animation.Increment(gameTime);
 
+		if (Animation.SwitchToMenu()) {
+			System.Console.WriteLine("SWIIIIIIIIIIIIIIIIIIIIITCH");
+			_GameData.State = GameState.Playing;
+		}
+
 		base.Draw(gameTime);
 	}
 
 	private void DrawGame() {
-		_spriteBatch.Draw(Asset.Grid, new Vector2(10,290), Color.White);
-
+		Display.Grid();
 		Display.AllTiles();
 		Display.Scores();
 		if (_GameData.State == GameState.Won) Display.Win();

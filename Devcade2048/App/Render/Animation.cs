@@ -207,7 +207,8 @@ public static class Animation {
 
     public static bool RenderingTiles() {
         return !StateIsAny(
-            AnimationState.ResetFromWin
+            AnimationState.ResetFromWin,
+            AnimationState.ToGame
         );
     }
 
@@ -216,6 +217,14 @@ public static class Animation {
             State == AnimationState.Spawning 
          && JustChanged 
          && StateWasAny(AnimationState.ResetFromWin, AnimationState.ResetFromLost, AnimationState.ResetFromNormal)
+        );
+    }
+
+    public static bool SwitchToMenu() {
+        return (
+            State == AnimationState.ToGame
+         && JustChanged
+         && LastState == AnimationState.FromMenu
         );
     }
 

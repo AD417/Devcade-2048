@@ -39,7 +39,7 @@ public class ScoreDelta {
 
     public Color DrawColor() {
         double opacity = 1 - Opacity();
-        return RenderMath.Interpolate(new Color(0, 255, 0), new Color(251, 194, 27), opacity);
+        return StyleMath.Interpolate(new Color(0, 255, 0), new Color(251, 194, 27), opacity);
     }
 
     public override string ToString() {

@@ -13,14 +13,21 @@ public static class Display {
     }
 
     public static void Title() {
-        if (Animation.State != AnimationState.InitFadeIn) {
-            sprite.Draw(Asset.Title, new Vector2(60, 0), Color.White);
-            return;
+        Color brightness = Color.White;
+        if (Animation.State == AnimationState.InitFadeIn) {
+            brightness = StyleMath.GetInitialBrightness();
         }
-        Color brightness = RenderMath.GetInitialBrightness();
         sprite.Draw(Asset.Title, new Vector2(60, 0), brightness);
     }
 
+    public static void Grid() {
+        Vector2 position = new Vector2(10, 290);
+        // Time to go overkill on this.
+        if (Animation.State == AnimationState.ToGame) {
+            position.Y = 1000 - (float) (710 * Animation.FastStart());
+        }
+        sprite.Draw(Asset.Grid, position, Color.White);
+    }
 
     public static void AllTiles() {
         if (!Animation.RenderingTiles()) return;
@@ -32,7 +39,7 @@ public static class Display {
                 drawTile(t.MergedFrom[1]);
             }
 
-            Rectangle location = RenderMath.PositionOfTile(t);
+            Rectangle location = StyleMath.PositionOfTile(t);
 
             Texture2D blob = DetermineBlob(t);
 
@@ -46,7 +53,7 @@ public static class Display {
         if (Animation.UpdatingGrid() || Animation.State == AnimationState.ResetFromWin) return;
         void drawWin(Tile t) {
             if (t is null || t.Value != 2048) return;
-            Rectangle location = RenderMath.PositionOfWinTile(t);
+            Rectangle location = StyleMath.PositionOfWinTile(t);
 
             sprite.Draw(Asset.Tile[t.TextureId], location, Color.White);
         }
@@ -62,7 +69,7 @@ public static class Display {
 
     public static void WinReset() {
         if (Animation.State != AnimationState.ResetFromWin) return;
-        Rectangle location = RenderMath.PositionOfWinTile();
+        Rectangle location = StyleMath.PositionOfWinTile();
         sprite.Draw(Asset.Tile[10], location, Color.White);
     }
 
@@ -76,7 +83,7 @@ public static class Display {
 
     private static Texture2D DetermineBlob(Tile t) {
         if (manager.State != GameState.Lost) return Asset.Tile[t.TextureId];
-        if (t.TextureId > RenderMath.BiggestLossTile()) return Asset.Tile[t.TextureId];
+        if (t.TextureId > StyleMath.BiggestLossTile()) return Asset.Tile[t.TextureId];
         int loseTileId = 0;
         if (t.TextureId > 5) loseTileId++;
         return Asset.LoseTile[loseTileId];
@@ -87,13 +94,17 @@ public static class Display {
     }
 
     public static void Scores() {
+        Color scoreColor = Color.Black;
+        if (Animation.State == AnimationState.ToGame) {
+            scoreColor = StyleMath.Interpolate(new Color(251, 194, 27), Color.Black, Animation.FastEnd(2));
+        }
 		string scoreStr = "Score: " + manager.Score.ToString().PadLeft(5);
 		int scoreWidth = (int)Asset.ScoreFont.MeasureString(scoreStr).X;
 		sprite.DrawString(
             Asset.ScoreFont, 
             scoreStr, 
-            new Vector2(400 - scoreWidth, 200), 
-            Color.Black
+            new Vector2(400 - scoreWidth, 190), 
+            scoreColor
         );
 
 		string highScoreStr = 
@@ -102,14 +113,14 @@ public static class Display {
 		sprite.DrawString(
             Asset.ScoreFont, 
             highScoreStr, 
-            new Vector2(400 - highScoreWidth, 250), 
-            Color.Black
+            new Vector2(400 - highScoreWidth, 240), 
+            scoreColor
         );
 
         foreach (ScoreDelta score in ScoreContainer.scores) {
             string deltaStr = "+" + score.ToString();
             int width = (int) Asset.ScoreFont.MeasureString(deltaStr).X;
-            Vector2 position = new Vector2(400 - width, 200 - score.ShiftUp());
+            Vector2 position = new Vector2(400 - width, 190 - score.ShiftUp());
             sprite.DrawString(
                 Asset.ScoreFont, 
                 deltaStr, 
@@ -121,10 +132,19 @@ public static class Display {
 
 
     public static void Menu() {
-        Color brightness = RenderMath.GetInitialBrightness();
-		sprite.Draw(Asset.Menu[0], new Vector2(9, 300), brightness);
-		sprite.Draw(Asset.Menu[1], new Vector2(219, 300), brightness);
-		sprite.Draw(Asset.Menu[2], new Vector2(114, 500), brightness);
+        Color brightness = StyleMath.GetInitialBrightness();
+        Vector2 pos1 = new Vector2(9, 300);
+        Vector2 pos2 = new Vector2(219, 300);
+        Vector2 pos3 = new Vector2(114, 500);
+        if (Animation.State == AnimationState.FromMenu) {
+            double percent = Animation.FastEnd(2);
+            pos1 = StyleMath.Interpolate(pos1, new Vector2(-300, 300), percent);
+            pos2 = StyleMath.Interpolate(pos2, new Vector2(530, 300), percent);
+            pos3 = StyleMath.Interpolate(pos3, new Vector2(-300, 500), percent);
+        }
+		sprite.Draw(Asset.Menu[0], pos1, brightness);
+		sprite.Draw(Asset.Menu[1], pos2, brightness);
+		sprite.Draw(Asset.Menu[2], pos3, brightness);
     }
 
 
