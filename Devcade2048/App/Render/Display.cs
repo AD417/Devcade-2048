@@ -13,7 +13,12 @@ public static class Display {
     }
 
     public static void Title() {
-        sprite.Draw(Asset.Title, new Vector2(60, 0), Color.White);
+        if (Animation.State != AnimationState.InitFadeIn) {
+            sprite.Draw(Asset.Title, new Vector2(60, 0), Color.White);
+            return;
+        }
+        Color brightness = RenderMath.GetInitialBrightness();
+        sprite.Draw(Asset.Title, new Vector2(60, 0), brightness);
     }
 
 
@@ -116,9 +121,10 @@ public static class Display {
 
 
     public static void Menu() {
-		sprite.Draw(Asset.Menu[0], new Vector2(9, 300), Color.White);
-		sprite.Draw(Asset.Menu[1], new Vector2(219, 300), Color.White);
-		sprite.Draw(Asset.Menu[2], new Vector2(114, 500), Color.White);
+        Color brightness = RenderMath.GetInitialBrightness();
+		sprite.Draw(Asset.Menu[0], new Vector2(9, 300), brightness);
+		sprite.Draw(Asset.Menu[1], new Vector2(219, 300), brightness);
+		sprite.Draw(Asset.Menu[2], new Vector2(114, 500), brightness);
     }
 
 

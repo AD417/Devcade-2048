@@ -162,7 +162,7 @@ public class Game1 : Game
 	protected override void Draw(GameTime gameTime)
 	{
 		// System.Console.WriteLine(Animation.State);
-		GraphicsDevice.Clear(new Color(251, 194, 27));
+		GraphicsDevice.Clear(RenderMath.GetBackgroundColor());
 		
 		// Batches all the draw calls for this frame, and then performs them all at once
 		_spriteBatch.Begin();

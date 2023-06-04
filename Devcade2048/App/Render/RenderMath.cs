@@ -4,15 +4,25 @@ using Microsoft.Xna.Framework;
 namespace Devcade2048.App.Render;
 
 public static class RenderMath {
-        public static Color TextColorFade(Color c) {
-        int r = 251, g = 194, b = 27;
-        double opacity = Animation.Opacity();
-        r = (int) (c.R * (1 - opacity) + r * opacity);
-        g = (int) (c.G * (1 - opacity) + g * opacity);
-        b = (int) (c.B * (1 - opacity) + b * opacity);
-        return new Color(r, g, b);
+    // Color management
+    public static Color Interpolate(Color c1, Color c2, double percent) {
+        int r, g, b;
+        r = (int) (c1.R * (1 - percent) + c2.R * percent);
+        g = (int) (c1.G * (1 - percent) + c2.G * percent);
+        b = (int) (c1.B * (1 - percent) + c2.B * percent);
+        return new Color(r,g,b);
     }
 
+    public static Color GetBackgroundColor() {
+        if (Animation.State != AnimationState.InitFadeIn) return new Color(251, 194, 27);
+        double opacity = Animation.FastEnd(2);
+        return RenderMath.Interpolate(new Color(0,0,0), new Color(251, 194, 27), opacity);
+    }
+
+    public static Color GetInitialBrightness() {
+        if (Animation.State != AnimationState.InitFadeIn) return Color.White;
+        return Interpolate(Color.Black, Color.White, Animation.FastEnd(2));
+    }
 
     // Tile management
     private static Vector2 ToScreenPosition(Vector2 pos) {

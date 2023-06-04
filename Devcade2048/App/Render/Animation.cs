@@ -5,7 +5,7 @@ namespace Devcade2048.App.Render;
 
 public static class Animation {
     internal static TimeSpan Timer;
-    public static AnimationState State { get; private set; } = AnimationState.WaitingForInput;
+    public static AnimationState State { get; private set; } = AnimationState.InitFadeIn;
     public static AnimationState LastState { get; private set; } = AnimationState.WaitingForInput;
     public static bool JustChanged { get; private set; } = false;
 
@@ -59,6 +59,7 @@ public static class Animation {
                 CheckEndCompletion();
                 break;
 
+            case AnimationState.InitFadeIn:
             case AnimationState.ToMenu:
             case AnimationState.ToGame:
             case AnimationState.ToInfo:
@@ -99,6 +100,7 @@ public static class Animation {
         LastState = State;
         JustChanged = true;
         switch (State) {
+            case AnimationState.InitFadeIn:
             case AnimationState.ToMenu:
             case AnimationState.ContinueFromWin:
             case AnimationState.ToInfo:
@@ -161,6 +163,7 @@ public static class Animation {
 
     public static double PercentComplete() {
         switch (State) {
+            case AnimationState.InitFadeIn: 
             case AnimationState.ToMenu:
             case AnimationState.ToGame:
             case AnimationState.ToInfo:
@@ -223,6 +226,7 @@ public static class Animation {
          && LastState == AnimationState.ContinueFromWin
         );
     }
+
     public static double Opacity() {
         double percent = PercentComplete();
         switch (State) {
@@ -237,5 +241,15 @@ public static class Animation {
             default:
                 return 1.0;
         }
+    }
+
+    public static double FastEnd(double factor = 3) {
+        double normalPercent = PercentComplete();
+        return Math.Pow(normalPercent, factor);
+    }
+
+    public static double FastStart(double factor = 3) {
+        double normalPercent = PercentComplete();
+        return 1 - Math.Pow(1 - normalPercent, factor);
     }
 }
