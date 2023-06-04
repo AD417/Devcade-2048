@@ -24,12 +24,31 @@ public static class StyleMath {
         return Interpolate(Color.Black, Color.White, Animation.FastEnd(2));
     }
 
+    public static Color GetScoreColor() {
+        if (Animation.State == AnimationState.ToGame) {
+            return StyleMath.Interpolate(new Color(251, 194, 27), Color.Black, Animation.FastEnd(2));
+        }
+        if (Animation.State == AnimationState.FromGame) {
+            return StyleMath.Interpolate(Color.Black, new Color(251, 194, 27), Animation.FastStart(2));
+        }
+        return Color.Black;
+    }
+
     // Tile management
+    public static Vector2 GridDisplacement() {
+        if (!Animation.StateIsAny(AnimationState.FromGame, AnimationState.ToGame)) return new Vector2();
+        if (Animation.State == AnimationState.ToGame) {
+            return new Vector2(0, 710 * (float)(1 - Animation.FastStart()));
+        } else { // AnimationState is FromGame
+            return new Vector2(0, (float)(710 * Animation.FastEnd()));
+        }
+    }
+
     private static Vector2 ToScreenPosition(Vector2 pos) {
         return new Vector2(
             (int) (12 + pos.X * 100),
             (int) (292 + pos.Y * 100)
-        );
+        ) + GridDisplacement();
     }
 
 
@@ -116,9 +135,13 @@ public static class StyleMath {
 
     public static Rectangle PositionOfWinTile(Tile t) {
         int scale = (int) (96 + 304 * WinScale());
+        Vector2 pos = t.Position;
+        pos = pos * 100 * (float)(1 - WinScale());
+        pos += new Vector2(12, 292) + GridDisplacement();
+        
         return new Rectangle(
-            (int) (12 + t.Position.X * 100 * (1 - WinScale())),
-            (int) (292 + t.Position.Y * 100 * (1 - WinScale())),
+            (int) pos.X,
+            (int) pos.Y,
             scale,
             scale
         );

@@ -134,10 +134,14 @@ public class Game1 : Game
 	}
 
 	private void UpdateGame(GameTime gameTime) {
+		if (Animation.ResetGrid()) _GameData.Setup();
+		if (Animation.ContinueGame()) _GameData.Continue();
+
+		if (!Animation.AcceptInput()) return;
+
 		Manager.Direction direction = InputManager.GetStickDirection();
 		if (
 			direction != Manager.Direction.None 
-		 && Animation.AcceptInput()
 		 && (_GameData.State == GameState.Playing || _GameData.State == GameState.Continuing)
 		) {
 
@@ -146,27 +150,36 @@ public class Game1 : Game
 		}
 
 		if (
-		 	Animation.AcceptInput()
-		 && (Keyboard.GetState().IsKeyDown(Keys.R) || Input.GetButton(1, Input.ArcadeButtons.A1))
+			Keyboard.GetState().IsKeyDown(Keys.R) 
+		 || Input.GetButton(1, Input.ArcadeButtons.A1)
 		) {
 			Reset();
 		}
 
 		if (
-			Animation.AcceptInput()
-		 && _GameData.State == GameState.Won
+			Keyboard.GetState().IsKeyDown(Keys.E)
+		 || Input.GetButton(1, Input.ArcadeButtons.A2)
+		) {
+			EndGame();
+		}
+
+		if (
+			_GameData.State == GameState.Won
 		 && (Keyboard.GetState().IsKeyDown(Keys.C) || Input.GetButton(1, Input.ArcadeButtons.A4))
 		) {
 			Continue();
 		}
 
-		if (Animation.ResetGrid()) _GameData.Setup();
-		if (Animation.ContinueGame()) _GameData.Continue();
 	}
 
 	private void Reset() {
 		HighScoreTracker.Save();
 		Animation.BeginReset(_GameData);
+	}
+
+	private void EndGame() {
+		HighScoreTracker.Save();
+		Animation.ChangeStateTo(AnimationState.FromGame);
 	}
 
 	private void Continue() {
@@ -217,9 +230,14 @@ public class Game1 : Game
 		ScoreContainer.Increment(gameTime);
 	 	Animation.Increment(gameTime);
 
+		if (Animation.SwitchToGame()) {
+			System.Console.WriteLine("SWIIIIIIIIIIIIIIIIIIIIITCH TO!");
+
+			_GameData.Setup();
+		}
 		if (Animation.SwitchToMenu()) {
-			System.Console.WriteLine("SWIIIIIIIIIIIIIIIIIIIIITCH");
-			_GameData.State = GameState.Playing;
+			System.Console.WriteLine("SWIIIIIIIIIIIIIIIIIIIIITCH FROM!");
+			_GameData.State = GameState.InMenu;
 		}
 
 		base.Draw(gameTime);

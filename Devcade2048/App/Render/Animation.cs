@@ -38,9 +38,10 @@ public static class Animation {
             default:
             // Short circuit the reset animation that means nothing here.
             // TODO: change it to "Transition to the game". 
-                man.Setup();
-                ChangeStateTo(AnimationState.Spawning);
-                break;
+                throw new NotSupportedException("AYO WTF, WE CAN'T RESET FROM " + man.State);
+            //     man.Setup();
+            //     ChangeStateTo(AnimationState.Spawning);
+            //     break;
         }
     }
 
@@ -220,11 +221,19 @@ public static class Animation {
         );
     }
 
-    public static bool SwitchToMenu() {
+    public static bool SwitchToGame() {
         return (
             State == AnimationState.ToGame
          && JustChanged
          && LastState == AnimationState.FromMenu
+        );
+    }
+
+    public static bool SwitchToMenu() {
+        return (
+            State == AnimationState.ToMenu
+         && JustChanged
+         && LastState == AnimationState.FromGame
         );
     }
 

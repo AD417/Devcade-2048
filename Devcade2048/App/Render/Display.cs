@@ -23,9 +23,7 @@ public static class Display {
     public static void Grid() {
         Vector2 position = new Vector2(10, 290);
         // Time to go overkill on this.
-        if (Animation.State == AnimationState.ToGame) {
-            position.Y = 1000 - (float) (710 * Animation.FastStart());
-        }
+        position += StyleMath.GridDisplacement();
         sprite.Draw(Asset.Grid, position, Color.White);
     }
 
@@ -62,8 +60,10 @@ public static class Display {
             sprite.DrawString(Asset.ScoreFont, "YOU WIN!", new Vector2(20, 700), Color.Black);
             sprite.Draw(Asset.Button, new Vector2(20, 720), Color.Red);
             sprite.DrawString(Asset.ScoreFont, "Play again", new Vector2(125, 750), Color.Red);
-            sprite.Draw(Asset.Button, new Vector2(20, 800), Color.White);
-            sprite.DrawString(Asset.ScoreFont, "Continue", new Vector2(125, 830), Color.White);
+            sprite.Draw(Asset.Button, new Vector2(20, 780), Color.Blue);
+            sprite.DrawString(Asset.ScoreFont, "Exit to Menu", new Vector2(125, 810), Color.Blue);
+            sprite.Draw(Asset.Button, new Vector2(20, 840), Color.White);
+            sprite.DrawString(Asset.ScoreFont, "Continue", new Vector2(125, 870), Color.White);
         }
     }
 
@@ -94,10 +94,8 @@ public static class Display {
     }
 
     public static void Scores() {
-        Color scoreColor = Color.Black;
-        if (Animation.State == AnimationState.ToGame) {
-            scoreColor = StyleMath.Interpolate(new Color(251, 194, 27), Color.Black, Animation.FastEnd(2));
-        }
+        Color scoreColor = StyleMath.GetScoreColor();
+        
 		string scoreStr = "Score: " + manager.Score.ToString().PadLeft(5);
 		int scoreWidth = (int)Asset.ScoreFont.MeasureString(scoreStr).X;
 		sprite.DrawString(
@@ -136,12 +134,18 @@ public static class Display {
         Vector2 pos1 = new Vector2(9, 300);
         Vector2 pos2 = new Vector2(219, 300);
         Vector2 pos3 = new Vector2(114, 500);
+        double percent = 0;
         if (Animation.State == AnimationState.FromMenu) {
-            double percent = Animation.FastEnd(2);
-            pos1 = StyleMath.Interpolate(pos1, new Vector2(-300, 300), percent);
-            pos2 = StyleMath.Interpolate(pos2, new Vector2(530, 300), percent);
-            pos3 = StyleMath.Interpolate(pos3, new Vector2(-300, 500), percent);
+            percent = Animation.FastEnd(2);
         }
+        if (Animation.State == AnimationState.ToMenu) {
+            percent = 1 - Animation.FastStart(2);
+        }
+
+        pos1 = StyleMath.Interpolate(pos1, new Vector2(-300, 300), percent);
+        pos2 = StyleMath.Interpolate(pos2, new Vector2(530, 300), percent);
+        pos3 = StyleMath.Interpolate(pos3, new Vector2(-300, 500), percent);
+
 		sprite.Draw(Asset.Menu[0], pos1, brightness);
 		sprite.Draw(Asset.Menu[1], pos2, brightness);
 		sprite.Draw(Asset.Menu[2], pos3, brightness);
