@@ -79,6 +79,8 @@ public static class Display {
         sprite.DrawString(Asset.ScoreFont, "GAME OVER!", new Vector2(20, 700), Color.Black);
             sprite.Draw(Asset.Button, new Vector2(20, 720), Color.Red);
             sprite.DrawString(Asset.ScoreFont, "Try again", new Vector2(125, 750), Color.Red);
+            sprite.Draw(Asset.Button, new Vector2(20, 780), Color.Blue);
+            sprite.DrawString(Asset.ScoreFont, "Exit to Menu", new Vector2(125, 810), Color.Blue);
     }
 
     private static Texture2D DetermineBlob(Tile t) {
@@ -95,7 +97,7 @@ public static class Display {
 
     public static void Scores() {
         Color scoreColor = StyleMath.GetScoreColor();
-        
+
 		string scoreStr = "Score: " + manager.Score.ToString().PadLeft(5);
 		int scoreWidth = (int)Asset.ScoreFont.MeasureString(scoreStr).X;
 		sprite.DrawString(

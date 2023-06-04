@@ -138,7 +138,7 @@ public static class StyleMath {
         Vector2 pos = t.Position;
         pos = pos * 100 * (float)(1 - WinScale());
         pos += new Vector2(12, 292) + GridDisplacement();
-        
+
         return new Rectangle(
             (int) pos.X,
             (int) pos.Y,
@@ -153,7 +153,11 @@ public static class StyleMath {
     }
 
     public static int BiggestLossTile() {
-        if (Animation.StateIsAny(AnimationState.WaitingForInput, AnimationState.ResetFromLost)) return 12;
+        if (Animation.StateIsAny(
+            AnimationState.WaitingForInput, 
+            AnimationState.ResetFromLost, 
+            AnimationState.FromGame
+        )) return 12;
         if (Animation.State != AnimationState.ToLost) return -1;
 
         return (int) ((Animation.PercentComplete() - 0.5) * 20);
