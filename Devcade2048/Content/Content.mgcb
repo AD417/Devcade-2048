@@ -248,6 +248,13 @@
 /processorParam:TextureFormat=Compressed
 /build:MonospaceTypewriter.spritefont
 
+#begin MonospaceTypewriterSmall.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:MonospaceTypewriterSmall.spritefont
+
 #begin TitleBar.png
 /importer:TextureImporter
 /processor:TextureProcessor

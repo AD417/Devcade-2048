@@ -90,7 +90,8 @@ public class Game1 : Game
 		}
 		Asset.LoseTile[0] = Content.Load<Texture2D>("DED1 Blob");
 		Asset.LoseTile[1] = Content.Load<Texture2D>("DED2 Blob");
-		Asset.ScoreFont = Content.Load<SpriteFont>("MonospaceTypewriter");
+		Asset.BigFont = Content.Load<SpriteFont>("MonospaceTypewriter");
+		Asset.SmallFont = Content.Load<SpriteFont>("MonospaceTypewriterSmall");
 
 		Display.Initialize(_spriteBatch, _GameData);
 	}
@@ -124,7 +125,7 @@ public class Game1 : Game
 				UpdateGame(gameTime);
 				break;
 			case GameState.InCredits:
-			case GameState.InHelp:
+			case GameState.InInfo:
 			case GameState.InMenu:
 				UpdateMenu(gameTime);
 				break;
@@ -188,17 +189,30 @@ public class Game1 : Game
 
 
 	private void UpdateMenu(GameTime gameTime) {
+		if (!Animation.AcceptInput()) return;
 		if (
-		 	Animation.AcceptInput()
-		 && (Keyboard.GetState().IsKeyDown(Keys.R) || Input.GetButton(1, Input.ArcadeButtons.A1))
+			Keyboard.GetState().IsKeyDown(Keys.R) 
+		 || Input.GetButton(1, Input.ArcadeButtons.A1)
 		) {
 			StartGame();
+		}
+
+		if (
+			Keyboard.GetState().IsKeyDown(Keys.E)
+		 || Input.GetButton(1, Input.ArcadeButtons.A2)
+		) {
+			GotoInfo();
 		}
 	}
 
 	private void StartGame() {
 		// _GameData.State = GameState.Playing;
 		Animation.ChangeStateTo(AnimationState.FromMenu);
+	}
+
+	private void GotoInfo() {
+		Animation.ChangeStateTo(AnimationState.FromMenu);
+		_GameData.State = GameState.InInfo;
 	}
 
 	/// <summary>
@@ -223,7 +237,7 @@ public class Game1 : Game
 		);
 
 		if (inGame) DrawGame();
-		else Display.Menu();
+		else DrawMenu();
 		
 		_spriteBatch.End();
 
@@ -250,5 +264,11 @@ public class Game1 : Game
 		if (_GameData.State == GameState.Won) Display.Win();
 		if (Animation.State == AnimationState.ResetFromWin) Display.WinReset();
 		if (_GameData.State == GameState.Lost) Display.Lose();
+	}
+
+	private void DrawMenu() {
+		Display.MenuBlobs();
+
+		Display.Info();
 	}
 }
