@@ -5,6 +5,10 @@ namespace Devcade2048.App.Render;
 public enum AnimationState {
     WaitingForInput,
 
+    // Startup animations
+    InitFadeIn,
+    // InitToTile,
+
     // Major animations between Game and Menu
     ToMenu,
     ToGame,
@@ -24,6 +28,7 @@ public enum AnimationState {
     EasterEgg,
     ToLost,
     ResetFromWin, 
+    ContinueFromWin,
     ResetFromLost,
     ResetFromNormal,
 }

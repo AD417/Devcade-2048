@@ -13,9 +13,19 @@ public static class Display {
     }
 
     public static void Title() {
-        sprite.Draw(Asset.Title, new Vector2(60, 0), Color.White);
+        Color brightness = Color.White;
+        if (Animation.State == AnimationState.InitFadeIn) {
+            brightness = StyleMath.GetInitialBrightness();
+        }
+        sprite.Draw(Asset.Title, new Vector2(60, 0), brightness);
     }
 
+    public static void Grid() {
+        Vector2 position = new Vector2(10, 290);
+        // Time to go overkill on this.
+        position += StyleMath.GridDisplacement();
+        sprite.Draw(Asset.Grid, position, Color.White);
+    }
 
     public static void AllTiles() {
         if (!Animation.RenderingTiles()) return;
@@ -27,7 +37,7 @@ public static class Display {
                 drawTile(t.MergedFrom[1]);
             }
 
-            Rectangle location = RenderMath.PositionOfTile(t);
+            Rectangle location = StyleMath.PositionOfTile(t);
 
             Texture2D blob = DetermineBlob(t);
 
@@ -38,34 +48,44 @@ public static class Display {
 
     public static void Win() {
         if (manager.State != GameState.Won) return;
-        if (Animation.UpdatingGrid()) return;
+        if (Animation.UpdatingGrid() || Animation.State == AnimationState.ResetFromWin) return;
         void drawWin(Tile t) {
             if (t is null || t.Value != 2048) return;
-            Rectangle location = RenderMath.PositionOfWinTile(t);
+            Rectangle location = StyleMath.PositionOfWinTile(t);
 
             sprite.Draw(Asset.Tile[t.TextureId], location, Color.White);
         }
         manager.Grid.EachCell((int _x, int _y, Tile t) => drawWin(t));
         if (Animation.AcceptInput()) {
-            sprite.DrawString(Asset.ScoreFont, "YOU WIN!", new Vector2(20, 700), Color.Black);
+            sprite.DrawString(Asset.BigFont, "YOU WIN!", new Vector2(20, 700), Color.Black);
+            sprite.Draw(Asset.Button, new Vector2(20, 720), Color.Red);
+            sprite.DrawString(Asset.BigFont, "Play again", new Vector2(125, 750), Color.Red);
+            sprite.Draw(Asset.Button, new Vector2(20, 780), Color.Blue);
+            sprite.DrawString(Asset.BigFont, "Exit to Menu", new Vector2(125, 810), Color.Blue);
+            sprite.Draw(Asset.Button, new Vector2(20, 840), Color.White);
+            sprite.DrawString(Asset.BigFont, "Continue", new Vector2(125, 870), Color.White);
         }
     }
 
     public static void WinReset() {
         if (Animation.State != AnimationState.ResetFromWin) return;
-        Rectangle location = RenderMath.PositionOfWinTile();
+        Rectangle location = StyleMath.PositionOfWinTile();
         sprite.Draw(Asset.Tile[10], location, Color.White);
     }
 
     public static void Lose() {
         if (manager.State != GameState.Lost) return;
         if (Animation.State != AnimationState.WaitingForInput) return;
-        sprite.DrawString(Asset.ScoreFont, "GAME OVER!", new Vector2(20, 700), Color.Black);
+        sprite.DrawString(Asset.BigFont, "GAME OVER!", new Vector2(20, 700), Color.Black);
+            sprite.Draw(Asset.Button, new Vector2(20, 720), Color.Red);
+            sprite.DrawString(Asset.BigFont, "Try again", new Vector2(125, 750), Color.Red);
+            sprite.Draw(Asset.Button, new Vector2(20, 780), Color.Blue);
+            sprite.DrawString(Asset.BigFont, "Exit to Menu", new Vector2(125, 810), Color.Blue);
     }
 
     private static Texture2D DetermineBlob(Tile t) {
         if (manager.State != GameState.Lost) return Asset.Tile[t.TextureId];
-        if (t.TextureId > RenderMath.BiggestLossTile()) return Asset.Tile[t.TextureId];
+        if (t.TextureId > StyleMath.BiggestLossTile()) return Asset.Tile[t.TextureId];
         int loseTileId = 0;
         if (t.TextureId > 5) loseTileId++;
         return Asset.LoseTile[loseTileId];
@@ -76,31 +96,33 @@ public static class Display {
     }
 
     public static void Scores() {
+        Color scoreColor = StyleMath.GetScoreColor();
+
 		string scoreStr = "Score: " + manager.Score.ToString().PadLeft(5);
-		int scoreWidth = (int)Asset.ScoreFont.MeasureString(scoreStr).X;
+		int scoreWidth = (int)Asset.BigFont.MeasureString(scoreStr).X;
 		sprite.DrawString(
-            Asset.ScoreFont, 
+            Asset.BigFont, 
             scoreStr, 
-            new Vector2(400 - scoreWidth, 200), 
-            Color.Black
+            new Vector2(400 - scoreWidth, 190), 
+            scoreColor
         );
 
 		string highScoreStr = 
             "Best: " + HighScoreTracker.HighScore.ToString().PadLeft(5);
-		int highScoreWidth = (int)Asset.ScoreFont.MeasureString(highScoreStr).X;
+		int highScoreWidth = (int)Asset.BigFont.MeasureString(highScoreStr).X;
 		sprite.DrawString(
-            Asset.ScoreFont, 
+            Asset.BigFont, 
             highScoreStr, 
-            new Vector2(400 - highScoreWidth, 250), 
-            Color.Black
+            new Vector2(400 - highScoreWidth, 240), 
+            scoreColor
         );
 
         foreach (ScoreDelta score in ScoreContainer.scores) {
             string deltaStr = "+" + score.ToString();
-            int width = (int) Asset.ScoreFont.MeasureString(deltaStr).X;
-            Vector2 position = new Vector2(400 - width, 200 - score.ShiftUp());
+            int width = (int) Asset.BigFont.MeasureString(deltaStr).X;
+            Vector2 position = new Vector2(400 - width, 190 - score.ShiftUp());
             sprite.DrawString(
-                Asset.ScoreFont, 
+                Asset.BigFont, 
                 deltaStr, 
                 position, 
                 score.DrawColor()
@@ -109,11 +131,47 @@ public static class Display {
     }
 
 
-    public static void Menu() {
-		sprite.Draw(Asset.Menu[0], new Vector2(9, 300), Color.White);
-		sprite.Draw(Asset.Menu[1], new Vector2(219, 300), Color.White);
-		sprite.Draw(Asset.Menu[2], new Vector2(114, 500), Color.White);
+    public static void MenuBlobs() {
+        Color brightness = StyleMath.GetInitialBrightness();
+        Vector2 pos1 = new Vector2(9, 300);
+        Vector2 pos2 = new Vector2(219, 300);
+        Vector2 pos3 = new Vector2(114, 500);
+        double percent = 0;
+        if (Animation.State == AnimationState.FromMenu) {
+            percent = Animation.FastEnd(2);
+        }
+        if (Animation.State == AnimationState.ToMenu) {
+            percent = 1 - Animation.FastStart(2);
+        }
+
+        pos1 = StyleMath.Interpolate(pos1, new Vector2(-300, 300), percent);
+        pos2 = StyleMath.Interpolate(pos2, new Vector2(530, 300), percent);
+        pos3 = StyleMath.Interpolate(pos3, new Vector2(-300, 500), percent);
+
+		sprite.Draw(Asset.Menu[0], pos1, brightness);
+		sprite.Draw(Asset.Menu[1], pos2, brightness);
+		sprite.Draw(Asset.Menu[2], pos3, brightness);
     }
 
+    public static void Info() {
+        if (manager.State != GameState.InInfo) return;
 
+        double percent = Animation.FastStart(2);
+
+        Rectangle region = new Rectangle(40, 350, 360, 600);
+        region.Y += (int) (percent * 900);
+
+        TextBox.DrawInArea(
+            sprite, 
+    @"    2048, with blobs!
+    Use the joystick to move tiles up, down, left, and right to slide them around the grid. (Diagonals don't count.)
+    When 2 identical tiles merge together, they combine into one! 
+    Get to 2048 to win!
+    
+    From the menu, press RED to begin, BLUE to see this info menu, and GREEN to see the credits.
+    In game, press RED to reset and BLUE to exit.",
+            new Rectangle(40, 350, 350, 300),
+            Color.Red
+        );
+    }
 }

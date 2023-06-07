@@ -81,6 +81,7 @@ public class Game1 : Game
 		Asset.Menu[0] = Content.Load<Texture2D>("BlobStart");
 		Asset.Menu[1] = Content.Load<Texture2D>("BlobInfo");
 		Asset.Menu[2] = Content.Load<Texture2D>("BlobCredits");
+		Asset.Button = Content.Load<Texture2D>("BUTTON");
 
 		Asset.Grid = Content.Load<Texture2D>("2048Grid");
 		for (int i = 0; i < 11; i++) {
@@ -89,7 +90,8 @@ public class Game1 : Game
 		}
 		Asset.LoseTile[0] = Content.Load<Texture2D>("DED1 Blob");
 		Asset.LoseTile[1] = Content.Load<Texture2D>("DED2 Blob");
-		Asset.ScoreFont = Content.Load<SpriteFont>("MonospaceTypewriter");
+		Asset.BigFont = Content.Load<SpriteFont>("MonospaceTypewriter");
+		Asset.SmallFont = Content.Load<SpriteFont>("MonospaceTypewriterSmall");
 
 		Display.Initialize(_spriteBatch, _GameData);
 	}
@@ -113,11 +115,35 @@ public class Game1 : Game
 		}
 
 		// TODO: Add your update logic here
+		// System.Console.WriteLine(_GameData.State);
+		// System.Console.WriteLine(Animation.State);
+		switch (_GameData.State) {
+			case GameState.Continuing:
+			case GameState.Lost:
+			case GameState.Playing:
+			case GameState.Won:
+				UpdateGame(gameTime);
+				break;
+			case GameState.InCredits:
+			case GameState.InInfo:
+			case GameState.InMenu:
+				UpdateMenu(gameTime);
+				break;
+		}
+
+		base.Update(gameTime);
+	}
+
+	private void UpdateGame(GameTime gameTime) {
+		if (Animation.ResetGrid()) _GameData.Setup();
+		if (Animation.ContinueGame()) _GameData.Continue();
+
+		if (!Animation.AcceptInput()) return;
+
 		Manager.Direction direction = InputManager.GetStickDirection();
 		if (
 			direction != Manager.Direction.None 
-		 && Animation.AcceptInput()
-		 && _GameData.State == GameState.Playing
+		 && (_GameData.State == GameState.Playing || _GameData.State == GameState.Continuing)
 		) {
 
 			_GameData.Move(direction);
@@ -125,34 +151,68 @@ public class Game1 : Game
 		}
 
 		if (
-		 	Animation.AcceptInput()
-		 && (Keyboard.GetState().IsKeyDown(Keys.R) || Input.GetButton(1, Input.ArcadeButtons.A1))
+			Keyboard.GetState().IsKeyDown(Keys.R) 
+		 || Input.GetButton(1, Input.ArcadeButtons.A1)
 		) {
 			Reset();
 		}
-		if (Animation.ResetGrid()) _GameData.Setup();
 
-		base.Update(gameTime);
+		if (
+			Keyboard.GetState().IsKeyDown(Keys.E)
+		 || Input.GetButton(1, Input.ArcadeButtons.A2)
+		) {
+			EndGame();
+		}
+
+		if (
+			_GameData.State == GameState.Won
+		 && (Keyboard.GetState().IsKeyDown(Keys.C) || Input.GetButton(1, Input.ArcadeButtons.A4))
+		) {
+			Continue();
+		}
+
 	}
 
 	private void Reset() {
 		HighScoreTracker.Save();
 		Animation.BeginReset(_GameData);
-		/*switch (_GameData.State) {
-			case GameState.Continuing:
-			case GameState.Playing:
-			case GameState.InMenu:
-				Animation.ChangeStateTo(AnimationState.Spawning);
-				break;
-			case GameState.Won:
-				Animation.ChangeStateTo(AnimationState.ResetFromWin);
-				break;
-			case GameState.Lost:
-				Animation.ChangeStateTo(AnimationState.ResetFromLost);
-				break;
-		}
-		_GameData.Setup(); */
+	}
 
+	private void EndGame() {
+		HighScoreTracker.Save();
+		Animation.ChangeStateTo(AnimationState.FromGame);
+	}
+
+	private void Continue() {
+		Animation.ChangeStateTo(AnimationState.ContinueFromWin);
+	}
+
+
+	private void UpdateMenu(GameTime gameTime) {
+		if (!Animation.AcceptInput()) return;
+		if (
+			Keyboard.GetState().IsKeyDown(Keys.R) 
+		 || Input.GetButton(1, Input.ArcadeButtons.A1)
+		) {
+			StartGame();
+		}
+
+		if (
+			Keyboard.GetState().IsKeyDown(Keys.E)
+		 || Input.GetButton(1, Input.ArcadeButtons.A2)
+		) {
+			GotoInfo();
+		}
+	}
+
+	private void StartGame() {
+		// _GameData.State = GameState.Playing;
+		Animation.ChangeStateTo(AnimationState.FromMenu);
+	}
+
+	private void GotoInfo() {
+		Animation.ChangeStateTo(AnimationState.FromMenu);
+		_GameData.State = GameState.InInfo;
 	}
 
 	/// <summary>
@@ -162,7 +222,7 @@ public class Game1 : Game
 	protected override void Draw(GameTime gameTime)
 	{
 		// System.Console.WriteLine(Animation.State);
-		GraphicsDevice.Clear(new Color(251, 194, 27));
+		GraphicsDevice.Clear(StyleMath.GetBackgroundColor());
 		
 		// Batches all the draw calls for this frame, and then performs them all at once
 		_spriteBatch.Begin();
@@ -177,23 +237,38 @@ public class Game1 : Game
 		);
 
 		if (inGame) DrawGame();
-		else Display.Menu();
+		else DrawMenu();
 		
 		_spriteBatch.End();
 
 		ScoreContainer.Increment(gameTime);
 	 	Animation.Increment(gameTime);
 
+		if (Animation.SwitchToGame()) {
+			System.Console.WriteLine("SWIIIIIIIIIIIIIIIIIIIIITCH TO!");
+
+			_GameData.Setup();
+		}
+		if (Animation.SwitchToMenu()) {
+			System.Console.WriteLine("SWIIIIIIIIIIIIIIIIIIIIITCH FROM!");
+			_GameData.State = GameState.InMenu;
+		}
+
 		base.Draw(gameTime);
 	}
 
 	private void DrawGame() {
-		_spriteBatch.Draw(Asset.Grid, new Vector2(10,290), Color.White);
-
+		Display.Grid();
 		Display.AllTiles();
 		Display.Scores();
 		if (_GameData.State == GameState.Won) Display.Win();
 		if (Animation.State == AnimationState.ResetFromWin) Display.WinReset();
 		if (_GameData.State == GameState.Lost) Display.Lose();
+	}
+
+	private void DrawMenu() {
+		Display.MenuBlobs();
+
+		Display.Info();
 	}
 }

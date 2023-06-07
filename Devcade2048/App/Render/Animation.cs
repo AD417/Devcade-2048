@@ -3,10 +3,9 @@ using Microsoft.Xna.Framework;
 
 namespace Devcade2048.App.Render;
 
-// Yes, yes, there already exists this, but the other one is getting nuked soon. 
 public static class Animation {
     internal static TimeSpan Timer;
-    public static AnimationState State { get; private set; } = AnimationState.WaitingForInput;
+    public static AnimationState State { get; private set; } = AnimationState.InitFadeIn;
     public static AnimationState LastState { get; private set; } = AnimationState.WaitingForInput;
     public static bool JustChanged { get; private set; } = false;
 
@@ -39,9 +38,10 @@ public static class Animation {
             default:
             // Short circuit the reset animation that means nothing here.
             // TODO: change it to "Transition to the game". 
-                man.Setup();
-                ChangeStateTo(AnimationState.Spawning);
-                break;
+                throw new NotSupportedException("AYO WTF, WE CAN'T RESET FROM " + man.State);
+            //     man.Setup();
+            //     ChangeStateTo(AnimationState.Spawning);
+            //     break;
         }
     }
 
@@ -60,6 +60,7 @@ public static class Animation {
                 CheckEndCompletion();
                 break;
 
+            case AnimationState.InitFadeIn:
             case AnimationState.ToMenu:
             case AnimationState.ToGame:
             case AnimationState.ToInfo:
@@ -67,6 +68,7 @@ public static class Animation {
             case AnimationState.FromGame:
             case AnimationState.FromInfo:
             case AnimationState.ResetFromWin:
+            case AnimationState.ContinueFromWin:
             case AnimationState.ResetFromLost:
             case AnimationState.ResetFromNormal:
                 CheckTransitionCompletion();
@@ -99,7 +101,9 @@ public static class Animation {
         LastState = State;
         JustChanged = true;
         switch (State) {
+            case AnimationState.InitFadeIn:
             case AnimationState.ToMenu:
+            case AnimationState.ContinueFromWin:
             case AnimationState.ToInfo:
                 State = AnimationState.WaitingForInput;
                 break;
@@ -160,6 +164,7 @@ public static class Animation {
 
     public static double PercentComplete() {
         switch (State) {
+            case AnimationState.InitFadeIn: 
             case AnimationState.ToMenu:
             case AnimationState.ToGame:
             case AnimationState.ToInfo:
@@ -167,6 +172,7 @@ public static class Animation {
             case AnimationState.FromGame:
             case AnimationState.FromInfo:
             case AnimationState.ResetFromWin:
+            case AnimationState.ContinueFromWin:
             case AnimationState.ResetFromLost:
             case AnimationState.ResetFromNormal:
                 return Timer / TransitionTime;
@@ -202,7 +208,8 @@ public static class Animation {
 
     public static bool RenderingTiles() {
         return !StateIsAny(
-            AnimationState.ResetFromWin
+            AnimationState.ResetFromWin,
+            AnimationState.ToGame
         );
     }
 
@@ -213,6 +220,31 @@ public static class Animation {
          && StateWasAny(AnimationState.ResetFromWin, AnimationState.ResetFromLost, AnimationState.ResetFromNormal)
         );
     }
+
+    public static bool SwitchToGame() {
+        return (
+            State == AnimationState.ToGame
+         && JustChanged
+         && LastState == AnimationState.FromMenu
+        );
+    }
+
+    public static bool SwitchToMenu() {
+        return (
+            State == AnimationState.ToMenu
+         && JustChanged
+         && LastState == AnimationState.FromGame
+        );
+    }
+
+    public static bool ContinueGame() {
+        return (
+            State == AnimationState.WaitingForInput
+         && JustChanged
+         && LastState == AnimationState.ContinueFromWin
+        );
+    }
+
     public static double Opacity() {
         double percent = PercentComplete();
         switch (State) {
@@ -227,5 +259,15 @@ public static class Animation {
             default:
                 return 1.0;
         }
+    }
+
+    public static double FastEnd(double factor = 3) {
+        double normalPercent = PercentComplete();
+        return Math.Pow(normalPercent, factor);
+    }
+
+    public static double FastStart(double factor = 3) {
+        double normalPercent = PercentComplete();
+        return 1 - Math.Pow(1 - normalPercent, factor);
     }
 }
