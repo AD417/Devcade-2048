@@ -28,7 +28,7 @@ public class GameTab : ITab {
 
     public void End() {
         HighScoreTracker.Save();
-        GameData.State = GameState.InMenu;
+        GameData.State = GameState.Suspended;
     }
 
     public void Update(GameTime gameTime) {

@@ -153,7 +153,7 @@ public static class Display {
     }
 
     public static void Info() {
-        if (manager.State != GameState.InInfo) return;
+        if (manager.State != GameState.Suspended) return;
 
         double percent = Animation.FastStart(2);
 

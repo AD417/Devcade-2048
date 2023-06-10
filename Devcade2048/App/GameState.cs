@@ -3,9 +3,7 @@
 namespace Devcade2048.App;
 
 public enum GameState { 
-    InMenu,
-    InInfo,
-    InCredits,
+    Suspended,
     Playing, 
     Lost, 
     Won, 
