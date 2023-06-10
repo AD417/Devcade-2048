@@ -36,12 +36,13 @@ public static class StyleMath {
 
     // Tile management
     public static Vector2 GridDisplacement() {
-        if (!Animation.StateIsAny(AnimationState.FromTab, AnimationState.ToTab)) return new Vector2();
         if (Animation.State == AnimationState.ToTab) {
             return new Vector2(0, 710 * (float)(1 - Animation.FastStart()));
-        } else { // AnimationState is FromGame
+        }
+        if (Animation.State == AnimationState.FromTab) {
             return new Vector2(0, (float)(710 * Animation.FastEnd()));
         }
+        return new Vector2();
     }
 
     private static Vector2 ToScreenPosition(Vector2 pos) {

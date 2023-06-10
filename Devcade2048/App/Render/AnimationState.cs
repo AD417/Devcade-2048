@@ -12,17 +12,6 @@ public enum AnimationState {
 
     ToTab,
     FromTab,
-    /*
-    // Major animations between Game and Menu
-    ToMenu,
-    ToGame,
-    FromMenu, // TODO: Check whether this jumps to Game or to Info. 
-    FromGame,
-
-    // Menu animations
-    ToInfo,
-    FromInfo,
-    */
 
     // Game animations
     Spawning,

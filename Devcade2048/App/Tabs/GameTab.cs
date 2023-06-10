@@ -95,44 +95,4 @@ public class GameTab : ITab {
     public SelectedTab NextTab() {
         return _nextTab;
     }
-
-    /*
-    private Manager manager;
-    Status state;
-    public GameTab(Manager man) {
-        manager = man;
-        state = Status.None;
-    }
-
-    public void UpdateState() {
-
-    }
-
-    public void PreInit() {
-        // None
-        // manager.Clear();
-    }
-
-    public void PostInit() {
-        manager.Setup();
-    }
-
-    public void Draw() {
-		Display.Grid();
-		Display.AllTiles();
-		Display.Scores();
-
-		if (manager.State == GameState.Won) Display.Win();
-		if (Animation.State == AnimationState.ResetFromWin) Display.WinReset();
-		if (manager.State == GameState.Lost) Display.Lose();
-    }
-
-    public void PreExit() {
-        HighScoreTracker.Save();
-    }
-
-    public void PostExit() {
-        // None
-    }
-    */
 }

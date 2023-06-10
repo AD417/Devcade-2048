@@ -116,25 +116,9 @@ public class Game1 : Game
 			Exit();
 		}
 
-		// TODO: Add your update logic here
-		// System.Console.WriteLine(_GameData.State);
-		// System.Console.WriteLine(Animation.State);
+		// TODO: Add other update logic here
 		
 		TabHandler.CurrentTab.Update(gameTime);
-		/*switch (_GameData.State) {
-			case GameState.Continuing:
-			case GameState.Lost:
-			case GameState.Playing:
-			case GameState.Won:
-				UpdateGame(gameTime);
-				break;
-			case GameState.InCredits:
-			case GameState.InInfo:
-			case GameState.InMenu:
-				UpdateMenu(gameTime);
-				break;
-		} */
-
 		TabHandler.CheckTabSwitching();
 
 		base.Update(gameTime);
@@ -155,17 +139,6 @@ public class Game1 : Game
 		Display.Title();
 
 		TabHandler.CurrentTab.Draw(gameTime);
-		/*
-		bool inGame = (
-			_GameData.State == GameState.Playing
-		 || _GameData.State == GameState.Continuing
-		 || _GameData.State == GameState.Won
-		 || _GameData.State == GameState.Lost
-		);
-
-		if (inGame) DrawGame();
-		else DrawMenu();
-		*/
 		
 		_spriteBatch.End();
 
