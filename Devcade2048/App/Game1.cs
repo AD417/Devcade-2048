@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Devcade;
 using System;
 using Devcade2048.App.Render;
+using Devcade2048.App.Tabs;
 
 // MAKE SURE YOU RENAME ALL PROJECT FILES FROM DevcadeGame TO YOUR YOUR GAME NAME
 namespace Devcade2048.App;
@@ -32,6 +33,7 @@ public class Game1 : Game
 
 		_GameData = new Manager(size: 4);
 
+		TabHandler.Initialize(_GameData);
 		DebugRender.Write(_GameData.Grid);
 	}
 
@@ -71,6 +73,7 @@ public class Game1 : Game
 		_spriteBatch = new SpriteBatch(GraphicsDevice);
 
 		HighScoreTracker.Load();
+		Display.Initialize(_spriteBatch, _GameData);
 		
 		// TODO: use this.Content to load your game content here
 		// ex:
@@ -93,7 +96,6 @@ public class Game1 : Game
 		Asset.BigFont = Content.Load<SpriteFont>("MonospaceTypewriter");
 		Asset.SmallFont = Content.Load<SpriteFont>("MonospaceTypewriterSmall");
 
-		Display.Initialize(_spriteBatch, _GameData);
 	}
 
 	/// <summary>
@@ -114,105 +116,12 @@ public class Game1 : Game
 			Exit();
 		}
 
-		// TODO: Add your update logic here
-		// System.Console.WriteLine(_GameData.State);
-		// System.Console.WriteLine(Animation.State);
-		switch (_GameData.State) {
-			case GameState.Continuing:
-			case GameState.Lost:
-			case GameState.Playing:
-			case GameState.Won:
-				UpdateGame(gameTime);
-				break;
-			case GameState.InCredits:
-			case GameState.InInfo:
-			case GameState.InMenu:
-				UpdateMenu(gameTime);
-				break;
-		}
+		// TODO: Add other update logic here
+		
+		TabHandler.CurrentTab.Update(gameTime);
+		TabHandler.CheckTabSwitching();
 
 		base.Update(gameTime);
-	}
-
-	private void UpdateGame(GameTime gameTime) {
-		if (Animation.ResetGrid()) _GameData.Setup();
-		if (Animation.ContinueGame()) _GameData.Continue();
-
-		if (!Animation.AcceptInput()) return;
-
-		Manager.Direction direction = InputManager.GetStickDirection();
-		if (
-			direction != Manager.Direction.None 
-		 && (_GameData.State == GameState.Playing || _GameData.State == GameState.Continuing)
-		) {
-
-			_GameData.Move(direction);
-			DebugRender.Write(_GameData.Grid);
-		}
-
-		if (
-			Keyboard.GetState().IsKeyDown(Keys.R) 
-		 || Input.GetButton(1, Input.ArcadeButtons.A1)
-		) {
-			Reset();
-		}
-
-		if (
-			Keyboard.GetState().IsKeyDown(Keys.E)
-		 || Input.GetButton(1, Input.ArcadeButtons.A2)
-		) {
-			EndGame();
-		}
-
-		if (
-			_GameData.State == GameState.Won
-		 && (Keyboard.GetState().IsKeyDown(Keys.C) || Input.GetButton(1, Input.ArcadeButtons.A4))
-		) {
-			Continue();
-		}
-
-	}
-
-	private void Reset() {
-		HighScoreTracker.Save();
-		Animation.BeginReset(_GameData);
-	}
-
-	private void EndGame() {
-		HighScoreTracker.Save();
-		Animation.ChangeStateTo(AnimationState.FromGame);
-	}
-
-	private void Continue() {
-		Animation.ChangeStateTo(AnimationState.ContinueFromWin);
-	}
-
-
-	private void UpdateMenu(GameTime gameTime) {
-		if (!Animation.AcceptInput()) return;
-		if (
-			Keyboard.GetState().IsKeyDown(Keys.R) 
-		 || Input.GetButton(1, Input.ArcadeButtons.A1)
-		) {
-			StartGame();
-		}
-
-		if (
-			Keyboard.GetState().IsKeyDown(Keys.E)
-		 || Input.GetButton(1, Input.ArcadeButtons.A2)
-		) {
-			GotoInfo();
-		}
-	}
-
-	private void StartGame() {
-		// _GameData.State = GameState.Playing;
-		Animation.ChangeStateTo(AnimationState.FromMenu);
-	}
-
-	private void GotoInfo() {
-		Animation.ChangeStateTo(AnimationState.FromMenu);
-		_GameData.State = GameState.InInfo;
 	}
 
 	/// <summary>
@@ -229,30 +138,12 @@ public class Game1 : Game
 
 		Display.Title();
 
-		bool inGame = (
-			_GameData.State == GameState.Playing
-		 || _GameData.State == GameState.Continuing
-		 || _GameData.State == GameState.Won
-		 || _GameData.State == GameState.Lost
-		);
-
-		if (inGame) DrawGame();
-		else DrawMenu();
+		TabHandler.CurrentTab.Draw(gameTime);
 		
 		_spriteBatch.End();
 
 		ScoreContainer.Increment(gameTime);
 	 	Animation.Increment(gameTime);
-
-		if (Animation.SwitchToGame()) {
-			System.Console.WriteLine("SWIIIIIIIIIIIIIIIIIIIIITCH TO!");
-
-			_GameData.Setup();
-		}
-		if (Animation.SwitchToMenu()) {
-			System.Console.WriteLine("SWIIIIIIIIIIIIIIIIIIIIITCH FROM!");
-			_GameData.State = GameState.InMenu;
-		}
 
 		base.Draw(gameTime);
 	}

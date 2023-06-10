@@ -9,15 +9,9 @@ public enum AnimationState {
     InitFadeIn,
     // InitToTile,
 
-    // Major animations between Game and Menu
-    ToMenu,
-    ToGame,
-    FromMenu, // TODO: Check whether this jumps to Game or to Info. 
-    FromGame,
 
-    // Menu animations
-    ToInfo,
-    FromInfo,
+    ToTab,
+    FromTab,
 
     // Game animations
     Spawning,

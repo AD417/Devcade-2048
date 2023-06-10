@@ -33,7 +33,7 @@ public class Manager {
     public Manager(int size) {
         Size = size;
         Setup();
-        State = GameState.InMenu;
+        State = GameState.Suspended;
     }
 
     public void Continue() {
