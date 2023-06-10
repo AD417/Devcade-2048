@@ -1,6 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using Devcade2048.App.Tabs;
+
 namespace Devcade2048.App.Render;
 
 public static class Display {
@@ -132,7 +134,9 @@ public static class Display {
 
 
     public static void MenuBlobs() {
-        Color brightness = StyleMath.GetInitialBrightness();
+        Display.GameBlob();
+        Display.InfoBlob();
+        /*Color brightness = StyleMath.GetInitialBrightness();
         Vector2 pos1 = new Vector2(9, 300);
         Vector2 pos2 = new Vector2(219, 300);
         Vector2 pos3 = new Vector2(114, 500);
@@ -149,28 +153,81 @@ public static class Display {
 
 		sprite.Draw(Asset.Menu[0], pos1, brightness);
 		sprite.Draw(Asset.Menu[1], pos2, brightness);
-		sprite.Draw(Asset.Menu[2], pos3, brightness);
+		sprite.Draw(Asset.Menu[2], pos3, brightness); */
+    }
+
+    public static void GameBlob() {
+        if (TabHandler.CurrentTab.Id() != SelectedTab.Menu) return;
+        Color brightness = StyleMath.GetInitialBrightness();
+        Vector2 pos = new Vector2(9, 300);
+        double percent = 0;
+        Vector2 endPos = new Vector2(-300, 300);
+        if (Animation.State == AnimationState.FromTab) {
+            percent = Animation.FastEnd(2);
+        }
+        if (Animation.State == AnimationState.ToTab) {
+            percent = 1 - Animation.FastStart(2);
+        }
+
+        pos = StyleMath.Interpolate(pos, endPos, percent);
+
+        sprite.Draw(Asset.Menu[0], pos, brightness);
+    }
+
+    public static void InfoBlob() {
+        if (
+            TabHandler.CurrentTab.Id() != SelectedTab.Info 
+         && TabHandler.CurrentTab.Id() != SelectedTab.Menu
+        ) return; 
+
+        Color brightness = StyleMath.GetInitialBrightness();
+        Vector2 pos = new Vector2(219, 300);
+        double percent = 0;
+        Vector2 endPos = new Vector2(114, 130);
+
+        if (Animation.State == AnimationState.FromTab) {
+            percent = Animation.FastEnd(2);
+            if (TabHandler.NextTab.Id() == SelectedTab.Game) endPos = new Vector2(530, 300);
+        }
+        if (Animation.State == AnimationState.ToTab) {
+            percent = 1 - Animation.FastStart(2);
+            if (TabHandler.LastTab.Id() == SelectedTab.Game) endPos = new Vector2(530, 300);
+        }
+        if (TabHandler.CurrentTab.Id() == SelectedTab.Info) {
+            pos = new Vector2(114, 130);
+        }
+
+        pos = StyleMath.Interpolate(pos, endPos, percent);
+
+        sprite.Draw(Asset.Menu[1], pos, brightness);
     }
 
     public static void Info() {
-        if (manager.State != GameState.Suspended) return;
+        double percent = 0;
 
-        double percent = Animation.FastStart(2);
+        if (Animation.State == AnimationState.ToTab) {
+            percent = 1 - Animation.FastStart(2);
+        } else if (Animation.State == AnimationState.FromTab) {
+            percent = Animation.FastEnd(2);
+        }
+
+        Color color = StyleMath.Interpolate(new Color(0, 127, 255), new Color(251, 194, 27), percent);
 
         Rectangle region = new Rectangle(40, 350, 360, 600);
-        region.Y += (int) (percent * 900);
+        region.Y += (int) (percent * 300);
 
         TextBox.DrawInArea(
             sprite, 
     @"    2048, with blobs!
-    Use the joystick to move tiles up, down, left, and right to slide them around the grid. (Diagonals don't count.)
+    Use the joystick to move tiles up, down, left, and right to slide them around the grid. (Diagonals do nothing.)
     When 2 identical tiles merge together, they combine into one! 
     Get to 2048 to win!
     
     From the menu, press RED to begin, BLUE to see this info menu, and GREEN to see the credits.
-    In game, press RED to reset and BLUE to exit.",
-            new Rectangle(40, 350, 350, 300),
-            Color.Red
+    In game, press RED to reset and BLUE to exit.
+    Press any button to return to the menu.",
+            region,
+            color
         );
     }
 }
