@@ -9,6 +9,10 @@ public enum AnimationState {
     InitFadeIn,
     // InitToTile,
 
+
+    ToTab,
+    FromTab,
+    /*
     // Major animations between Game and Menu
     ToMenu,
     ToGame,
@@ -18,6 +22,7 @@ public enum AnimationState {
     // Menu animations
     ToInfo,
     FromInfo,
+    */
 
     // Game animations
     Spawning,

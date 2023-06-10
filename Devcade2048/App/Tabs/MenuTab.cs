@@ -12,6 +12,9 @@ public class MenuTab : ITab {
 
     public SelectedTab _nextTab = SelectedTab.None;
 
+    public SelectedTab Id() => SelectedTab.Menu;
+
+
     public void Begin() {
         _nextTab = SelectedTab.None;
     }
@@ -38,20 +41,17 @@ public class MenuTab : ITab {
     }
 
 	private void StartGame() {
-		// _GameData.State = GameState.Playing;
-		Animation.ChangeStateTo(AnimationState.FromMenu);
+		TabHandler.SetNextTab(SelectedTab.Game);
 	}
 
 	private void GotoInfo() {
-		Animation.ChangeStateTo(AnimationState.FromMenu);
+		Animation.ChangeStateTo(AnimationState.FromTab);
 		//  _GameData.State = GameState.InInfo;
 	}
 
 
     public void Draw(GameTime gameTime) {
 		Display.MenuBlobs();
-
-		// Display.Info();
     }
 
     public SelectedTab NextTab() {

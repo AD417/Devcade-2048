@@ -25,10 +25,10 @@ public static class StyleMath {
     }
 
     public static Color GetScoreColor() {
-        if (Animation.State == AnimationState.ToGame) {
+        if (Animation.State == AnimationState.ToTab) {
             return StyleMath.Interpolate(new Color(251, 194, 27), Color.Black, Animation.FastEnd(2));
         }
-        if (Animation.State == AnimationState.FromGame) {
+        if (Animation.State == AnimationState.FromTab) {
             return StyleMath.Interpolate(Color.Black, new Color(251, 194, 27), Animation.FastStart(2));
         }
         return Color.Black;
@@ -36,8 +36,8 @@ public static class StyleMath {
 
     // Tile management
     public static Vector2 GridDisplacement() {
-        if (!Animation.StateIsAny(AnimationState.FromGame, AnimationState.ToGame)) return new Vector2();
-        if (Animation.State == AnimationState.ToGame) {
+        if (!Animation.StateIsAny(AnimationState.FromTab, AnimationState.ToTab)) return new Vector2();
+        if (Animation.State == AnimationState.ToTab) {
             return new Vector2(0, 710 * (float)(1 - Animation.FastStart()));
         } else { // AnimationState is FromGame
             return new Vector2(0, (float)(710 * Animation.FastEnd()));
@@ -156,7 +156,7 @@ public static class StyleMath {
         if (Animation.StateIsAny(
             AnimationState.WaitingForInput, 
             AnimationState.ResetFromLost, 
-            AnimationState.FromGame
+            AnimationState.FromTab
         )) return 12;
         if (Animation.State != AnimationState.ToLost) return -1;
 

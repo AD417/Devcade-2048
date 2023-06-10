@@ -1,6 +1,8 @@
 using System;
 using Microsoft.Xna.Framework;
 
+using Devcade2048.App.Tabs;
+
 namespace Devcade2048.App.Render;
 
 public static class Animation {
@@ -61,12 +63,8 @@ public static class Animation {
                 break;
 
             case AnimationState.InitFadeIn:
-            case AnimationState.ToMenu:
-            case AnimationState.ToGame:
-            case AnimationState.ToInfo:
-            case AnimationState.FromMenu:
-            case AnimationState.FromGame:
-            case AnimationState.FromInfo:
+            case AnimationState.ToTab:
+            case AnimationState.FromTab:
             case AnimationState.ResetFromWin:
             case AnimationState.ContinueFromWin:
             case AnimationState.ResetFromLost:
@@ -102,24 +100,23 @@ public static class Animation {
         JustChanged = true;
         switch (State) {
             case AnimationState.InitFadeIn:
-            case AnimationState.ToMenu:
             case AnimationState.ContinueFromWin:
-            case AnimationState.ToInfo:
                 State = AnimationState.WaitingForInput;
                 break;
-            case AnimationState.ToGame:
             case AnimationState.ResetFromWin:
             case AnimationState.ResetFromLost:
             case AnimationState.ResetFromNormal:
                 State = AnimationState.Spawning;
                 break;
-            case AnimationState.FromMenu:
-                // TODO: handle going to Info.
-                State = AnimationState.ToGame;
+            case AnimationState.FromTab:
+                State = AnimationState.ToTab;
                 break;
-            case AnimationState.FromGame:
-            case AnimationState.FromInfo:
-                State = AnimationState.ToMenu;
+            case AnimationState.ToTab:
+                if (TabHandler.CurrentTab.Id() == SelectedTab.Game) {
+                    State = AnimationState.Spawning;
+                } else {
+                    State = AnimationState.WaitingForInput;
+                }
                 break;
         }
     }
@@ -165,12 +162,8 @@ public static class Animation {
     public static double PercentComplete() {
         switch (State) {
             case AnimationState.InitFadeIn: 
-            case AnimationState.ToMenu:
-            case AnimationState.ToGame:
-            case AnimationState.ToInfo:
-            case AnimationState.FromMenu:
-            case AnimationState.FromGame:
-            case AnimationState.FromInfo:
+            case AnimationState.ToTab:
+            case AnimationState.FromTab:
             case AnimationState.ResetFromWin:
             case AnimationState.ContinueFromWin:
             case AnimationState.ResetFromLost:
@@ -209,7 +202,7 @@ public static class Animation {
     public static bool RenderingTiles() {
         return !StateIsAny(
             AnimationState.ResetFromWin,
-            AnimationState.ToGame
+            AnimationState.ToTab
         );
     }
 
@@ -221,19 +214,11 @@ public static class Animation {
         );
     }
 
-    public static bool SwitchToGame() {
+    public static bool SwitchTabs() {
         return (
-            State == AnimationState.ToGame
+            State == AnimationState.ToTab
          && JustChanged
-         && LastState == AnimationState.FromMenu
-        );
-    }
-
-    public static bool SwitchToMenu() {
-        return (
-            State == AnimationState.ToMenu
-         && JustChanged
-         && LastState == AnimationState.FromGame
+         && LastState == AnimationState.FromTab
         );
     }
 
@@ -248,13 +233,9 @@ public static class Animation {
     public static double Opacity() {
         double percent = PercentComplete();
         switch (State) {
-            case AnimationState.ToMenu:
-            case AnimationState.ToGame:
-            case AnimationState.ToInfo:
+            case AnimationState.ToTab:
                 return percent;
-            case AnimationState.FromGame:
-            case AnimationState.FromMenu:
-            case AnimationState.FromInfo:
+            case AnimationState.FromTab:
                 return 1.0 - percent;
             default:
                 return 1.0;

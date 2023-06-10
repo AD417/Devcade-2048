@@ -11,21 +11,24 @@ namespace Devcade2048.App.Tabs;
 public class GameTab : ITab {
 
     private Manager GameData;
-    private SpriteBatch Sprite;
     private SelectedTab _nextTab = SelectedTab.None;
 
-    public GameTab(Manager gameData, SpriteBatch sprite) {
+    public GameTab(Manager gameData) {
+        // TODO: determine if the GameData / Manager can be created here, without needing the Game. 
         GameData = gameData;
-        Sprite = sprite;
     }
+
+    public SelectedTab Id() => SelectedTab.Game;
 
     public void Begin() {
         _nextTab = SelectedTab.None;
         GameData.Setup();
+        GameData.State = GameState.Playing;
     }
 
     public void End() {
         HighScoreTracker.Save();
+        GameData.State = GameState.InMenu;
     }
 
     public void Update(GameTime gameTime) {
@@ -73,7 +76,7 @@ public class GameTab : ITab {
 
 	private void EndGame() {
 		HighScoreTracker.Save();
-		Animation.ChangeStateTo(AnimationState.FromGame);
+        TabHandler.SetNextTab(SelectedTab.Menu);
 	}
 
 	private void Continue() {

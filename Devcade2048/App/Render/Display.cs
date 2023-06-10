@@ -137,10 +137,9 @@ public static class Display {
         Vector2 pos2 = new Vector2(219, 300);
         Vector2 pos3 = new Vector2(114, 500);
         double percent = 0;
-        if (Animation.State == AnimationState.FromMenu) {
+        if (Animation.State == AnimationState.FromTab) {
             percent = Animation.FastEnd(2);
-        }
-        if (Animation.State == AnimationState.ToMenu) {
+        } else if (Animation.State == AnimationState.ToTab) {
             percent = 1 - Animation.FastStart(2);
         }
 
