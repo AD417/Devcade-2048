@@ -1,6 +1,8 @@
 using System;
 using Microsoft.Xna.Framework;
 
+using Devcade2048.App.Tabs;
+
 namespace Devcade2048.App.Render;
 
 public static class StyleMath {
@@ -163,4 +165,42 @@ public static class StyleMath {
 
         return (int) ((Animation.PercentComplete() - 0.5) * 20);
     }
+
+
+    // Menu Blobs
+    public static Vector2 MenuBlobPosition(Vector2 normal, Vector2 offScreen, SelectedTab tab) {
+        Vector2 top = new Vector2(114, 130);
+        if (Animation.State == AnimationState.WaitingForInput) {
+            if (TabHandler.CurrentTab.Id() == tab) return top;
+            if (TabHandler.CurrentTab.Id() == SelectedTab.Menu) return normal;
+            return offScreen;
+        }
+        if (Animation.State == AnimationState.ToTab) {
+            if (TabHandler.CurrentTab.Id() == tab && TabHandler.LastTab.Id() == SelectedTab.Menu) {
+                return top;
+            }
+            if (TabHandler.CurrentTab.Id() == SelectedTab.Menu && TabHandler.LastTab.Id() == tab) {
+                return Interpolate(top, normal, Animation.FastStart(2));
+            }
+            if (TabHandler.CurrentTab.Id() == SelectedTab.Menu) {
+                return Interpolate(offScreen, normal, Animation.FastStart(2));
+            }
+            return offScreen;
+        }
+        if (Animation.State == AnimationState.FromTab) {
+            if (TabHandler.CurrentTab.Id() == tab && TabHandler.NextTab.Id() == SelectedTab.Menu) {
+                return top;
+            }
+            if (TabHandler.CurrentTab.Id() == SelectedTab.Menu && TabHandler.NextTab.Id() == tab) {
+                return Interpolate(normal, top, Animation.FastEnd(2));
+            }
+            if (TabHandler.CurrentTab.Id() == SelectedTab.Menu) {
+                return Interpolate(normal, offScreen, Animation.FastEnd(2));
+            }
+            return offScreen;
+        }
+
+        return offScreen;
+    }
+
 }

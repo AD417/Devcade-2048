@@ -136,6 +136,7 @@ public static class Display {
     public static void MenuBlobs() {
         Display.GameBlob();
         Display.InfoBlob();
+        Display.CreditsBlob();
         /*Color brightness = StyleMath.GetInitialBrightness();
         Vector2 pos1 = new Vector2(9, 300);
         Vector2 pos2 = new Vector2(219, 300);
@@ -181,25 +182,29 @@ public static class Display {
         ) return; 
 
         Color brightness = StyleMath.GetInitialBrightness();
-        Vector2 pos = new Vector2(219, 300);
-        double percent = 0;
-        Vector2 endPos = new Vector2(114, 130);
-
-        if (Animation.State == AnimationState.FromTab) {
-            percent = Animation.FastEnd(2);
-            if (TabHandler.NextTab.Id() == SelectedTab.Game) endPos = new Vector2(530, 300);
-        }
-        if (Animation.State == AnimationState.ToTab) {
-            percent = 1 - Animation.FastStart(2);
-            if (TabHandler.LastTab.Id() == SelectedTab.Game) endPos = new Vector2(530, 300);
-        }
-        if (TabHandler.CurrentTab.Id() == SelectedTab.Info) {
-            pos = new Vector2(114, 130);
-        }
-
-        pos = StyleMath.Interpolate(pos, endPos, percent);
+        Vector2 pos = StyleMath.MenuBlobPosition(
+            new Vector2(219, 300),
+            new Vector2(530, 300),
+            SelectedTab.Info
+        );
 
         sprite.Draw(Asset.Menu[1], pos, brightness);
+    }
+
+    public static void CreditsBlob() {
+        if (
+            TabHandler.CurrentTab.Id() != SelectedTab.Credits 
+         && TabHandler.CurrentTab.Id() != SelectedTab.Menu
+        ) return; 
+
+        Color brightness = StyleMath.GetInitialBrightness();
+        Vector2 pos = StyleMath.MenuBlobPosition(
+            new Vector2(114, 500),
+            new Vector2(-300, 500),
+            SelectedTab.Credits
+        );
+
+        sprite.Draw(Asset.Menu[2], pos, brightness);
     }
 
     public static void Info() {
