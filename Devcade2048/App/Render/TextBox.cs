@@ -32,4 +32,9 @@ public static class TextBox {
         sb.DrawString(Asset.SmallFont, line, pos, color);
         return (int) (pos.Y - area.Top + 2 * size.Y);
     }
+
+    public static void WriteCenteredText(SpriteBatch sb, string text, Vector2 pos, Color color) {
+        Vector2 offset = Asset.BigFont.MeasureString(text) / 2; 
+        sb.DrawString(Asset.BigFont, text, pos - offset, color);
+    }
 }

@@ -58,6 +58,7 @@ public class MenuTab : ITab {
 	}
 
     public void Draw(GameTime gameTime) {
+		Display.MenuHighScore();
 		Display.MenuBlobs();
     }
 

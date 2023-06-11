@@ -137,24 +137,6 @@ public static class Display {
         Display.GameBlob();
         Display.InfoBlob();
         Display.CreditsBlob();
-        /*Color brightness = StyleMath.GetInitialBrightness();
-        Vector2 pos1 = new Vector2(9, 300);
-        Vector2 pos2 = new Vector2(219, 300);
-        Vector2 pos3 = new Vector2(114, 500);
-        double percent = 0;
-        if (Animation.State == AnimationState.FromTab) {
-            percent = Animation.FastEnd(2);
-        } else if (Animation.State == AnimationState.ToTab) {
-            percent = 1 - Animation.FastStart(2);
-        }
-
-        pos1 = StyleMath.Interpolate(pos1, new Vector2(-300, 300), percent);
-        pos2 = StyleMath.Interpolate(pos2, new Vector2(530, 300), percent);
-        pos3 = StyleMath.Interpolate(pos3, new Vector2(-300, 500), percent);
-
-		sprite.Draw(Asset.Menu[0], pos1, brightness);
-		sprite.Draw(Asset.Menu[1], pos2, brightness);
-		sprite.Draw(Asset.Menu[2], pos3, brightness); */
     }
 
     public static void GameBlob() {
@@ -205,6 +187,12 @@ public static class Display {
         );
 
         sprite.Draw(Asset.Menu[2], pos, brightness);
+    }
+
+    public static void MenuHighScore() {
+        Color color = StyleMath.GetScoreColor();
+        string highScore = "HIGH SCORE: " + HighScoreTracker.HighScore.ToString();
+        TextBox.WriteCenteredText(sprite, highScore, new Vector2(210, 200), color);
     }
 
     public static void Info() {

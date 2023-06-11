@@ -6,6 +6,8 @@ using Devcade2048.App.Tabs;
 namespace Devcade2048.App.Render;
 
 public static class StyleMath {
+    public static Color Background = new Color(251, 194, 27);
+
     // Color management
     public static Color Interpolate(Color c1, Color c2, double percent) {
         int r, g, b;
@@ -16,9 +18,9 @@ public static class StyleMath {
     }
 
     public static Color GetBackgroundColor() {
-        if (Animation.State != AnimationState.InitFadeIn) return new Color(251, 194, 27);
+        if (Animation.State != AnimationState.InitFadeIn) return Background;
         double opacity = Animation.FastEnd(2);
-        return StyleMath.Interpolate(new Color(0,0,0), new Color(251, 194, 27), opacity);
+        return StyleMath.Interpolate(new Color(0,0,0), Background, opacity);
     }
 
     public static Color GetInitialBrightness() {
@@ -28,10 +30,10 @@ public static class StyleMath {
 
     public static Color GetScoreColor() {
         if (Animation.State == AnimationState.ToTab) {
-            return StyleMath.Interpolate(new Color(251, 194, 27), Color.Black, Animation.FastEnd(2));
+            return StyleMath.Interpolate(Background, Color.Black, Animation.FastEnd(2));
         }
         if (Animation.State == AnimationState.FromTab) {
-            return StyleMath.Interpolate(Color.Black, new Color(251, 194, 27), Animation.FastStart(2));
+            return StyleMath.Interpolate(Color.Black, Background, Animation.FastStart(2));
         }
         return Color.Black;
     }
