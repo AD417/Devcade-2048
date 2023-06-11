@@ -230,7 +230,38 @@ public static class Display {
     
     From the menu, press RED to begin, BLUE to see this info menu, and GREEN to see the credits.
     In game, press RED to reset and BLUE to exit.
-    Press any button to return to the menu.",
+    
+    (Press any button to return.)",
+            region,
+            color
+        );
+    }
+
+    public static void Credits() {
+        double percent = 0;
+
+        if (Animation.State == AnimationState.ToTab) {
+            percent = 1 - Animation.FastStart(2);
+        } else if (Animation.State == AnimationState.FromTab) {
+            percent = Animation.FastEnd(2);
+        }
+
+        Color color = StyleMath.Interpolate(new Color(0, 127, 0), new Color(251, 194, 27), percent);
+
+        Rectangle region = new Rectangle(40, 350, 360, 600);
+        region.Y += (int) (percent * 300);
+
+        TextBox.DrawInArea(
+            sprite, 
+    @"   Original Game by Gabriele Cirulli.
+    Ported to the Devcade by Alexander Day, with help from:
+    - Noah Emke
+    - Jeremy Start
+    - Wilson McDade
+    
+    Special Thanks to the Computer Science House for the Devcade and Documentation, and you, for playing.
+    
+    (Press Any button to return.)",
             region,
             color
         );

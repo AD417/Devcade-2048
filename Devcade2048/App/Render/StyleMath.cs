@@ -168,11 +168,14 @@ public static class StyleMath {
 
 
     // Menu Blobs
-    public static Vector2 MenuBlobPosition(Vector2 normal, Vector2 offScreen, SelectedTab tab) {
+    public static Vector2 MenuBlobPosition(Vector2 menuPos, Vector2 offScreen, SelectedTab tab) {
+        if (Animation.State == AnimationState.InitFadeIn) return menuPos;
+
+
         Vector2 top = new Vector2(114, 130);
         if (Animation.State == AnimationState.WaitingForInput) {
             if (TabHandler.CurrentTab.Id() == tab) return top;
-            if (TabHandler.CurrentTab.Id() == SelectedTab.Menu) return normal;
+            if (TabHandler.CurrentTab.Id() == SelectedTab.Menu) return menuPos;
             return offScreen;
         }
         if (Animation.State == AnimationState.ToTab) {
@@ -180,10 +183,10 @@ public static class StyleMath {
                 return top;
             }
             if (TabHandler.CurrentTab.Id() == SelectedTab.Menu && TabHandler.LastTab.Id() == tab) {
-                return Interpolate(top, normal, Animation.FastStart(2));
+                return Interpolate(top, menuPos, Animation.FastStart(2));
             }
             if (TabHandler.CurrentTab.Id() == SelectedTab.Menu) {
-                return Interpolate(offScreen, normal, Animation.FastStart(2));
+                return Interpolate(offScreen, menuPos, Animation.FastStart(2));
             }
             return offScreen;
         }
@@ -192,10 +195,10 @@ public static class StyleMath {
                 return top;
             }
             if (TabHandler.CurrentTab.Id() == SelectedTab.Menu && TabHandler.NextTab.Id() == tab) {
-                return Interpolate(normal, top, Animation.FastEnd(2));
+                return Interpolate(menuPos, top, Animation.FastEnd(2));
             }
             if (TabHandler.CurrentTab.Id() == SelectedTab.Menu) {
-                return Interpolate(normal, offScreen, Animation.FastEnd(2));
+                return Interpolate(menuPos, offScreen, Animation.FastEnd(2));
             }
             return offScreen;
         }

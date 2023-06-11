@@ -5,10 +5,10 @@ using Devcade2048.App.Render;
 namespace Devcade2048.App.Tabs;
 
 
-public class InfoTab : ITab {
+public class CreditsTab : ITab {
     public SelectedTab _nextTab = SelectedTab.None;
 
-    public SelectedTab Id() => SelectedTab.Info;
+    public SelectedTab Id() => SelectedTab.Credits;
 
 
     public void Begin() {
@@ -27,7 +27,7 @@ public class InfoTab : ITab {
 
     public void Draw(GameTime gameTime) {
 		Display.MenuBlobs();
-        Display.Info();
+        Display.Credits();
     }
 
     public SelectedTab NextTab() {

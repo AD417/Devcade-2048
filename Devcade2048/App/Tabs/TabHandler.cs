@@ -15,6 +15,7 @@ public static class TabHandler {
         Tabs[0] = new MenuTab();
         Tabs[1] = new GameTab(manager);
         Tabs[2] = new InfoTab();
+        Tabs[3] = new CreditsTab();
         // TODO: more tabs. (Not important for right now.)
 
         CurrentTab = Tabs[0];
@@ -34,6 +35,9 @@ public static class TabHandler {
                 break;
             case SelectedTab.Info:
                 NextTab = Tabs[2];
+                break;
+            case SelectedTab.Credits:
+                NextTab = Tabs[3];
                 break;
         }
         Animation.ChangeStateTo(AnimationState.FromTab);
