@@ -6,13 +6,11 @@ namespace Devcade2048.App.Tabs;
 
 
 public class InfoTab : ITab {
-    public SelectedTab _nextTab = SelectedTab.None;
-
     public SelectedTab Id() => SelectedTab.Info;
 
 
     public void Begin() {
-        _nextTab = SelectedTab.None;
+        // None;
     }
 
     public void End() {
@@ -28,9 +26,5 @@ public class InfoTab : ITab {
     public void Draw(GameTime gameTime) {
 		Display.MenuBlobs();
         Display.Info();
-    }
-
-    public SelectedTab NextTab() {
-        return _nextTab;
     }
 }

@@ -147,19 +147,4 @@ public class Game1 : Game
 
 		base.Draw(gameTime);
 	}
-
-	private void DrawGame() {
-		Display.Grid();
-		Display.AllTiles();
-		Display.Scores();
-		if (_GameData.State == GameState.Won) Display.Win();
-		if (Animation.State == AnimationState.ResetFromWin) Display.WinReset();
-		if (_GameData.State == GameState.Lost) Display.Lose();
-	}
-
-	private void DrawMenu() {
-		Display.MenuBlobs();
-
-		Display.Info();
-	}
 }

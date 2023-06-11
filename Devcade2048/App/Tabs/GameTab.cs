@@ -9,9 +9,7 @@ using Devcade2048.App.Render;
 namespace Devcade2048.App.Tabs;
 
 public class GameTab : ITab {
-
     private Manager GameData;
-    private SelectedTab _nextTab = SelectedTab.None;
 
     public GameTab(Manager gameData) {
         // TODO: determine if the GameData / Manager can be created here, without needing the Game. 
@@ -21,7 +19,6 @@ public class GameTab : ITab {
     public SelectedTab Id() => SelectedTab.Game;
 
     public void Begin() {
-        _nextTab = SelectedTab.None;
         GameData.Setup();
         GameData.State = GameState.Playing;
     }
@@ -90,9 +87,5 @@ public class GameTab : ITab {
 		if (GameData.State == GameState.Won) Display.Win();
 		if (Animation.State == AnimationState.ResetFromWin) Display.WinReset();
 		if (GameData.State == GameState.Lost) Display.Lose();
-    }
-
-    public SelectedTab NextTab() {
-        return _nextTab;
     }
 }

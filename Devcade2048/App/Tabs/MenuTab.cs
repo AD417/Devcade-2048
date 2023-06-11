@@ -7,14 +7,11 @@ using Devcade2048.App.Render;
 namespace Devcade2048.App.Tabs;
 
 public class MenuTab : ITab {
-
-    public SelectedTab _nextTab = SelectedTab.None;
-
     public SelectedTab Id() => SelectedTab.Menu;
 
 
     public void Begin() {
-        _nextTab = SelectedTab.None;
+		// None;
     }
 
     public void End() {
@@ -60,9 +57,5 @@ public class MenuTab : ITab {
     public void Draw(GameTime gameTime) {
 		Display.MenuHighScore();
 		Display.MenuBlobs();
-    }
-
-    public SelectedTab NextTab() {
-        return _nextTab;
     }
 }

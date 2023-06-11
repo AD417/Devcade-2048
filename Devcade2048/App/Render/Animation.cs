@@ -230,18 +230,6 @@ public static class Animation {
         );
     }
 
-    public static double Opacity() {
-        double percent = PercentComplete();
-        switch (State) {
-            case AnimationState.ToTab:
-                return percent;
-            case AnimationState.FromTab:
-                return 1.0 - percent;
-            default:
-                return 1.0;
-        }
-    }
-
     public static double FastEnd(double factor = 3) {
         double normalPercent = PercentComplete();
         return Math.Pow(normalPercent, factor);
