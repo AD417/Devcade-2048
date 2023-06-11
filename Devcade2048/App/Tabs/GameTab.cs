@@ -1,9 +1,7 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Devcade;
 
-using Devcade2048.App;
 using Devcade2048.App.Render;
 
 namespace Devcade2048.App.Tabs;
