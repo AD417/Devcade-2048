@@ -1,6 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using Devcade2048.App.Tabs;
+
 namespace Devcade2048.App.Render;
 
 public static class Display {
@@ -132,45 +134,124 @@ public static class Display {
 
 
     public static void MenuBlobs() {
+        Display.GameBlob();
+        Display.InfoBlob();
+        Display.CreditsBlob();
+    }
+
+    public static void GameBlob() {
+        if (TabHandler.CurrentTab.Id() != SelectedTab.Menu) return;
         Color brightness = StyleMath.GetInitialBrightness();
-        Vector2 pos1 = new Vector2(9, 300);
-        Vector2 pos2 = new Vector2(219, 300);
-        Vector2 pos3 = new Vector2(114, 500);
+        Vector2 pos = new Vector2(9, 300);
         double percent = 0;
+        Vector2 endPos = new Vector2(-300, 300);
         if (Animation.State == AnimationState.FromTab) {
             percent = Animation.FastEnd(2);
-        } else if (Animation.State == AnimationState.ToTab) {
+        }
+        if (Animation.State == AnimationState.ToTab) {
             percent = 1 - Animation.FastStart(2);
         }
 
-        pos1 = StyleMath.Interpolate(pos1, new Vector2(-300, 300), percent);
-        pos2 = StyleMath.Interpolate(pos2, new Vector2(530, 300), percent);
-        pos3 = StyleMath.Interpolate(pos3, new Vector2(-300, 500), percent);
+        pos = StyleMath.Interpolate(pos, endPos, percent);
 
-		sprite.Draw(Asset.Menu[0], pos1, brightness);
-		sprite.Draw(Asset.Menu[1], pos2, brightness);
-		sprite.Draw(Asset.Menu[2], pos3, brightness);
+        sprite.Draw(Asset.Menu[0], pos, brightness);
+    }
+
+    public static void InfoBlob() {
+        if (
+            TabHandler.CurrentTab.Id() != SelectedTab.Info 
+         && TabHandler.CurrentTab.Id() != SelectedTab.Menu
+        ) return; 
+
+        Color brightness = StyleMath.GetInitialBrightness();
+        Vector2 pos = StyleMath.MenuBlobPosition(
+            new Vector2(219, 300),
+            new Vector2(530, 300),
+            SelectedTab.Info
+        );
+
+        sprite.Draw(Asset.Menu[1], pos, brightness);
+    }
+
+    public static void CreditsBlob() {
+        if (
+            TabHandler.CurrentTab.Id() != SelectedTab.Credits 
+         && TabHandler.CurrentTab.Id() != SelectedTab.Menu
+        ) return; 
+
+        Color brightness = StyleMath.GetInitialBrightness();
+        Vector2 pos = StyleMath.MenuBlobPosition(
+            new Vector2(114, 500),
+            new Vector2(-300, 500),
+            SelectedTab.Credits
+        );
+
+        sprite.Draw(Asset.Menu[2], pos, brightness);
+    }
+
+    public static void MenuHighScore() {
+        Color color = StyleMath.GetScoreColor();
+        string highScore = "HIGH SCORE: " + HighScoreTracker.HighScore.ToString();
+        TextBox.WriteCenteredText(sprite, highScore, new Vector2(210, 200), color);
     }
 
     public static void Info() {
-        if (manager.State != GameState.Suspended) return;
+        double percent = 0;
 
-        double percent = Animation.FastStart(2);
+        if (Animation.State == AnimationState.ToTab) {
+            percent = 1 - Animation.FastStart(2);
+        } else if (Animation.State == AnimationState.FromTab) {
+            percent = Animation.FastEnd(2);
+        }
+
+        Color color = StyleMath.Interpolate(new Color(0, 127, 255), new Color(251, 194, 27), percent);
 
         Rectangle region = new Rectangle(40, 350, 360, 600);
-        region.Y += (int) (percent * 900);
+        region.Y += (int) (percent * 300);
 
         TextBox.DrawInArea(
             sprite, 
     @"    2048, with blobs!
-    Use the joystick to move tiles up, down, left, and right to slide them around the grid. (Diagonals don't count.)
+    Use the joystick to move tiles up, down, left, and right to slide them around the grid. (Diagonals do nothing.)
     When 2 identical tiles merge together, they combine into one! 
     Get to 2048 to win!
     
     From the menu, press RED to begin, BLUE to see this info menu, and GREEN to see the credits.
-    In game, press RED to reset and BLUE to exit.",
-            new Rectangle(40, 350, 350, 300),
-            Color.Red
+    In game, press RED to reset and BLUE to exit.
+    
+    (Press any button to return.)",
+            region,
+            color
+        );
+    }
+
+    public static void Credits() {
+        double percent = 0;
+
+        if (Animation.State == AnimationState.ToTab) {
+            percent = 1 - Animation.FastStart(2);
+        } else if (Animation.State == AnimationState.FromTab) {
+            percent = Animation.FastEnd(2);
+        }
+
+        Color color = StyleMath.Interpolate(new Color(0, 127, 0), new Color(251, 194, 27), percent);
+
+        Rectangle region = new Rectangle(40, 350, 360, 600);
+        region.Y += (int) (percent * 300);
+
+        TextBox.DrawInArea(
+            sprite, 
+    @"   Original Game by Gabriele Cirulli.
+    Ported to the Devcade by Alexander Day, with help from:
+    - Noah Emke
+    - Jeremy Start
+    - Wilson McDade
+    
+    Special Thanks to the Computer Science House for the Devcade and Documentation, and you, for playing.
+    
+    (Press Any button to return.)",
+            region,
+            color
         );
     }
 }

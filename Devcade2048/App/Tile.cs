@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 
-
 namespace Devcade2048.App;
 
 public class Tile

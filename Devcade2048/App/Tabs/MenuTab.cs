@@ -1,22 +1,17 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Devcade;
 
-using Devcade2048.App;
 using Devcade2048.App.Render;
 
 namespace Devcade2048.App.Tabs;
 
 public class MenuTab : ITab {
-
-    public SelectedTab _nextTab = SelectedTab.None;
-
     public SelectedTab Id() => SelectedTab.Menu;
 
 
     public void Begin() {
-        _nextTab = SelectedTab.None;
+		// None;
     }
 
     public void End() {
@@ -38,6 +33,13 @@ public class MenuTab : ITab {
 		) {
 			GotoInfo();
 		}
+
+		if (
+			Keyboard.GetState().IsKeyDown(Keys.C)
+		 || Input.GetButton(1, Input.ArcadeButtons.A3)
+		) {
+			GotoCredits();
+		}
     }
 
 	private void StartGame() {
@@ -45,16 +47,15 @@ public class MenuTab : ITab {
 	}
 
 	private void GotoInfo() {
-		Animation.ChangeStateTo(AnimationState.FromTab);
-		//  _GameData.State = GameState.InInfo;
+		TabHandler.SetNextTab(SelectedTab.Info);
 	}
 
+	private void GotoCredits() {
+		TabHandler.SetNextTab(SelectedTab.Credits);
+	}
 
     public void Draw(GameTime gameTime) {
+		Display.MenuHighScore();
 		Display.MenuBlobs();
-    }
-
-    public SelectedTab NextTab() {
-        return _nextTab;
     }
 }
