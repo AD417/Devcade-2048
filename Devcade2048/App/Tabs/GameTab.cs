@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Input;
 using Devcade;
 
 using Devcade2048.App.Render;
+using Devcade2048.App;
 
 namespace Devcade2048.App.Tabs;
 
@@ -42,23 +43,17 @@ public class GameTab : ITab {
 			DebugRender.Write(GameData.Grid);
 		}
 
-		if (
-			Keyboard.GetState().IsKeyDown(Keys.R) 
-		 || Input.GetButton(1, Input.ArcadeButtons.A1)
-		) {
+		if (InputManager.isButtonPressed(Button.Red)) {
 			Reset();
 		}
 
-		if (
-			Keyboard.GetState().IsKeyDown(Keys.P)
-		 || Input.GetButton(1, Input.ArcadeButtons.A2)
-		) {
+		if (InputManager.isButtonPressed(Button.Blue)) {
 			EndGame();
 		}
 
 		if (
 			GameData.State == GameState.Won
-		 && (Keyboard.GetState().IsKeyDown(Keys.C) || Input.GetButton(1, Input.ArcadeButtons.A4))
+		 && InputManager.isButtonPressed(Button.White)
 		) {
 			Continue();
 		}

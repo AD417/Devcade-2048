@@ -20,24 +20,15 @@ public class MenuTab : ITab {
 
     public void Update(GameTime gameTime) {
 		if (!Animation.AcceptInput()) return;
-		if (
-			Keyboard.GetState().IsKeyDown(Keys.R) 
-		 || Input.GetButton(1, Input.ArcadeButtons.A1)
-		) {
+		if (InputManager.isButtonPressed(Button.Red)) {
 			StartGame();
 		}
 
-		if (
-			Keyboard.GetState().IsKeyDown(Keys.E)
-		 || Input.GetButton(1, Input.ArcadeButtons.A2)
-		) {
+		if (InputManager.isButtonPressed(Button.Blue)) {
 			GotoInfo();
 		}
 
-		if (
-			Keyboard.GetState().IsKeyDown(Keys.C)
-		 || Input.GetButton(1, Input.ArcadeButtons.A3)
-		) {
+		if (InputManager.isButtonPressed(Button.Green)) {
 			GotoCredits();
 		}
     }
