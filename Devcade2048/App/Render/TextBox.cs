@@ -4,6 +4,31 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Devcade2048.App.Render;
 
 public static class TextBox {
+    // XXX: Copy of code located at Display.DrawAsset. This is probably bad...
+    public static void DrawString(SpriteBatch sb, SpriteFont font, string data, Vector2 pos, Color color) {
+        #region
+#if DEBUG
+        sb.DrawString(font, data, pos, color);
+#else
+        Vector2 actualPos = new(
+            (int) (pos.X * 18.0f / 7.0f),
+            (int) (pos.Y * 18.0f / 7.0f)
+        );
+        sb.DrawString(
+            spriteFont: font, 
+            text: data, 
+            position: actualPos, 
+            color: color, 
+            rotation: 0.0f, 
+            origin: new(), 
+            scale: 18.0f / 7.0f, 
+            effects: SpriteEffects.None, 
+            layerDepth: 0.0f
+        );
+#endif
+        #endregion
+    }
+
     public static void DrawInArea(SpriteBatch sb, string text, Rectangle area, Color color) {
         string[] paragraphs = text.Split('\n');
         foreach (string paragraph in paragraphs) {
@@ -29,12 +54,12 @@ public static class TextBox {
                 line = newLine;
             }
         }
-        sb.DrawString(Asset.SmallFont, line, pos, color);
+        DrawString(sb, Asset.SmallFont, line, pos, color);
         return (int) (pos.Y - area.Top + 2 * size.Y);
     }
 
     public static void WriteCenteredText(SpriteBatch sb, string text, Vector2 pos, Color color) {
         Vector2 offset = Asset.BigFont.MeasureString(text) / 2; 
-        sb.DrawString(Asset.BigFont, text, pos - offset, color);
+        DrawString(sb, Asset.BigFont, text, pos - offset, color);
     }
 }
