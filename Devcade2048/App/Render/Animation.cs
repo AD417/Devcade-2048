@@ -85,7 +85,7 @@ public static class Animation {
         if (Timer < EndTime) return;
         LastState = State;
         JustChanged = true;
-        if (State != AnimationState.ToWon || new Random().NextDouble() <= 0.95) {
+        if (State != AnimationState.ToWon || new Random().NextDouble() <= 0.9) {
             Timer = new TimeSpan();
             State = AnimationState.WaitingForInput;
         } else {

@@ -50,7 +50,7 @@ public class GameTab : ITab {
 		}
 
 		if (
-			Keyboard.GetState().IsKeyDown(Keys.E)
+			Keyboard.GetState().IsKeyDown(Keys.P)
 		 || Input.GetButton(1, Input.ArcadeButtons.A2)
 		) {
 			EndGame();

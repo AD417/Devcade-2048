@@ -34,8 +34,8 @@ public static class InputManager {
         if (Keyboard.GetState().IsKeyDown(Keys.A)) return Manager.Direction.Left;
 #else
         direction = Input.GetStick(1);
-        if (direction.Y < -0.9) return Manager.Direction.Up;
-        if (direction.Y >  0.9) return Manager.Direction.Down;
+        if (direction.Y >  0.9) return Manager.Direction.Up;
+        if (direction.Y < -0.9) return Manager.Direction.Down;
         if (direction.X < -0.9) return Manager.Direction.Left;
         if (direction.X >  0.9) return Manager.Direction.Right;
 #endif

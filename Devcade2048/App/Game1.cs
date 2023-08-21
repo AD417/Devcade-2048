@@ -89,7 +89,7 @@ public class Game1 : Game
 		Asset.Grid = Content.Load<Texture2D>("2048Grid");
 		for (int i = 0; i < 11; i++) {
 			int powerOfTwo = (int) Math.Pow(2, i + 1);
-			Asset.Tile[i] = Content.Load<Texture2D>($"{powerOfTwo.ToString("0000")} Tile");
+			Asset.Tile[i] = Content.Load<Texture2D>($"{powerOfTwo:0000} Tile");
 		}
 		Asset.LoseTile[0] = Content.Load<Texture2D>("DED1 Blob");
 		Asset.LoseTile[1] = Content.Load<Texture2D>("DED2 Blob");

@@ -13,7 +13,7 @@ public class Manager {
 
     public int ScoreDelta { get; private set; }
 
-    private static Random RNG = new Random();
+    private static readonly Random RNG = new();
     // TODO: figure out how to handle InMenu. 
 
     public GameState State;
@@ -41,7 +41,7 @@ public class Manager {
     }
 
     public bool IsGameTerminated() {
-        return (State == GameState.Lost || State == GameState.Won);
+        return State == GameState.Lost || State == GameState.Won;
     }
 
     public void Setup() {
@@ -118,8 +118,10 @@ public class Manager {
             Tile next = Grid.CellContent(positions.Next);
 
             if (next != null && next.Value == tile.Value && next.MergedFrom == null) {
-                Tile merged = new Tile(positions.Next, tile.TextureId + 1, tile.Value * 2);
-                merged.MergedFrom = new Tile[] {tile, next};
+                Tile merged = new Tile(positions.Next, tile.TextureId + 1, tile.Value * 2)
+                {
+                    MergedFrom = new Tile[] { tile, next }
+                };
 
                 Grid.InsertTile(merged);
                 Grid.RemoveTile(tile);
