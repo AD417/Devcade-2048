@@ -2,7 +2,6 @@ using Devcade;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 
-using Devcade2048.App;
 using System;
 
 namespace Devcade2048.App;

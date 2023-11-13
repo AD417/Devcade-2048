@@ -20,7 +20,7 @@ public static class StyleMath {
     public static Color GetBackgroundColor() {
         if (Animation.State != AnimationState.InitFadeIn) return Background;
         double opacity = Animation.FastEnd(2);
-        return StyleMath.Interpolate(new Color(0,0,0), Background, opacity);
+        return Interpolate(new Color(0,0,0), Background, opacity);
     }
 
     public static Color GetInitialBrightness() {
@@ -30,10 +30,10 @@ public static class StyleMath {
 
     public static Color GetScoreColor() {
         if (Animation.State == AnimationState.ToTab) {
-            return StyleMath.Interpolate(Background, Color.Black, Animation.FastEnd(2));
+            return Interpolate(Background, Color.Black, Animation.FastEnd(2));
         }
         if (Animation.State == AnimationState.FromTab) {
-            return StyleMath.Interpolate(Color.Black, Background, Animation.FastStart(2));
+            return Interpolate(Color.Black, Background, Animation.FastStart(2));
         }
         return Color.Black;
     }

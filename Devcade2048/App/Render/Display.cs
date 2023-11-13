@@ -276,7 +276,7 @@ public static class Display {
         TextBox.DrawInArea(
             sprite, 
     @"    2048, with blobs!
-    Use the joystick to move tiles up, down, left, and right to slide them around the grid. (Diagonals do nothing.)
+    Use the joystick to move tiles up, down, left, and right to slide them around the grid.
     When 2 identical tiles merge together, they combine into one! 
     Get to 2048 to win!
     

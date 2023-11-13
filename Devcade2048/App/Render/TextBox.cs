@@ -2,7 +2,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Devcade2048.App.Render;
-
 public static class TextBox {
     // XXX: Copy of code located at Display.DrawAsset. This is probably bad...
     public static void DrawString(SpriteBatch sb, SpriteFont font, string data, Vector2 pos, Color color) {
@@ -42,12 +41,12 @@ public static class TextBox {
         string[] words = text.Split(' ');
         string line = "";
         Vector2 pos = new Vector2(area.Left, area.Top);
-        Vector2 size = new Vector2()    ;
+        Vector2 size = Vector2.Zero;
         foreach (string word in words) {
             string newLine = line + " " + word;
             size = Asset.SmallFont.MeasureString(newLine);
             if (size.X > area.Width) {
-                sb.DrawString(Asset.SmallFont, line, pos, color);
+                DrawString(sb, Asset.SmallFont, line, pos, color);
                 line = word;
                 pos.Y += size.Y + 1;
             } else {

@@ -44,6 +44,8 @@ public class Game1 : Game
 	{
 		// Sets up the input library
 		Input.Initialize();
+        Persistence.Init();
+		HighScoreTracker.Load();
 
 		// Set window size if running debug (in release it will be fullscreen)
 		#region
