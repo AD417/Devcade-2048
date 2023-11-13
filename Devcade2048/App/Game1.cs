@@ -115,6 +115,8 @@ public class Game1 : Game
 			(Input.GetButton(1, Input.ArcadeButtons.Menu) &&
 			Input.GetButton(2, Input.ArcadeButtons.Menu)))
 		{
+			HighScoreTracker.Save();
+			Persistence.Flush();
 			Exit();
 		}
 
