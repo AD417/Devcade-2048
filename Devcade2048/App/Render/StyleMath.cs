@@ -162,7 +162,7 @@ public static class StyleMath {
             AnimationState.WaitingForInput, 
             AnimationState.ResetFromLost, 
             AnimationState.FromTab
-        )) return 12;
+        )) return 16;
         if (Animation.State != AnimationState.ToLost) return -1;
 
         return (int) ((Animation.PercentComplete() - 0.5) * 20);
