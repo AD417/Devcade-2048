@@ -12,7 +12,9 @@ public static class HighScoreTracker {
     }
 
     public static async void Save() {
-        _ = await Persistence.Save<int>("2blob48", "highscore", HighScore, null);
+        Persistence.SetLocalPath("/tmp/");
+        var _ = await Persistence.Save<int>("2blob48", "highscore", HighScore, null);
+        await Persistence.Flush();
     }
 
     public static void Update(int score) {
