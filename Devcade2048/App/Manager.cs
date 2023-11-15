@@ -3,22 +3,38 @@ using System;
 using System.Collections.Generic;
 
 using Devcade2048.App.Render;
+using System.Text.Json;
 
 namespace Devcade2048.App;
 
+[Serializable]
 public class Manager {
-    public int Size { get; }
-    public Grid Grid { get; private set; }
-    public int Score { get; private set; }
+    private readonly int size;
+    private int score;
+    [NonSerialized]
+    private int scoreDelta;
+    [NonSerialized]
+    private Grid grid;
 
-    public int ScoreDelta { get; private set; }
+    public int Size => size;
+    public Grid Grid { get => grid; }
+    public int Score { get => score; }
 
-    private static readonly Random RNG = new();
+    // TODO: remove this and make it local to 
+    public int ScoreDelta { get => scoreDelta; }
+
     // TODO: figure out how to handle InMenu. 
-
+    [NonSerialized]
     public GameState State;
+    private static readonly Random RNG = new();
 
-    public enum Direction { Up, Down, Left, Right, None }
+    public enum Direction { 
+        Up,
+        Down, 
+        Left, 
+        Right, 
+        None 
+    }
 
     internal class MoveData {
         public Vector2 Farthest { get; }
@@ -31,7 +47,7 @@ public class Manager {
     }
 
     public Manager(int size) {
-        Size = size;
+        this.size = size;
         Setup();
         State = GameState.Suspended;
     }
@@ -45,9 +61,9 @@ public class Manager {
     }
 
     public void Setup() {
-        Grid = new Grid(Size);
-        Score = 0;
-        ScoreDelta = 0;
+        grid = new Grid(size);
+        score = 0;
+        scoreDelta = 0;
         State = GameState.Playing;
         AddStartTiles();
 
@@ -67,8 +83,8 @@ public class Manager {
             value = 4;
             id = 1;
         } else {
-            value = 1024;
-            id = 10;
+            value = 2;
+            id = 0;
         }
         Vector2? available = Grid.RandomAvailableCell();
         if (available != null) {
@@ -78,7 +94,8 @@ public class Manager {
     }
 
     public void Actuate() {
-        // TODO
+        // string x = JsonSerializer.Serialize(this, new JsonSerializerOptions());
+        // Console.WriteLine(x);
     }
 
     public void PrepareTiles() {
@@ -103,7 +120,7 @@ public class Manager {
 
         Tile tile;
 
-        ScoreDelta = 0;
+        scoreDelta = 0;
         Vector2 vector = GetVector(direction);
         List<Vector2> traversal = BuildTraversals(vector);
         bool moved = false;
@@ -128,8 +145,8 @@ public class Manager {
 
                 tile.UpdatePosition(positions.Next);
 
-                Score += merged.Value;
-                ScoreDelta += merged.Value;
+                score += merged.Value;
+                scoreDelta += merged.Value;
 
                 if (merged.Value == 2048 && State == GameState.Playing) State = GameState.Won;
             } else {
@@ -143,11 +160,11 @@ public class Manager {
         if (moved) {
             AddRandomTile();
 
-            if (!this.MovesAvailable()) {
+            if (!MovesAvailable()) {
                 State = GameState.Lost;
                 HighScoreTracker.Save();
             }
-            if (ScoreDelta > 0) ScoreContainer.Add(ScoreDelta);
+            if (scoreDelta > 0) ScoreContainer.Add(scoreDelta);
 
 			Animation.ChangeStateTo(AnimationState.Moving);
             Actuate();
@@ -167,12 +184,12 @@ public class Manager {
 
     private List<Vector2> BuildTraversals(Vector2 vector) {
         List<Vector2> output = new List<Vector2>();
-        int[] xOrder = new int[Size];
-        int[] yOrder = new int[Size];
+        int[] xOrder = new int[size];
+        int[] yOrder = new int[size];
 
-        for (int i = 0; i < Size; i++) {
-            xOrder[i] = vector.X == 1 ? (Size - 1 - i) : i;
-            yOrder[i] = vector.Y == 1 ? (Size - 1 - i) : i;
+        for (int i = 0; i < size; i++) {
+            xOrder[i] = vector.X == 1 ? (size - 1 - i) : i;
+            yOrder[i] = vector.Y == 1 ? (size - 1 - i) : i;
         }
 
         foreach (int x in xOrder) {
@@ -207,10 +224,10 @@ public class Manager {
             foreach (Direction dir in Enum.GetValues(typeof(Direction))) {
                 if (dir == Direction.None) continue;
                 Vector2 vector = GetVector(dir);
-                Tile other = this.Grid.CellContent(cell + vector);
+                Tile other = Grid.CellContent(cell + vector);
                 if (other != null && other.Value == tile.Value) {
-                    System.Console.Write(cell);
-                    System.Console.WriteLine(vector);
+                    // Console.Write(cell);
+                    // Console.WriteLine(vector);
                     return true;
                 }
             }

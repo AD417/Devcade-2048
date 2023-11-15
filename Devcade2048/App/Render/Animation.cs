@@ -207,27 +207,27 @@ public static class Animation {
     }
 
     public static bool ResetGrid() {
-        return (
+        return 
             State == AnimationState.Spawning 
          && JustChanged 
          && StateWasAny(AnimationState.ResetFromWin, AnimationState.ResetFromLost, AnimationState.ResetFromNormal)
-        );
+        ;
     }
 
     public static bool SwitchTabs() {
-        return (
+        return 
             State == AnimationState.ToTab
          && JustChanged
          && LastState == AnimationState.FromTab
-        );
+        ;
     }
 
     public static bool ContinueGame() {
-        return (
+        return 
             State == AnimationState.WaitingForInput
          && JustChanged
          && LastState == AnimationState.ContinueFromWin
-        );
+        ;
     }
 
     public static double FastEnd(double factor = 3) {

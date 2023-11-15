@@ -5,29 +5,33 @@ using System.Collections.Generic;
 namespace Devcade2048.App;
 
 // Code shamelessly improvised from Gabriele Cirulli's 2048. 
-#nullable enable
+[Serializable]
 public class Grid {
-    public int Size { get; }
-    public Tile?[,] Cells { get; }
+    private readonly int size;
+    private readonly Tile[,] cells;
+
+    public int Size => size;
+    public Tile[,] Cells => cells;
 
     private static Random RNG = new Random();
+    private static readonly int DEFAULT_DIMENSIONS = 4;
 
     public Grid(int size, Tile[,] previousState) {
-        Size = size;
-        Cells = FromState(previousState);
+        this.size = size;
+        this.cells = FromState(previousState);
     }
 
     public Grid(int size) {
-        Size = size;
-        Cells = Empty();
+        this.size = size;
+        this.cells = Empty();
     }
 
-    public Grid() : this(4) {}
+    public Grid() : this(DEFAULT_DIMENSIONS) {}
 
-    private Tile?[,] Empty() {
-        Tile?[,] cells = new Tile[Size,Size];
-        for (int x = 0; x < Size; x++) {
-            for (int y = 0; y < Size; y++) {
+    private Tile[,] Empty() {
+        Tile[,] cells = new Tile[size,size];
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
                 // TODO: Verify that x,y vs y,x is not an issue here.
                 cells[x,y] = null;
             }
@@ -35,10 +39,10 @@ public class Grid {
         return cells;
     }
 
-    private Tile?[,] FromState(Tile[,] state) {
-        Tile?[,] cells = new Tile[Size, Size];
-        for (int x = 0; x < Size; x++) {
-            for (int y = 0; y < Size; y++) {
+    private Tile[,] FromState(Tile[,] state) {
+        Tile[,] cells = new Tile[size, size];
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
                 Tile tile = state[x,y];
                 cells[x,y] = (tile != null) ? new Tile(tile.Position, tile.TextureId, tile.Value) : null;
             }
@@ -55,7 +59,7 @@ public class Grid {
     public List<Vector2> AvailableCells() {
         List<Vector2> cells = new List<Vector2>();
 
-        void gatherAvailableCells(int x, int y, Tile? tile) {
+        void gatherAvailableCells(int x, int y, Tile tile) {
             if (tile == null) {
                 cells.Add(new Vector2(x,y));
             }
@@ -66,16 +70,16 @@ public class Grid {
         return cells;
     }
 
-    public void EachCell(Action<int, int, Tile?> callback) {
-        for (int x = 0; x < Size; x++) {
-            for (int y = 0; y < Size; y++) {
-                callback(x, y, Cells[x,y]);
+    public void EachCell(Action<int, int, Tile> callback) {
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                callback(x, y, cells[x,y]);
             }
         }
     }
 
     public bool CellsAvailable() {
-        return (AvailableCells().Count > 0);
+        return AvailableCells().Count > 0;
     }
 
     public bool CellAvailable(Vector2 cell) {
@@ -83,31 +87,31 @@ public class Grid {
     }
 
     public bool CellOccupied(Vector2 cell) {
-        return (CellContent(cell) != null);
+        return CellContent(cell) != null;
     }
 
-    public Tile? CellContent(Vector2 cell) {
+    public Tile CellContent(Vector2 cell) {
         if (!WithinBounds(cell)) return null;
-        return Cells[(int)cell.X,(int)cell.Y];
+        return cells[(int)cell.X,(int)cell.Y];
     }
 
     public bool WithinBounds(Vector2 position) {
-        return (
+        return 
             position.X >= 0
-         && position.X < Size
+         && position.X < size
          && position.Y >= 0
-         && position.Y < Size
-        );
+         && position.Y < size
+        ;
     }
 
     public void InsertTile(Tile tile) {
         Vector2 pos = tile.Position;
-        Console.WriteLine(pos);
-        Cells[(int)pos.X,(int)pos.Y] = tile;
+        // Console.WriteLine(pos);
+        cells[(int)pos.X,(int)pos.Y] = tile;
     }
 
     public void RemoveTile(Tile tile) {
         Vector2 pos = tile.Position;
-        Cells[(int)pos.X,(int)pos.Y] = null;
+        cells[(int)pos.X,(int)pos.Y] = null;
     }
 }

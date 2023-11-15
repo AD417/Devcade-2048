@@ -53,46 +53,46 @@ public static class InputManager {
         switch (button) {
             case Button.None: return !AnyButtonPressed();
             case Button.Red: 
-                return  (
+                return  
                     // Start; Restart
                     Keyboard.GetState().IsKeyDown(Keys.R)
                  || Input.GetButton(1, Input.ArcadeButtons.A1)
                  || Input.GetButton(2, Input.ArcadeButtons.A1)
-                );
+                ;
             case Button.Blue: 
-                return  (
+                return  
                     // Exit.
                     Keyboard.GetState().IsKeyDown(Keys.P)
                  || Input.GetButton(1, Input.ArcadeButtons.A2)
                  || Input.GetButton(2, Input.ArcadeButtons.A2)
-                );
+                ;
             case Button.Green: 
-                return  (
+                return  
                     Input.GetButton(1, Input.ArcadeButtons.A3)
                  || Input.GetButton(2, Input.ArcadeButtons.A3)
-                );
+                ;
             case Button.White: 
-                return  (
+                return  
                     // Continue
                     Keyboard.GetState().IsKeyDown(Keys.C)
                  || Input.GetButton(1, Input.ArcadeButtons.A4)
                  || Input.GetButton(2, Input.ArcadeButtons.A4)
-                );
+                ;
             case Button.Purple: 
-                return  (
+                return  
                     Keyboard.GetState().IsKeyDown(Keys.C)
                  || Input.GetButton(1, Input.ArcadeButtons.B1)
                  || Input.GetButton(1, Input.ArcadeButtons.B2)
                  || Input.GetButton(1, Input.ArcadeButtons.B3)
                  || Input.GetButton(1, Input.ArcadeButtons.B4)
-                );
+                ;
             case Button.Yellow: 
-                return  (
+                return  
                     Input.GetButton(2, Input.ArcadeButtons.B1)
                  || Input.GetButton(2, Input.ArcadeButtons.B2)
                  || Input.GetButton(2, Input.ArcadeButtons.B3)
                  || Input.GetButton(2, Input.ArcadeButtons.B4)
-                );
+                ;
         }
         throw new Exception("Invalid button type: " + button);
     }

@@ -13,6 +13,6 @@ public static class ScoreContainer {
         for (int i = scores.Count - 1; i >= 0; i--) {
             scores[i].Increment(gt);
         }
-        scores.RemoveAll(score => score.IsDone());
+        _ = scores.RemoveAll(score => score.IsDone());
     }
 }

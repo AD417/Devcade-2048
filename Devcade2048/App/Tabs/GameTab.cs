@@ -1,9 +1,7 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using Devcade;
 
 using Devcade2048.App.Render;
-using Devcade2048.App;
 
 namespace Devcade2048.App.Tabs;
 
@@ -25,6 +23,8 @@ public class GameTab : ITab {
     public void End() {
         HighScoreTracker.Save();
         GameData.State = GameState.Suspended;
+        _ = Persistence.SaveSync<Manager>("2blob48", "grid", GameData, null);
+		//Persistence.Flush();
     }
 
     public void Update(GameTime gameTime) {
@@ -40,7 +40,7 @@ public class GameTab : ITab {
 		) {
 
 			GameData.Move(direction);
-			DebugRender.Write(GameData.Grid);
+			// DebugRender.Write(GameData.Grid);
 		}
 
 		if (InputManager.isButtonPressed(Button.Red)) {

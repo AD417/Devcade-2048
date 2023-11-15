@@ -1,33 +1,41 @@
+using System;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 
 namespace Devcade2048.App;
 
+[Serializable]
 public class Tile
 {
-    public Vector2 Position { get; private set; }
-    public int Value { get; }
-    public int TextureId { get; }
+    private Vector2 position;
+    private readonly int value;
+    private readonly int textureId;
+    [NonSerialized]
+    private Vector2? previousPosition = null;
+    [NonSerialized]
+    private Tile[] mergedFrom = null;
 
-    public Vector2? PreviousPosition { get; private set; } = null;
-    #nullable enable
-    public Tile[]? MergedFrom { get; set; } = null;
-    #nullable disable
+    public Vector2 Position => position;
+    public int Value => value;
+    public int TextureId => textureId;
+    public Vector2? PreviousPosition => previousPosition;
+    public Tile[] MergedFrom { get => mergedFrom; set => mergedFrom = value; }
 
     public Tile(Vector2 position, int id) {
-        Position = position;
-        TextureId = id;
-        Value = 2;
+        this.position = position;
+        this.textureId = id;
+        this.value = 2;
     }
 
     public Tile(Vector2 position, int id, int value) : this(position, id) {
-        Value = value;
+        this.value = value;
     }
 
     public void SavePosition() {
-        PreviousPosition = new Vector2(Position.X, Position.Y);
+        this.previousPosition = new Vector2(position.X, position.Y);
     }
 
     public void UpdatePosition(Vector2 position) {
-        Position = new Vector2(position.X, position.Y);
+        this.position = new Vector2(position.X, position.Y);
     }
 }

@@ -5,6 +5,7 @@ using Devcade;
 using System;
 using Devcade2048.App.Render;
 using Devcade2048.App.Tabs;
+using System.Threading.Tasks;
 
 // MAKE SURE YOU RENAME ALL PROJECT FILES FROM DevcadeGame TO YOUR YOUR GAME NAME
 namespace Devcade2048.App;
@@ -34,7 +35,7 @@ public class Game1 : Game
 		_GameData = new Manager(size: 4);
 
 		TabHandler.Initialize(_GameData);
-		DebugRender.Write(_GameData.Grid);
+		// DebugRender.Write(_GameData.Grid);
 	}
 
 	/// <summary>
@@ -116,7 +117,8 @@ public class Game1 : Game
 			Input.GetButton(2, Input.ArcadeButtons.Menu)))
 		{
 			HighScoreTracker.Save();
-			Persistence.Flush();
+            Task flusher = Persistence.Flush();
+			flusher.Wait();
 			Exit();
 		}
 
