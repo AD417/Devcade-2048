@@ -116,6 +116,7 @@ public class Game1 : Game
 			Input.GetButton(2, Input.ArcadeButtons.Menu)))
 		{
 			HighScoreTracker.Save();
+			TabHandler.Exit();
             Task flusher = Persistence.Flush();
 			flusher.Wait();
 			Exit();

@@ -3,9 +3,8 @@ using System;
 using System.Collections.Generic;
 
 using Devcade2048.App.Render;
-using System.Text.Json;
 using Devcade;
-using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace Devcade2048.App;
 
@@ -50,7 +49,7 @@ public class Manager {
 
     public Manager(int size) {
         this.size = size;
-        Setup();
+        // Setup();
         State = GameState.Suspended;
     }
 
@@ -63,12 +62,23 @@ public class Manager {
     }
 
     public void Setup() {
-        grid = new Grid(size);
-        score = 0;
-        scoreDelta = 0;
-        State = GameState.Playing;
-        AddStartTiles();
+        try {
+            Manager man = 
+                Persistence.LoadSync<ManagerSerializable>("2blob48", "grid", new JsonSerializerOptions()).ToManager();
 
+            grid = man.grid;
+            score = man.score;
+
+        } catch (Exception e) {
+            System.Console.WriteLine("Whoops!");
+            System.Console.WriteLine(e);
+            grid = new Grid(size);
+            score = 0;
+            scoreDelta = 0;
+            AddStartTiles();
+        }
+
+        State = GameState.Playing;
         Actuate();
     }
 
@@ -239,23 +249,52 @@ public class Manager {
 
     [Serializable]
     private class ManagerSerializable {
-        int Score { get; set; }
-        Tile[] Tiles { get; set; }
+        public int Score { get; set; }
+        public int[] Tiles { get; set; }
 
         public ManagerSerializable(Manager man) {
             Score = man.score;
-            Tiles = new Tile[16];
+            Tiles = new int[16];
             for (int i = 0; i < 16; i++) {
                 int x = i % 4;
                 int y = i / 4;
-                Tiles[i] = man.grid.CellContent(new Vector2(x, y));
+                Tiles[i] = man.grid.CellContent(new Vector2(x, y))?.TextureId ?? -1;
             }
+        }
+
+        public ManagerSerializable(int score, int[] tiles) {
+            Score = score;
+            Tiles = tiles;
+        }
+
+        public ManagerSerializable() {
+            Score = 0;
+            Tiles = new int[0];
+        }
+
+        public Manager ToManager() {
+            Manager man = new Manager(4);
+            Tile[,] tiles = new Tile[4,4];
+
+            for (int i = 0; i < 16; i++) {
+                int x = i % 4;
+                int y = i / 4;
+                if (Tiles[i] == -1) {
+                    tiles[x,y] = null;
+                    continue;
+                }
+                tiles[x,y] = new Tile(new Vector2(x, y), Tiles[i], 2 << Tiles[i]);
+            }
+
+            man.grid = new Grid(4, tiles);
+            man.score = Score;
+            return man;
         }
     }
 
     public void Export() {
         ManagerSerializable export = new(this);
-        _ = Persistence.SaveSync<ManagerSerializable>("2blob48", "grid", export, null);
+        _ = Persistence.SaveSync<ManagerSerializable>("2blob48", "grid", export, new JsonSerializerOptions());
         Persistence.Flush().Wait();
     }
 }

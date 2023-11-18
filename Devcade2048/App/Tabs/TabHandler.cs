@@ -48,4 +48,8 @@ public static class TabHandler {
             CurrentTab.Begin();
         }
     }
+
+    public static void Exit() {
+        CurrentTab.End();
+    }
 }
