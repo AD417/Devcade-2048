@@ -9,9 +9,10 @@ public static class TextBox {
 #if DEBUG
         sb.DrawString(font, data, pos, color);
 #else
+        float scale = 18f / 7f;
         Vector2 actualPos = new(
-            (int) (pos.X * 18.0f / 7.0f),
-            (int) (pos.Y * 18.0f / 7.0f)
+            (int) (pos.X * scale),
+            (int) (pos.Y * scale)
         );
         sb.DrawString(
             spriteFont: font, 
@@ -20,7 +21,7 @@ public static class TextBox {
             color: color, 
             rotation: 0.0f, 
             origin: new(), 
-            scale: 18.0f / 7.0f, 
+            scale: scale, 
             effects: SpriteEffects.None, 
             layerDepth: 0.0f
         );
@@ -46,6 +47,7 @@ public static class TextBox {
             string newLine = line + " " + word;
             size = Asset.SmallFont.MeasureString(newLine);
             if (size.X > area.Width) {
+                System.Console.WriteLine(line);
                 DrawString(sb, Asset.SmallFont, line, pos, color);
                 line = word;
                 pos.Y += size.Y + 1;
@@ -53,7 +55,9 @@ public static class TextBox {
                 line = newLine;
             }
         }
+        System.Console.WriteLine(line);
         DrawString(sb, Asset.SmallFont, line, pos, color);
+        System.Console.WriteLine();
         return (int) (pos.Y - area.Top + 2 * size.Y);
     }
 
