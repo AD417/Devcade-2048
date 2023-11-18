@@ -62,33 +62,34 @@ public static class InputManager {
             case Button.Blue: 
                 return  
                     // Exit.
-                    Keyboard.GetState().IsKeyDown(Keys.P)
+                    Keyboard.GetState().IsKeyDown(Keys.B)
                  || Input.GetButton(1, Input.ArcadeButtons.A2)
                  || Input.GetButton(2, Input.ArcadeButtons.A2)
                 ;
             case Button.Green: 
                 return  
-                    Input.GetButton(1, Input.ArcadeButtons.A3)
+                    Keyboard.GetState().IsKeyDown(Keys.G)
+                 || Input.GetButton(1, Input.ArcadeButtons.A3)
                  || Input.GetButton(2, Input.ArcadeButtons.A3)
                 ;
             case Button.White: 
                 return  
-                    // Continue
                     Keyboard.GetState().IsKeyDown(Keys.C)
                  || Input.GetButton(1, Input.ArcadeButtons.A4)
                  || Input.GetButton(2, Input.ArcadeButtons.A4)
                 ;
             case Button.Purple: 
                 return  
-                    Keyboard.GetState().IsKeyDown(Keys.C)
+                    Keyboard.GetState().IsKeyDown(Keys.P)
                  || Input.GetButton(1, Input.ArcadeButtons.B1)
                  || Input.GetButton(1, Input.ArcadeButtons.B2)
                  || Input.GetButton(1, Input.ArcadeButtons.B3)
                  || Input.GetButton(1, Input.ArcadeButtons.B4)
                 ;
             case Button.Yellow: 
-                return  
-                    Input.GetButton(2, Input.ArcadeButtons.B1)
+                return
+                    Keyboard.GetState().IsKeyDown(Keys.Y)
+                 || Input.GetButton(2, Input.ArcadeButtons.B1)
                  || Input.GetButton(2, Input.ArcadeButtons.B2)
                  || Input.GetButton(2, Input.ArcadeButtons.B3)
                  || Input.GetButton(2, Input.ArcadeButtons.B4)

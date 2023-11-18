@@ -206,9 +206,8 @@ public static class Display {
     public static void GameBlob() {
         if (TabHandler.CurrentTab.Id() != SelectedTab.Menu) return;
         Color brightness = StyleMath.GetInitialBrightness();
-        Vector2 pos = new Vector2(9, 300);
+
         double percent = 0;
-        Vector2 endPos = new Vector2(-300, 300);
         if (Animation.State == AnimationState.FromTab) {
             percent = Animation.FastEnd(2);
         }
@@ -216,9 +215,19 @@ public static class Display {
             percent = 1 - Animation.FastStart(2);
         }
 
-        pos = StyleMath.Interpolate(pos, endPos, percent);
+        Vector2 newPos = StyleMath.Interpolate(
+            new Vector2(9, 300), 
+            new Vector2(-300, 300), 
+            percent
+        );
+        Vector2 contPos = StyleMath.Interpolate(
+            new Vector2(219, 300), 
+            new Vector2(530, 300), 
+            percent
+        );
 
-        DrawAsset(Asset.Menu[0], pos, brightness);
+        DrawAsset(Asset.Menu[0], newPos, brightness);
+        DrawAsset(Asset.Menu[1], contPos, brightness);
     }
 
     public static void InfoBlob() {
@@ -229,12 +238,12 @@ public static class Display {
 
         Color brightness = StyleMath.GetInitialBrightness();
         Vector2 pos = StyleMath.MenuBlobPosition(
-            new Vector2(219, 300),
-            new Vector2(530, 300),
+            new Vector2(9, 500),
+            new Vector2(-300, 500),
             SelectedTab.Info
         );
 
-        DrawAsset(Asset.Menu[1], pos, brightness);
+        DrawAsset(Asset.Menu[2], pos, brightness);
     }
 
     public static void CreditsBlob() {
@@ -245,12 +254,12 @@ public static class Display {
 
         Color brightness = StyleMath.GetInitialBrightness();
         Vector2 pos = StyleMath.MenuBlobPosition(
-            new Vector2(114, 500),
-            new Vector2(-300, 500),
+            new Vector2(219, 500),
+            new Vector2(530, 500),
             SelectedTab.Credits
         );
 
-        DrawAsset(Asset.Menu[2], pos, brightness);
+        DrawAsset(Asset.Menu[3], pos, brightness);
     }
 
     public static void MenuHighScore() {

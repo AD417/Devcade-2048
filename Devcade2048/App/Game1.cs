@@ -83,9 +83,10 @@ public class Game1 : Game
 
 		Asset.Title = Content.Load<Texture2D>("TitleBar");
 
-		Asset.Menu[0] = Content.Load<Texture2D>("BlobStart");
-		Asset.Menu[1] = Content.Load<Texture2D>("BlobInfo");
-		Asset.Menu[2] = Content.Load<Texture2D>("BlobCredits");
+		Asset.Menu[0] = Content.Load<Texture2D>("BlobNewGame");
+		Asset.Menu[1] = Content.Load<Texture2D>("BlobContinue");
+		Asset.Menu[2] = Content.Load<Texture2D>("BlobInfo");
+		Asset.Menu[3] = Content.Load<Texture2D>("BlobCredits");
 		Asset.Button = Content.Load<Texture2D>("BUTTON");
 
 		Asset.Grid = Content.Load<Texture2D>("2048Grid");

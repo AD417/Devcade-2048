@@ -21,6 +21,11 @@ public class MenuTab : ITab {
     public void Update(GameTime gameTime) {
 		if (!Animation.AcceptInput()) return;
 		if (InputManager.isButtonPressed(Button.Red)) {
+			Config.LoadGame = false;
+			StartGame();
+		}
+		if (InputManager.isButtonPressed(Button.White)) {
+			Config.LoadGame = true;
 			StartGame();
 		}
 
@@ -29,6 +34,7 @@ public class MenuTab : ITab {
 		}
 
 		if (InputManager.isButtonPressed(Button.Green)) {
+			System.Console.WriteLine("HAI");
 			GotoCredits();
 		}
     }

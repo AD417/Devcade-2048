@@ -62,22 +62,27 @@ public class Manager {
     }
 
     public void Setup() {
-        try {
-            Manager man = 
-                Persistence.LoadSync<ManagerSerializable>("2blob48", "grid", new JsonSerializerOptions()).ToManager();
+        if (Config.LoadGame) {
+            try {
+                Manager man = Persistence.LoadSync<ManagerSerializable>("2blob48", "grid", new JsonSerializerOptions())
+                    .ToManager();
 
-            grid = man.grid;
-            score = man.score;
+                grid = man.grid;
+                score = man.score;
 
-        } catch (Exception e) {
-            System.Console.WriteLine("Whoops!");
-            System.Console.WriteLine(e);
-            grid = new Grid(size);
-            score = 0;
-            scoreDelta = 0;
-            AddStartTiles();
+            } catch (Exception e) {
+                Console.WriteLine("Whoops!");
+                Console.WriteLine(e);
+                Config.LoadGame = false;
+            }
         }
 
+        if (!Config.LoadGame) {
+            grid = new Grid(size);
+            score = 0;
+            AddStartTiles();
+        }
+        scoreDelta = 0;
         State = GameState.Playing;
         Actuate();
     }
