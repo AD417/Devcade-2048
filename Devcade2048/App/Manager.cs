@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 using Devcade2048.App.Render;
 using System.Text.Json;
+using Devcade;
+using System.Text.Json.Serialization;
 
 namespace Devcade2048.App;
 
@@ -233,5 +235,27 @@ public class Manager {
             }
         }
         return false;
+    }
+
+    [Serializable]
+    private class ManagerSerializable {
+        int Score { get; set; }
+        Tile[] Tiles { get; set; }
+
+        public ManagerSerializable(Manager man) {
+            Score = man.score;
+            Tiles = new Tile[16];
+            for (int i = 0; i < 16; i++) {
+                int x = i % 4;
+                int y = i / 4;
+                Tiles[i] = man.grid.CellContent(new Vector2(x, y));
+            }
+        }
+    }
+
+    public void Export() {
+        ManagerSerializable export = new(this);
+        _ = Persistence.SaveSync<ManagerSerializable>("2blob48", "grid", export, null);
+        Persistence.Flush().Wait();
     }
 }

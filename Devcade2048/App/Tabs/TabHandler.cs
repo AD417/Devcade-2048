@@ -42,6 +42,7 @@ public static class TabHandler {
 
     public static void CheckTabSwitching() {
         if (Animation.SwitchTabs()) {
+            CurrentTab.End();
             LastTab = CurrentTab;
             CurrentTab = NextTab;
             CurrentTab.Begin();

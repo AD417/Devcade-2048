@@ -75,7 +75,6 @@ public class Game1 : Game
 	{
 		_spriteBatch = new SpriteBatch(GraphicsDevice);
 
-		HighScoreTracker.Load();
 		Display.Initialize(_spriteBatch, _GameData);
 		
 		// TODO: use this.Content to load your game content here

@@ -23,7 +23,7 @@ public class GameTab : ITab {
     public void End() {
         HighScoreTracker.Save();
         GameData.State = GameState.Suspended;
-        _ = Persistence.SaveSync<Manager>("2blob48", "grid", GameData, null);
+		GameData.Export();
 		//Persistence.Flush();
     }
 
