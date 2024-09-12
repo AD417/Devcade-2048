@@ -4,6 +4,8 @@ namespace Devcade2048.App;
 
 public static class DebugRender {
     public static void Write(Grid grid) {
+        #region 
+#if DEBUG
         Console.WriteLine();
 
         string[] rows = new string[grid.Size];
@@ -17,5 +19,7 @@ public static class DebugRender {
             Console.WriteLine(row);
             Console.WriteLine();
         }
+#endif 
+        #endregion
     }
 }
