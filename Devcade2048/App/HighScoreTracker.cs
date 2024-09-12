@@ -1,3 +1,6 @@
+using System;
+using System.Threading;
+
 using Devcade;
 
 namespace Devcade2048.App;
@@ -8,7 +11,14 @@ public static class HighScoreTracker {
 
     public static async void Load() {
         Persistence.SetLocalPath("/tmp/");
-        HighScore = (await Persistence.Load<int>("2blob48", "highscore", null)).GetObject<int>(null);
+        while (!Persistence.initalized) Thread.Sleep(1);
+        try {
+            HighScore = (await Persistence.Load<int>("2blob48", "highscore", null)).GetObject<int>(null);
+        } catch (Exception e) {
+            Console.WriteLine("Whoops! Can't load the high score!");
+            Console.WriteLine(e);
+            HighScore = 0;
+        }
     }
 
     public static async void Save() {
