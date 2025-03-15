@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Devcade;
 using System;
 using Devcade2048.App.Render;
+using Devcade2048.App.Render.Animation;
 using Devcade2048.App.Tabs;
 using System.Threading.Tasks;
 
@@ -14,6 +15,8 @@ public class Game1 : Game
 {
 	private GraphicsDeviceManager _graphics;
 	private SpriteBatch _spriteBatch;
+
+	private AnimationState animation = AnimationState.InitialState;
 	
 	/// <summary>
 	/// Stores the window dimensions in a rectangle object for easy use
@@ -76,6 +79,7 @@ public class Game1 : Game
 		_spriteBatch = new SpriteBatch(GraphicsDevice);
 
 		Display.Initialize(_spriteBatch, _GameData);
+		AnimationState.SetRendering(_spriteBatch, _GameData);
 		
 		// TODO: use this.Content to load your game content here
 		// ex:
@@ -118,15 +122,25 @@ public class Game1 : Game
 		{
 			HighScoreTracker.Save();
 			TabHandler.Exit();
+			// Ensure the high score information is saved to disk.
             Task flusher = Persistence.Flush();
 			flusher.Wait();
+
 			Exit();
 		}
 
 		// TODO: Add other update logic here
 		
-		TabHandler.CurrentTab.Update(gameTime);
-		TabHandler.CheckTabSwitching();
+		// TabHandler.CurrentTab.Update(gameTime);
+		// TabHandler.CheckTabSwitching();
+
+		if (animation.IsAcceptingInput()) {
+			animation = animation.ProcessInput();
+		}
+		animation.Tick(gameTime);
+		if (animation.IsComplete()) {
+			animation = animation.NextState();
+		}
 
 		base.Update(gameTime);
 	}
@@ -137,20 +151,23 @@ public class Game1 : Game
 	/// <param name="gameTime">This is the gameTime object you can use to get the time since last frame.</param>
 	protected override void Draw(GameTime gameTime)
 	{
-		// System.Console.WriteLine(Animation.State);
-		GraphicsDevice.Clear(StyleMath.GetBackgroundColor());
+		// System.Console.WriteLine(Animation1.State);
+		// GraphicsDevice.Clear(StyleMath.GetBackgroundColor());
+		GraphicsDevice.Clear(new Color(251, 194, 27));
 		
 		// Batches all the draw calls for this frame, and then performs them all at once
 		_spriteBatch.Begin();
+		
+		animation.Draw();
 
-		Display.Title();
+		// Display.Title();
 
-		TabHandler.CurrentTab.Draw(gameTime);
+		// TabHandler.CurrentTab.Draw(gameTime);
 		
 		_spriteBatch.End();
 
 		ScoreContainer.Increment(gameTime);
-	 	Animation.Increment(gameTime);
+	 	Animation1.Increment(gameTime);
 
 		base.Draw(gameTime);
 	}

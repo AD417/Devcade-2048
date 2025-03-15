@@ -28,10 +28,10 @@ public class GameTab : ITab {
     }
 
     public void Update(GameTime gameTime) {
-		if (Animation.ResetGrid()) GameData.Setup();
-		if (Animation.ContinueGame()) GameData.Continue();
+		if (Animation1.ResetGrid()) GameData.Setup();
+		if (Animation1.ContinueGame()) GameData.Continue();
 
-		if (!Animation.AcceptInput()) return;
+		if (!Animation1.AcceptInput()) return;
 
 		Manager.Direction direction = InputManager.GetStickDirection();
 		if (
@@ -61,7 +61,7 @@ public class GameTab : ITab {
 
 	private void Reset() {
 		HighScoreTracker.Save();
-		Animation.BeginReset(GameData);
+		Animation1.BeginReset(GameData);
 	}
 
 	private void EndGame() {
@@ -70,7 +70,7 @@ public class GameTab : ITab {
 	}
 
 	private void Continue() {
-		Animation.ChangeStateTo(AnimationState.ContinueFromWin);
+		Animation1.ChangeStateTo(AnimationState1.ContinueFromWin);
 	}
 
     public void Draw(GameTime gameTime) {
@@ -78,7 +78,7 @@ public class GameTab : ITab {
 		Display.AllTiles();
 		Display.Scores();
 		if (GameData.State == GameState.Won) Display.Win();
-		if (Animation.State == AnimationState.ResetFromWin) Display.WinReset();
+		if (Animation1.State == AnimationState1.ResetFromWin) Display.WinReset();
 		if (GameData.State == GameState.Lost) Display.Lose();
     }
 }

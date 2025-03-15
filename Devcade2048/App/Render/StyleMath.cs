@@ -18,33 +18,33 @@ public static class StyleMath {
     }
 
     public static Color GetBackgroundColor() {
-        if (Animation.State != AnimationState.InitFadeIn) return Background;
-        double opacity = Animation.FastEnd(2);
+        if (Animation1.State != AnimationState1.InitFadeIn) return Background;
+        double opacity = Animation1.FastEnd(2);
         return Interpolate(new Color(0,0,0), Background, opacity);
     }
 
     public static Color GetInitialBrightness() {
-        if (Animation.State != AnimationState.InitFadeIn) return Color.White;
-        return Interpolate(Color.Black, Color.White, Animation.FastEnd(2));
+        if (Animation1.State != AnimationState1.InitFadeIn) return Color.White;
+        return Interpolate(Color.Black, Color.White, Animation1.FastEnd(2));
     }
 
     public static Color GetScoreColor() {
-        if (Animation.State == AnimationState.ToTab) {
-            return Interpolate(Background, Color.Black, Animation.FastEnd(2));
+        if (Animation1.State == AnimationState1.ToTab) {
+            return Interpolate(Background, Color.Black, Animation1.FastEnd(2));
         }
-        if (Animation.State == AnimationState.FromTab) {
-            return Interpolate(Color.Black, Background, Animation.FastStart(2));
+        if (Animation1.State == AnimationState1.FromTab) {
+            return Interpolate(Color.Black, Background, Animation1.FastStart(2));
         }
         return Color.Black;
     }
 
     // Tile management
     public static Vector2 GridDisplacement() {
-        if (Animation.State == AnimationState.ToTab) {
-            return new Vector2(0, 710 * (float)(1 - Animation.FastStart()));
+        if (Animation1.State == AnimationState1.ToTab) {
+            return new Vector2(0, 710 * (float)(1 - Animation1.FastStart()));
         }
-        if (Animation.State == AnimationState.FromTab) {
-            return new Vector2(0, (float)(710 * Animation.FastEnd()));
+        if (Animation1.State == AnimationState1.FromTab) {
+            return new Vector2(0, (float)(710 * Animation1.FastEnd()));
         }
         return new Vector2();
     }
@@ -65,18 +65,18 @@ public static class StyleMath {
     }
 
     private static int TileScale(Tile t) {
-        if (Animation.StateIsAny(
-            AnimationState.ResetFromLost, 
-            AnimationState.ResetFromNormal
+        if (Animation1.StateIsAny(
+            AnimationState1.ResetFromLost, 
+            AnimationState1.ResetFromNormal
         )) {
             return ResetTileScale();
         }
         if (t.PreviousPosition != null) return 96;
 
-        if (Animation.State == AnimationState.Moving) return 0;
-        if (Animation.State != AnimationState.Spawning) return 96;
+        if (Animation1.State == AnimationState1.Moving) return 0;
+        if (Animation1.State != AnimationState1.Spawning) return 96;
 
-        double scaleFactor = Animation.PercentComplete();
+        double scaleFactor = Animation1.PercentComplete();
 
 
         if (t.MergedFrom is null) return (int) (96 * scaleFactor);
@@ -87,18 +87,18 @@ public static class StyleMath {
     }
 
     private static int ResetTileScale() {
-        double scaleFactor = 1 - Animation.PercentComplete();
+        double scaleFactor = 1 - Animation1.PercentComplete();
         return (int) (96 * scaleFactor * scaleFactor);
     }
 
     private static Vector2 TilePosition(Tile t) {
         Vector2 currentPos = ToScreenPosition(t.Position);
         
-        if (Animation.State != AnimationState.Moving) return currentPos;
+        if (Animation1.State != AnimationState1.Moving) return currentPos;
         if (t.PreviousPosition is null) return currentPos;
 
         Vector2 oldPos = ToScreenPosition((Vector2)t.PreviousPosition);
-        float percent = (float) Animation.PercentComplete();
+        float percent = (float) Animation1.PercentComplete();
 
         return oldPos * (1 - percent) + currentPos * percent;
     }
@@ -119,20 +119,20 @@ public static class StyleMath {
 
     // Win and Loss States
     private static double WinScale() {
-        if (!Animation.StateIsAny(
-            AnimationState.ToWon, 
-            AnimationState.EasterEgg, 
-            AnimationState.ResetFromWin,
-            AnimationState.ContinueFromWin
+        if (!Animation1.StateIsAny(
+            AnimationState1.ToWon, 
+            AnimationState1.EasterEgg, 
+            AnimationState1.ResetFromWin,
+            AnimationState1.ContinueFromWin
         )) {
             return 1.0;
         }
-        double percent = Animation.PercentComplete();
-        if (Animation.State == AnimationState.ResetFromWin) {
+        double percent = Animation1.PercentComplete();
+        if (Animation1.State == AnimationState1.ResetFromWin) {
             percent = 1 - percent;
             return Math.Pow(percent, 3);
         }
-        if (Animation.State == AnimationState.ContinueFromWin) {
+        if (Animation1.State == AnimationState1.ContinueFromWin) {
             return 1 - Math.Pow(percent, 3);
         }
         return Math.Pow(percent, 3);
@@ -158,49 +158,49 @@ public static class StyleMath {
     }
 
     public static int BiggestLossTile() {
-        if (Animation.StateIsAny(
-            AnimationState.WaitingForInput, 
-            AnimationState.ResetFromLost, 
-            AnimationState.FromTab
+        if (Animation1.StateIsAny(
+            AnimationState1.WaitingForInput, 
+            AnimationState1.ResetFromLost, 
+            AnimationState1.FromTab
         )) return 16;
-        if (Animation.State != AnimationState.ToLost) return -1;
+        if (Animation1.State != AnimationState1.ToLost) return -1;
 
-        return (int) ((Animation.PercentComplete() - 0.5) * 20);
+        return (int) ((Animation1.PercentComplete() - 0.5) * 20);
     }
 
 
     // Menu Blobs
     public static Vector2 MenuBlobPosition(Vector2 menuPos, Vector2 offScreen, SelectedTab tab) {
-        if (Animation.State == AnimationState.InitFadeIn) return menuPos;
+        if (Animation1.State == AnimationState1.InitFadeIn) return menuPos;
 
 
         Vector2 top = new Vector2(114, 130);
-        if (Animation.State == AnimationState.WaitingForInput) {
+        if (Animation1.State == AnimationState1.WaitingForInput) {
             if (TabHandler.CurrentTab.Id() == tab) return top;
             if (TabHandler.CurrentTab.Id() == SelectedTab.Menu) return menuPos;
             return offScreen;
         }
-        if (Animation.State == AnimationState.ToTab) {
+        if (Animation1.State == AnimationState1.ToTab) {
             if (TabHandler.CurrentTab.Id() == tab && TabHandler.LastTab.Id() == SelectedTab.Menu) {
                 return top;
             }
             if (TabHandler.CurrentTab.Id() == SelectedTab.Menu && TabHandler.LastTab.Id() == tab) {
-                return Interpolate(top, menuPos, Animation.FastStart(2));
+                return Interpolate(top, menuPos, Animation1.FastStart(2));
             }
             if (TabHandler.CurrentTab.Id() == SelectedTab.Menu) {
-                return Interpolate(offScreen, menuPos, Animation.FastStart(2));
+                return Interpolate(offScreen, menuPos, Animation1.FastStart(2));
             }
             return offScreen;
         }
-        if (Animation.State == AnimationState.FromTab) {
+        if (Animation1.State == AnimationState1.FromTab) {
             if (TabHandler.CurrentTab.Id() == tab && TabHandler.NextTab.Id() == SelectedTab.Menu) {
                 return top;
             }
             if (TabHandler.CurrentTab.Id() == SelectedTab.Menu && TabHandler.NextTab.Id() == tab) {
-                return Interpolate(menuPos, top, Animation.FastEnd(2));
+                return Interpolate(menuPos, top, Animation1.FastEnd(2));
             }
             if (TabHandler.CurrentTab.Id() == SelectedTab.Menu) {
-                return Interpolate(menuPos, offScreen, Animation.FastEnd(2));
+                return Interpolate(menuPos, offScreen, Animation1.FastEnd(2));
             }
             return offScreen;
         }

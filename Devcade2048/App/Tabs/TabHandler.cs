@@ -37,11 +37,11 @@ public static class TabHandler {
                 NextTab = Tabs[3];
                 break;
         }
-        Animation.ChangeStateTo(AnimationState.FromTab);
+        Animation1.ChangeStateTo(AnimationState1.FromTab);
     }
 
     public static void CheckTabSwitching() {
-        if (Animation.SwitchTabs()) {
+        if (Animation1.SwitchTabs()) {
             CurrentTab.End();
             LastTab = CurrentTab;
             CurrentTab = NextTab;

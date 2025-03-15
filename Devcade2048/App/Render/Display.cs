@@ -78,7 +78,7 @@ public static class Display {
 
     public static void Title() {
         Color brightness = Color.White;
-        if (Animation.State == AnimationState.InitFadeIn) {
+        if (Animation1.State == AnimationState1.InitFadeIn) {
             brightness = StyleMath.GetInitialBrightness();
         }
         DrawAsset(Asset.Title, new Vector2(60, 0), brightness);
@@ -92,10 +92,10 @@ public static class Display {
     }
 
     public static void AllTiles() {
-        if (!Animation.RenderingTiles()) return;
+        if (!Animation1.RenderingTiles()) return;
         void drawTile(Tile t) {
             if (t is null) return;
-            bool renderMerge = t.MergedFrom != null && Animation.UpdatingGrid();
+            bool renderMerge = t.MergedFrom != null && Animation1.UpdatingGrid();
             if (renderMerge) {
                 drawTile(t.MergedFrom[0]);
                 drawTile(t.MergedFrom[1]);
@@ -112,7 +112,7 @@ public static class Display {
 
     public static void Win() {
         if (manager.State != GameState.Won) return;
-        if (Animation.UpdatingGrid() || Animation.State == AnimationState.ResetFromWin) return;
+        if (Animation1.UpdatingGrid() || Animation1.State == AnimationState1.ResetFromWin) return;
 
         static void drawWin(Tile t) {
             if (t is null || t.Value != 2048) return;
@@ -122,7 +122,7 @@ public static class Display {
         }
 
         manager.Grid.EachCell((int _x, int _y, Tile t) => drawWin(t));
-        if (Animation.AcceptInput()) {
+        if (Animation1.AcceptInput()) {
             DrawAsset(Asset.BigFont, "YOU WIN!", new Vector2(20, 700), Color.Black);
             DrawAsset(Asset.Button, new Vector2(20, 720), Color.Red);
             DrawAsset(Asset.BigFont, "Play again", new Vector2(125, 750), Color.Red);
@@ -134,14 +134,14 @@ public static class Display {
     }
 
     public static void WinReset() {
-        if (Animation.State != AnimationState.ResetFromWin) return;
+        if (Animation1.State != AnimationState1.ResetFromWin) return;
         Rectangle location = StyleMath.PositionOfWinTile();
         DrawAsset(Asset.Tile[10], location, Color.White);
     }
 
     public static void Lose() {
         if (manager.State != GameState.Lost) return;
-        if (Animation.State != AnimationState.WaitingForInput) return;
+        if (Animation1.State != AnimationState1.WaitingForInput) return;
         DrawAsset(Asset.BigFont, "GAME OVER!", new Vector2(20, 700), Color.Black);
             DrawAsset(Asset.Button, new Vector2(20, 720), Color.Red);
             DrawAsset(Asset.BigFont, "Try again", new Vector2(125, 750), Color.Red);
@@ -157,26 +157,26 @@ public static class Display {
         return Asset.LoseTile[loseTileId];
     }
 
-    public static void addScore(ScoreDelta score) {
+    public static void AddScore(ScoreDelta score) {
         ScoreContainer.Add(score);
     }
 
     public static void Scores() {
         Color scoreColor = StyleMath.GetScoreColor();
 
-		string scoreStr = "Score: " + manager.Score.ToString().PadLeft(5);
-		int scoreWidth = (int)Asset.BigFont.MeasureString(scoreStr).X;
-		DrawAsset(
+        string scoreStr = "Score: " + manager.Score.ToString().PadLeft(5);
+        int scoreWidth = (int)Asset.BigFont.MeasureString(scoreStr).X;
+        DrawAsset(
             Asset.BigFont, 
             scoreStr, 
             new Vector2(400 - scoreWidth, 190), 
             scoreColor
         );
 
-		string highScoreStr = 
+        string highScoreStr = 
             "Best: " + HighScoreTracker.HighScore.ToString().PadLeft(5);
-		int highScoreWidth = (int)Asset.BigFont.MeasureString(highScoreStr).X;
-		DrawAsset(
+        int highScoreWidth = (int)Asset.BigFont.MeasureString(highScoreStr).X;
+        DrawAsset(
             Asset.BigFont, 
             highScoreStr, 
             new Vector2(400 - highScoreWidth, 240), 
@@ -208,11 +208,11 @@ public static class Display {
         Color brightness = StyleMath.GetInitialBrightness();
 
         double percent = 0;
-        if (Animation.State == AnimationState.FromTab) {
-            percent = Animation.FastEnd(2);
+        if (Animation1.State == AnimationState1.FromTab) {
+            percent = Animation1.FastEnd(2);
         }
-        if (Animation.State == AnimationState.ToTab) {
-            percent = 1 - Animation.FastStart(2);
+        if (Animation1.State == AnimationState1.ToTab) {
+            percent = 1 - Animation1.FastStart(2);
         }
 
         Vector2 newPos = StyleMath.Interpolate(
@@ -271,10 +271,10 @@ public static class Display {
     public static void Info() {
         double percent = 0;
 
-        if (Animation.State == AnimationState.ToTab) {
-            percent = 1 - Animation.FastStart(2);
-        } else if (Animation.State == AnimationState.FromTab) {
-            percent = Animation.FastEnd(2);
+        if (Animation1.State == AnimationState1.ToTab) {
+            percent = 1 - Animation1.FastStart(2);
+        } else if (Animation1.State == AnimationState1.FromTab) {
+            percent = Animation1.FastEnd(2);
         }
 
         Color color = StyleMath.Interpolate(new Color(0, 127, 255), new Color(251, 194, 27), percent);
@@ -301,10 +301,10 @@ public static class Display {
     public static void Credits() {
         double percent = 0;
 
-        if (Animation.State == AnimationState.ToTab) {
-            percent = 1 - Animation.FastStart(2);
-        } else if (Animation.State == AnimationState.FromTab) {
-            percent = Animation.FastEnd(2);
+        if (Animation1.State == AnimationState1.ToTab) {
+            percent = 1 - Animation1.FastStart(2);
+        } else if (Animation1.State == AnimationState1.FromTab) {
+            percent = Animation1.FastEnd(2);
         }
 
         Color color = StyleMath.Interpolate(new Color(0, 127, 0), new Color(251, 194, 27), percent);

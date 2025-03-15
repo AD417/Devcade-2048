@@ -5,10 +5,10 @@ using Devcade2048.App.Tabs;
 
 namespace Devcade2048.App.Render;
 
-public static class Animation {
+public static class Animation1 {
     internal static TimeSpan Timer;
-    public static AnimationState State { get; private set; } = AnimationState.InitFadeIn;
-    public static AnimationState LastState { get; private set; } = AnimationState.WaitingForInput;
+    public static AnimationState1 State { get; private set; } = AnimationState1.InitFadeIn;
+    public static AnimationState1 LastState { get; private set; } = AnimationState1.WaitingForInput;
     public static bool JustChanged { get; private set; } = false;
 
     private static readonly TimeSpan TransitionTime = TimeSpan.FromMilliseconds(1000);
@@ -17,7 +17,7 @@ public static class Animation {
     private static readonly TimeSpan EndTime = TimeSpan.FromMilliseconds(2000);
 
     // Internal updates to Timer.
-    public static void ChangeStateTo(AnimationState newState) {
+    public static void ChangeStateTo(AnimationState1 newState) {
         LastState = State;
         State = newState;
         JustChanged = true;
@@ -28,21 +28,21 @@ public static class Animation {
         if (!AcceptInput()) return;
         switch (man.State) {
             case GameState.Won:
-                ChangeStateTo(AnimationState.ResetFromWin);
+                ChangeStateTo(AnimationState1.ResetFromWin);
                 break;
             case GameState.Lost:
-                ChangeStateTo(AnimationState.ResetFromLost);
+                ChangeStateTo(AnimationState1.ResetFromLost);
                 break;
             case GameState.Playing:
             case GameState.Continuing:
-                ChangeStateTo(AnimationState.ResetFromNormal);
+                ChangeStateTo(AnimationState1.ResetFromNormal);
                 break;
             default:
             // Short circuit the reset animation that means nothing here.
             // TODO: change it to "Transition to the game". 
                 throw new NotSupportedException("AYO WTF, WE CAN'T RESET FROM " + man.State);
             //     man.Setup();
-            //     ChangeStateTo(AnimationState.Spawning);
+            //     ChangeStateTo(AnimationState1.Spawning);
             //     break;
         }
     }
@@ -55,27 +55,27 @@ public static class Animation {
 
     private static void CheckCompletion() {
         switch (State) {
-            case AnimationState.WaitingForInput: return;
+            case AnimationState1.WaitingForInput: return;
 
-            case AnimationState.ToWon:
-            case AnimationState.ToLost:
+            case AnimationState1.ToWon:
+            case AnimationState1.ToLost:
                 CheckEndCompletion();
                 break;
 
-            case AnimationState.InitFadeIn:
-            case AnimationState.ToTab:
-            case AnimationState.FromTab:
-            case AnimationState.ResetFromWin:
-            case AnimationState.ContinueFromWin:
-            case AnimationState.ResetFromLost:
-            case AnimationState.ResetFromNormal:
+            case AnimationState1.InitFadeIn:
+            case AnimationState1.ToTab:
+            case AnimationState1.FromTab:
+            case AnimationState1.ResetFromWin:
+            case AnimationState1.ContinueFromWin:
+            case AnimationState1.ResetFromLost:
+            case AnimationState1.ResetFromNormal:
                 CheckTransitionCompletion();
                 break;
             
-            case AnimationState.Moving: 
+            case AnimationState1.Moving: 
                 CheckMoveCompletion();
                 break;
-            case AnimationState.Spawning:
+            case AnimationState1.Spawning:
                 CheckSpawnCompletion();
                 break;
         }
@@ -85,11 +85,11 @@ public static class Animation {
         if (Timer < EndTime) return;
         LastState = State;
         JustChanged = true;
-        if (State != AnimationState.ToWon || new Random().NextDouble() <= 0.9) {
+        if (State != AnimationState1.ToWon || new Random().NextDouble() <= 0.9) {
             Timer = new TimeSpan();
-            State = AnimationState.WaitingForInput;
+            State = AnimationState1.WaitingForInput;
         } else {
-            State = AnimationState.EasterEgg;
+            State = AnimationState1.EasterEgg;
         }
     }
 
@@ -99,23 +99,23 @@ public static class Animation {
         LastState = State;
         JustChanged = true;
         switch (State) {
-            case AnimationState.InitFadeIn:
-            case AnimationState.ContinueFromWin:
-                State = AnimationState.WaitingForInput;
+            case AnimationState1.InitFadeIn:
+            case AnimationState1.ContinueFromWin:
+                State = AnimationState1.WaitingForInput;
                 break;
-            case AnimationState.ResetFromWin:
-            case AnimationState.ResetFromLost:
-            case AnimationState.ResetFromNormal:
-                State = AnimationState.Spawning;
+            case AnimationState1.ResetFromWin:
+            case AnimationState1.ResetFromLost:
+            case AnimationState1.ResetFromNormal:
+                State = AnimationState1.Spawning;
                 break;
-            case AnimationState.FromTab:
-                State = AnimationState.ToTab;
+            case AnimationState1.FromTab:
+                State = AnimationState1.ToTab;
                 break;
-            case AnimationState.ToTab:
+            case AnimationState1.ToTab:
                 if (TabHandler.CurrentTab.Id() == SelectedTab.Game) {
-                    State = AnimationState.Spawning;
+                    State = AnimationState1.Spawning;
                 } else {
-                    State = AnimationState.WaitingForInput;
+                    State = AnimationState1.WaitingForInput;
                 }
                 break;
         }
@@ -126,7 +126,7 @@ public static class Animation {
         LastState = State;
         JustChanged = true;
         Timer = new TimeSpan();
-        State = AnimationState.Spawning;
+        State = AnimationState1.Spawning;
     }
 
     private static void CheckSpawnCompletion() {
@@ -134,25 +134,25 @@ public static class Animation {
         LastState = State;
         JustChanged = true;
         Timer = new TimeSpan(0);
-        State = AnimationState.WaitingForInput;
+        State = AnimationState1.WaitingForInput;
         if (Display.manager.State == GameState.Lost) {
-            State = AnimationState.ToLost;
+            State = AnimationState1.ToLost;
         }
         if (Display.manager.State == GameState.Won) {
-            State = AnimationState.ToWon;
+            State = AnimationState1.ToWon;
         }
     }
 
     // General stats.
-    public static bool StateIsAny(params AnimationState[] states) {
-        foreach (AnimationState state in states) {
+    public static bool StateIsAny(params AnimationState1[] states) {
+        foreach (AnimationState1 state in states) {
             if (state == State) return true;
         }
         return false;
     }
     
-    public static bool StateWasAny(params AnimationState[] states) {
-        foreach (AnimationState state in states) {
+    public static bool StateWasAny(params AnimationState1[] states) {
+        foreach (AnimationState1 state in states) {
             if (state == LastState) return true;
         }
         return false;
@@ -161,24 +161,24 @@ public static class Animation {
 
     public static double PercentComplete() {
         switch (State) {
-            case AnimationState.InitFadeIn: 
-            case AnimationState.ToTab:
-            case AnimationState.FromTab:
-            case AnimationState.ResetFromWin:
-            case AnimationState.ContinueFromWin:
-            case AnimationState.ResetFromLost:
-            case AnimationState.ResetFromNormal:
+            case AnimationState1.InitFadeIn: 
+            case AnimationState1.ToTab:
+            case AnimationState1.FromTab:
+            case AnimationState1.ResetFromWin:
+            case AnimationState1.ContinueFromWin:
+            case AnimationState1.ResetFromLost:
+            case AnimationState1.ResetFromNormal:
                 return Timer / TransitionTime;
 
-            case AnimationState.Moving:
+            case AnimationState1.Moving:
                 return Timer / MoveTime;
 
-            case AnimationState.Spawning:
+            case AnimationState1.Spawning:
                 return Timer / SpawnTime;
 
-            case AnimationState.ToWon:
-            case AnimationState.ToLost:
-            case AnimationState.EasterEgg:
+            case AnimationState1.ToWon:
+            case AnimationState1.ToLost:
+            case AnimationState1.EasterEgg:
                 return Timer / EndTime;
 
             default:
@@ -188,45 +188,45 @@ public static class Animation {
 
     public static bool AcceptInput() {
         return StateIsAny(
-            AnimationState.WaitingForInput,
-            AnimationState.EasterEgg
+            AnimationState1.WaitingForInput,
+            AnimationState1.EasterEgg
         );
     }
     public static bool UpdatingGrid() {
         return StateIsAny(
-            AnimationState.Moving,
-            AnimationState.Spawning
+            AnimationState1.Moving,
+            AnimationState1.Spawning
         );
     }
 
     public static bool RenderingTiles() {
         return !StateIsAny(
-            AnimationState.ResetFromWin,
-            AnimationState.ToTab
+            AnimationState1.ResetFromWin,
+            AnimationState1.ToTab
         );
     }
 
     public static bool ResetGrid() {
         return 
-            State == AnimationState.Spawning 
+            State == AnimationState1.Spawning 
          && JustChanged 
-         && StateWasAny(AnimationState.ResetFromWin, AnimationState.ResetFromLost, AnimationState.ResetFromNormal)
+         && StateWasAny(AnimationState1.ResetFromWin, AnimationState1.ResetFromLost, AnimationState1.ResetFromNormal)
         ;
     }
 
     public static bool SwitchTabs() {
         return 
-            State == AnimationState.ToTab
+            State == AnimationState1.ToTab
          && JustChanged
-         && LastState == AnimationState.FromTab
+         && LastState == AnimationState1.FromTab
         ;
     }
 
     public static bool ContinueGame() {
         return 
-            State == AnimationState.WaitingForInput
+            State == AnimationState1.WaitingForInput
          && JustChanged
-         && LastState == AnimationState.ContinueFromWin
+         && LastState == AnimationState1.ContinueFromWin
         ;
     }
 

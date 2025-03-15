@@ -18,7 +18,7 @@ public class CreditsTab : ITab {
     }
 
     public void Update(GameTime gameTime) {
-		if (!Animation.AcceptInput()) return;
+		if (!Animation1.AcceptInput()) return;
         if (InputManager.AnyButtonPressed()) TabHandler.SetNextTab(SelectedTab.Menu);
     }
 

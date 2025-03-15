@@ -2,7 +2,7 @@
 
 namespace Devcade2048.App.Render;
 
-public enum AnimationState {
+public enum AnimationState1 {
     WaitingForInput,
 
     // Startup animations

@@ -183,7 +183,7 @@ public class Manager {
             }
             if (scoreDelta > 0) ScoreContainer.Add(scoreDelta);
 
-			Animation.ChangeStateTo(AnimationState.Moving);
+			Animation1.ChangeStateTo(AnimationState1.Moving);
             Actuate();
         }
     }

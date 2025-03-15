@@ -19,7 +19,7 @@ public class MenuTab : ITab {
     }
 
     public void Update(GameTime gameTime) {
-		if (!Animation.AcceptInput()) return;
+		if (!Animation1.AcceptInput()) return;
 		if (InputManager.isButtonPressed(Button.Red)) {
 			Config.LoadGame = false;
 			StartGame();
