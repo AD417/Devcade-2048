@@ -12,7 +12,6 @@ public class ToMenuAnimationState : TransientAnimationState {
     };
 
     public ToMenuAnimationState() : base(TransitionTime) {
-
     }
 
   public override void Draw() {

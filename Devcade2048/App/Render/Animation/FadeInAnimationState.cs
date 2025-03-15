@@ -10,7 +10,7 @@ public class FadeInAnimationState : TransientAnimationState {
     public FadeInAnimationState() : base(TransitionTime) {}
 
     public override void Draw() {
-      // Draw the menu first. 
+        // Draw the menu first. 
         substate.Draw();
 
         // Draw a black rectangle of varying opacity over the entire UI. 
@@ -24,8 +24,8 @@ public class FadeInAnimationState : TransientAnimationState {
         DrawAsset(uiCover, screen, Color.Black * (float) (1 - PercentComplete()));
     }
 
-  public override AnimationState NextState()
-  {
-    return substate;
-  }
+    public override AnimationState NextState()
+    {
+        return substate;
+    }
 }

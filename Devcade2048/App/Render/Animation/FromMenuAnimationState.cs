@@ -10,20 +10,21 @@ public class FromMenuAnimationState : TransientAnimationState {
         new Vector2[] { new(9, 500), new(-300, 500) },
         new Vector2[] { new(219, 500), new(530, 500) },
     };
+    private readonly MenuTabAnimationState.Tab tab;
 
-    public FromMenuAnimationState() : base(TransitionTime) {
-
+    public FromMenuAnimationState(MenuTabAnimationState.Tab tab) : base(TransitionTime) {
+        this.tab = tab;
     }
 
-  public override void Draw() {
-    base.Draw();
-    DrawHighScore();
+    public override void Draw() {
+        base.Draw();
+        DrawHighScore();
 
-    for (int i = 0; i < 4; i++) {
-        Vector2 drawPos = Interpolate(blobPositions[i][0], blobPositions[i][1], FastEnd());
-        DrawAsset(Asset.Menu[i], drawPos);
+        for (int i = 0; i < 4; i++) {
+            Vector2 drawPos = Interpolate(blobPositions[i][0], blobPositions[i][1], FastEnd());
+            DrawAsset(Asset.Menu[i], drawPos);
+        }
     }
-  }
 
     private void DrawHighScore() {
         string highScore = "HIGH SCORE: " + HighScoreTracker.HighScore.ToString();
@@ -34,6 +35,6 @@ public class FromMenuAnimationState : TransientAnimationState {
 
   public override AnimationState NextState()
   {
-    return new ToMenuAnimationState();
+    return new ToTabAnimationState(tab);
   }
 }

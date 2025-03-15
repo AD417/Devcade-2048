@@ -35,8 +35,11 @@ public class MainMenuAnimationState : WaitingAnimationState {
     }
 
   public override AnimationState ProcessInput() {
-    if (InputManager.AnyButtonPressed()) {
-        return new FromMenuAnimationState();
+    if (InputManager.isButtonPressed(Button.Blue)) {
+        return new FromMenuAnimationState(MenuTabAnimationState.Tab.Info);
+    }
+    if (InputManager.isButtonPressed(Button.Green)) {
+        return new FromMenuAnimationState(MenuTabAnimationState.Tab.Credits);
     }
     return this;
   }

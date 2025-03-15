@@ -76,6 +76,7 @@ public class Game1 : Game
 	/// </summary>
 	protected override void LoadContent()
 	{
+		GraphicsDevice.BlendState = BlendState.NonPremultiplied;
 		_spriteBatch = new SpriteBatch(GraphicsDevice);
 
 		Display.Initialize(_spriteBatch, _GameData);

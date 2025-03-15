@@ -8,11 +8,11 @@ public class MovingTileAnimationState : TransientAnimationState {
     }
 
     public override void Draw() {
-           
+
     }
 
-  public override AnimationState NextState()
-  {
-    throw new NotImplementedException();
-  }
+    public override AnimationState NextState()
+    {
+        throw new NotImplementedException();
+    }
 }
