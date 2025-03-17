@@ -10,10 +10,10 @@ public class FromMenuAnimationState : TransientAnimationState {
         new Vector2[] { new(9, 500), new(-300, 500) },
         new Vector2[] { new(219, 500), new(530, 500) },
     };
-    private readonly MenuTabAnimationState.Tab tab;
+    private readonly Selection selection;
 
-    public FromMenuAnimationState(MenuTabAnimationState.Tab tab) : base(TransitionTime) {
-        this.tab = tab;
+    public FromMenuAnimationState(Selection selection) : base(TransitionTime) {
+        this.selection = selection;
     }
 
     public override void Draw() {
@@ -33,8 +33,14 @@ public class FromMenuAnimationState : TransientAnimationState {
     }
 
 
-  public override AnimationState NextState()
-  {
-    return new ToTabAnimationState(tab);
-  }
+    public override AnimationState NextState()
+    {
+        if (selection == Selection.Game) {
+            return new ToGameAnimationState(false);
+        }
+        if (selection == Selection.Continue) {
+            return new ToGameAnimationState(true);
+        }
+        return new ToTabAnimationState(selection);
+    }
 }

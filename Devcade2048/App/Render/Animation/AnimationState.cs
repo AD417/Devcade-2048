@@ -8,6 +8,7 @@ public abstract class AnimationState {
     protected static SpriteBatch Pen {get; private set; }
     protected static Manager Game {get; private set; }
     public static readonly AnimationState InitialState = new FadeInAnimationState();
+    public static readonly Color Background = new Color(251, 194, 27);
 
     public static void SetRendering(SpriteBatch pen, Manager game) {
         Pen = pen;
@@ -45,7 +46,7 @@ public abstract class AnimationState {
     public virtual bool IsAcceptingInput() {
         return false;
     }
-    
+
     public virtual AnimationState ProcessInput() {
         return this;
     }

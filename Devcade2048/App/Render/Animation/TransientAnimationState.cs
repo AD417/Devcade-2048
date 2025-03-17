@@ -59,4 +59,8 @@ public abstract class TransientAnimationState : AnimationState {
         y = (float) (v1.Y * (1 - percent) + v2.Y * percent);
         return new Vector2(x, y);
     }
+
+    protected static Color Interpolate(Color c1, Color c2, double percent) {
+        return Color.Lerp(c1, c2, (float) percent);
+    }
 }

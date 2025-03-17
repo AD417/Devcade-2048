@@ -6,16 +6,11 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Devcade2048.App.Render.Animation;
 
 public class MenuTabAnimationState : WaitingAnimationState {
-    // TODO: Move this enum to logical location
-    public enum Tab {
-        Credits,
-        Info,
-    }
 
-    private readonly Tab tab;
+    private readonly Selection selection;
 
-    public MenuTabAnimationState(Tab tab) {
-        this.tab = tab;
+    public MenuTabAnimationState(Selection selection) {
+        this.selection = selection;
     }
 
   public override AnimationState ProcessInput()
@@ -39,24 +34,24 @@ public class MenuTabAnimationState : WaitingAnimationState {
     }
 
     private Texture2D getBlob() {
-        switch (tab) {
-            case Tab.Info:
+        switch (selection) {
+            case Selection.Info:
                 return Asset.Menu[2];
-            case Tab.Credits:
+            case Selection.Credits:
                 return Asset.Menu[3];
             default:
-                throw new Exception("Tab type '" + tab + "' has no codepath!");
+                throw new Exception("Tab type '" + selection + "' has no codepath!");
         }
     }
 
     private string getTabText() {
-        switch (tab) {
-            case Tab.Info:
+        switch (selection) {
+            case Selection.Info:
                 return "This is the CREDITS tab!";
-            case Tab.Credits:
+            case Selection.Credits:
                 return "This is the INFO tab!";
             default:
-                return "ERROR: Tab type '" + tab + "' has no string... how are we here?";
+                return "ERROR: Tab type '" + selection + "' has no string... how are we here?";
         }
     }
 }

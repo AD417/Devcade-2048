@@ -6,8 +6,8 @@ namespace Devcade2048.App.Render.Animation;
 public class ToTabAnimationState : TransientAnimationState {
     MenuTabAnimationState substate;
 
-    public ToTabAnimationState(MenuTabAnimationState.Tab tab) : base(TransitionTime) {
-        substate = new MenuTabAnimationState(tab);
+    public ToTabAnimationState(Selection selection) : base(TransitionTime) {
+        substate = new MenuTabAnimationState(selection);
     }
 
     public override AnimationState NextState()

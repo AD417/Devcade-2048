@@ -61,20 +61,31 @@ public class Manager {
         return State == GameState.Lost || State == GameState.Won;
     }
 
+    public void NewGame() {
+
+        grid = new Grid(size);
+        score = 0;
+        AddStartTiles();
+        scoreDelta = 0;
+    }
+
+    public void LoadGame() {
+        try {
+            Manager man = Persistence.LoadSync<ManagerSerializable>("2blob48", "grid", new JsonSerializerOptions())
+                .ToManager();
+
+            grid = man.grid;
+            score = man.score;
+
+        } catch (Exception e) {
+            Console.WriteLine("Whoops!");
+            Console.WriteLine(e);
+            NewGame();
+        }
+    }
+
     public void Setup() {
         if (Config.LoadGame) {
-            try {
-                Manager man = Persistence.LoadSync<ManagerSerializable>("2blob48", "grid", new JsonSerializerOptions())
-                    .ToManager();
-
-                grid = man.grid;
-                score = man.score;
-
-            } catch (Exception e) {
-                Console.WriteLine("Whoops!");
-                Console.WriteLine(e);
-                Config.LoadGame = false;
-            }
         }
 
         if (!Config.LoadGame) {
