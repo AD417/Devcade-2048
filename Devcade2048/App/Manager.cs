@@ -142,9 +142,9 @@ public class Manager {
         tile.UpdatePosition(cell);
     }
 
-    public void Move(Direction direction) {
-        if (IsGameTerminated()) return;
-        if (direction == Direction.None) return;
+    public bool Move(Direction direction) {
+        if (IsGameTerminated()) return false;
+        if (direction == Direction.None) return false;
 
         Tile tile;
 
@@ -197,6 +197,7 @@ public class Manager {
 			Animation1.ChangeStateTo(AnimationState1.Moving);
             Actuate();
         }
+        return moved;
     }
 
     public Vector2 GetVector(Direction direction) {

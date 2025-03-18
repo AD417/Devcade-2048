@@ -79,7 +79,7 @@ public class Game1 : Game
 		GraphicsDevice.BlendState = BlendState.NonPremultiplied;
 		_spriteBatch = new SpriteBatch(GraphicsDevice);
 
-		Display.Initialize(_spriteBatch, _GameData);
+		// Display.Initialize(_spriteBatch, _GameData);
 		AnimationState.SetRendering(_spriteBatch, _GameData);
 		
 		// TODO: use this.Content to load your game content here
@@ -168,7 +168,7 @@ public class Game1 : Game
 		_spriteBatch.End();
 
 		ScoreContainer.Increment(gameTime);
-	 	Animation1.Increment(gameTime);
+	 	// Animation1.Increment(gameTime);
 
 		base.Draw(gameTime);
 	}
