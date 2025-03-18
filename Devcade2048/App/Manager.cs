@@ -241,7 +241,7 @@ public class Manager {
         return new MoveData(previous, cell);
     }
 
-    private bool MovesAvailable() {
+    public bool MovesAvailable() {
         return Grid.CellsAvailable() || TileMatchesAvailable();
     }
 

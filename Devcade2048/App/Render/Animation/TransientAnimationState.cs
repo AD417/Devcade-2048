@@ -9,12 +9,12 @@ public abstract class TransientAnimationState : AnimationState {
     protected static readonly TimeSpan TransitionTime = TimeSpan.FromMilliseconds(1000);
     protected static readonly TimeSpan TileMoveTime = TimeSpan.FromMilliseconds(150);
     protected static readonly TimeSpan TileSpawnTime = TimeSpan.FromMilliseconds(100);
-    protected static readonly TimeSpan WinAnimationTime = TimeSpan.FromMilliseconds(2000);
+    protected static readonly TimeSpan GameEndingTime = TimeSpan.FromMilliseconds(2000);
 
     internal TimeSpan Timer = new();
     internal TimeSpan MaxTime;
 
-    public TransientAnimationState(TimeSpan maxTime, AnimationState previous = null) : base(previous) {
+    public TransientAnimationState(TimeSpan maxTime) : base() {
         MaxTime = maxTime;
     }
 

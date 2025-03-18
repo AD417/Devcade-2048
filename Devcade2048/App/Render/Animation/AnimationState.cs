@@ -15,15 +15,7 @@ public abstract class AnimationState {
         Game = game;
     }
 
-    protected readonly AnimationState previous;
-
-    public AnimationState(AnimationState previous = null) {
-        this.previous = previous;
-        HandleOnSwapLogic();
-    }
-
-    protected virtual void HandleOnSwapLogic() {
-        // Nothing by default
+    public AnimationState() {
     }
 
     public virtual void Tick(GameTime gt) {

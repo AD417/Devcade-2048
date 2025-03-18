@@ -4,11 +4,12 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Devcade2048.App.Render.Animation;
 
 public class SpawningAnimationState : TransientAnimationState {
-    public SpawningAnimationState() : base(TileSpawnTime) {
-        
-    }
+    public SpawningAnimationState() : base(TileSpawnTime) {}
 
     public override AnimationState NextState() {
+        if (!Game.MovesAvailable()) {
+            return new ToGameOverAnimationState();
+        }
         return new GameWaitingAnimationState();
     }
 

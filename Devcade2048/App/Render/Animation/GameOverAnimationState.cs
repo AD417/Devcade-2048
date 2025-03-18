@@ -1,31 +1,33 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Devcade2048.App.Render.Animation;
 
-public class GameWaitingAnimationState : WaitingAnimationState {
+public class GameOverAnimationState : WaitingAnimationState {
 
-    public override AnimationState ProcessInput() {
-        if (InputManager.isButtonPressed(Button.Blue)) {
-            return new FromGameAnimationState();
-        }
-        if (InputManager.GetStickDirection() != Manager.Direction.None) {
-            if (Game.Move(InputManager.GetStickDirection())) return new MovingTileAnimationState();
-        }
+    public override AnimationState ProcessInput()
+    {
         if (InputManager.isButtonPressed(Button.Red)) {
-            return new GameResetAnimationState(false);
+            return new GameResetAnimationState(true);
         }
         return this;
     }
 
 
 
+
+
     public override void Draw() {
         base.Draw();
+
         DrawAsset(Asset.Grid, new Vector2(10, 290));
         DrawAllTiles();
         DrawScore();
+        DrawLossText();
     }
+
+
     private void DrawAllTiles() {
 
         void drawTile(Tile t) {
@@ -37,11 +39,16 @@ public class GameWaitingAnimationState : WaitingAnimationState {
             );
             Rectangle location = new Rectangle(pos.ToPoint(), new Point(96,96));
 
-            Texture2D blob = Asset.Tile[t.TextureId];
+            Texture2D blob = determineBlobTexture(t);
 
             DrawAsset(blob, location, Color.White);
         }
         Game.Grid.EachCell((int _x, int _y, Tile t) => drawTile(t));
+    }
+
+    private Texture2D determineBlobTexture(Tile t) {
+        if (t.TextureId > 5) return Asset.LoseTile[1];
+        return Asset.LoseTile[0];
     }
 
 
@@ -68,4 +75,11 @@ public class GameWaitingAnimationState : WaitingAnimationState {
         );
     }
 
+    public static void DrawLossText() {
+        DrawAsset(Asset.BigFont, "GAME OVER!", new Vector2(20, 700), Color.Black);
+        DrawAsset(Asset.Button, new Vector2(20, 720), Color.Red);
+        DrawAsset(Asset.BigFont, "Try again", new Vector2(125, 750), Color.Red);
+        DrawAsset(Asset.Button, new Vector2(20, 780), Color.Blue);
+        DrawAsset(Asset.BigFont, "Exit to Menu", new Vector2(125, 810), Color.Blue);
+    }
 }
