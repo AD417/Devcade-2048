@@ -41,7 +41,7 @@ public class ToGameOverAnimationState : TransientAnimationState {
     }
 
     private Texture2D determineBlobTexture(Tile t) {
-        double percent = PercentComplete();
+        float percent = PercentComplete();
         if (percent < 0.5) return Asset.Tile[t.TextureId];
         int largestDeadTile = (int) (cubicPercentComplete() * 16); 
         if (t.TextureId > largestDeadTile) return Asset.Tile[t.TextureId];
@@ -50,10 +50,10 @@ public class ToGameOverAnimationState : TransientAnimationState {
         return Asset.LoseTile[0];
     }
 
-    private double cubicPercentComplete() {
+    private float cubicPercentComplete() {
         // Scales cubically from 0 to 1 as the percent goes from 0.5 to 1. 
-        double percent = PercentComplete();
-        percent -= 0.5;
+        float percent = PercentComplete();
+        percent -= 1/2;
         percent *= 2;
         return percent * percent * percent;
     }
@@ -83,7 +83,7 @@ public class ToGameOverAnimationState : TransientAnimationState {
     }
 
     public void DrawLossText() {
-        float opacity = (float) cubicPercentComplete();
+        float opacity = cubicPercentComplete();
         DrawAsset(Asset.BigFont, "GAME OVER!", new Vector2(20, 700), Color.Black * opacity);
         DrawAsset(Asset.Button, new Vector2(20, 720), Color.Red * opacity);
         DrawAsset(Asset.BigFont, "Try again", new Vector2(125, 750), Color.Red * opacity);

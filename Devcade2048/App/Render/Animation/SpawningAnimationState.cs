@@ -91,8 +91,8 @@ public class SpawningAnimationState : TransientAnimationState {
         // passes through (0,0)
         // passes through (1,1)
         // is tangent to y=1.2 in the range (0,1)
-        double x = PercentComplete();
-        double y = -2.38 * x * x + 3.38 * x;
+        float x = PercentComplete();
+        float y = -2.38F * x * x + 3.38F * x;
         return (int) (y * 96);
     }
 

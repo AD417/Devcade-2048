@@ -85,7 +85,7 @@ public static class Animation1 {
         if (Timer < EndTime) return;
         LastState = State;
         JustChanged = true;
-        if (State != AnimationState1.ToWon || new Random().NextDouble() <= 0.9) {
+        if (State != AnimationState1.ToWon || new Random().NextSingle() <= 0.9) {
             Timer = new TimeSpan();
             State = AnimationState1.WaitingForInput;
         } else {
@@ -159,7 +159,7 @@ public static class Animation1 {
 
     }
 
-    public static double PercentComplete() {
+    public static float PercentComplete() {
         switch (State) {
             case AnimationState1.InitFadeIn: 
             case AnimationState1.ToTab:
@@ -168,21 +168,21 @@ public static class Animation1 {
             case AnimationState1.ContinueFromWin:
             case AnimationState1.ResetFromLost:
             case AnimationState1.ResetFromNormal:
-                return Timer / TransitionTime;
+                return (float) (Timer / TransitionTime);
 
             case AnimationState1.Moving:
-                return Timer / MoveTime;
+                return (float) (Timer / MoveTime);
 
             case AnimationState1.Spawning:
-                return Timer / SpawnTime;
+                return (float) (Timer / SpawnTime);
 
             case AnimationState1.ToWon:
             case AnimationState1.ToLost:
             case AnimationState1.EasterEgg:
-                return Timer / EndTime;
+                return (float) (Timer / EndTime);
 
             default:
-                return 1.0;
+                return 1.0F;
         }
     }
 
@@ -230,13 +230,13 @@ public static class Animation1 {
         ;
     }
 
-    public static double FastEnd(double factor = 3) {
-        double normalPercent = PercentComplete();
-        return Math.Pow(normalPercent, factor);
+    public static float FastEnd(float factor = 3) {
+        float normalPercent = PercentComplete();
+        return MathF.Pow(normalPercent, factor);
     }
 
-    public static double FastStart(double factor = 3) {
-        double normalPercent = PercentComplete();
-        return 1 - Math.Pow(1 - normalPercent, factor);
+    public static float FastStart(float factor = 3) {
+        float normalPercent = PercentComplete();
+        return 1 - MathF.Pow(1 - normalPercent, factor);
     }
 }

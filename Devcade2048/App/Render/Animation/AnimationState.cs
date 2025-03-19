@@ -22,8 +22,8 @@ public abstract class AnimationState {
         // Nothing by default
     }
 
-    public virtual double PercentComplete() {
-        return 0.0;
+    public virtual float PercentComplete() {
+        return 0.0F;
     }
 
     public virtual bool IsComplete() {

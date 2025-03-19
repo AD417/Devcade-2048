@@ -21,7 +21,7 @@ public class FadeInAnimationState : TransientAnimationState {
         // This black pixel is stretched to cover everything. 
         Rectangle screen = new Rectangle(0, 0, gd.DisplayMode.Width, gd.DisplayMode.Height);
 
-        DrawAsset(uiCover, screen, Color.Black * (float) (1 - PercentComplete()));
+        DrawAsset(uiCover, screen, Color.Black * (1 - PercentComplete()));
     }
 
     public override AnimationState NextState()

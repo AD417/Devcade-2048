@@ -26,7 +26,7 @@ public class ToMenuAnimationState : TransientAnimationState {
 
     private void DrawHighScore() {
         string highScore = "HIGH SCORE: " + HighScoreTracker.HighScore.ToString();
-        float opacity = (float) PercentComplete();
+        float opacity = PercentComplete();
         TextBox.WriteCenteredText(Pen, highScore, new Vector2(210, 200), Color.Black * opacity);
     }
 

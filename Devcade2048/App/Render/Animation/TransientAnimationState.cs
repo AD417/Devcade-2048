@@ -24,9 +24,9 @@ public abstract class TransientAnimationState : AnimationState {
         Timer += gt.ElapsedGameTime;
     }
 
-    public override double PercentComplete()
+    public override float PercentComplete()
     {
-        return Math.Min(Timer / MaxTime, 1.0);
+        return MathF.Min((float) (Timer / MaxTime), 1.0F);
     }
 
     public override bool IsComplete()
@@ -43,24 +43,24 @@ public abstract class TransientAnimationState : AnimationState {
 
     public abstract override AnimationState NextState();
 
-    public double FastEnd(double factor = 3) {
-        double normalPercent = PercentComplete();
-        return Math.Pow(normalPercent, factor);
+    public float FastEnd(float factor = 3) {
+        float normalPercent = PercentComplete();
+        return MathF.Pow(normalPercent, factor);
     }
 
-    public double FastStart(double factor = 3) {
-        double normalPercent = PercentComplete();
-        return 1 - Math.Pow(1 - normalPercent, factor);
+    public float FastStart(float factor = 3) {
+        float normalPercent = PercentComplete();
+        return 1 - MathF.Pow(1 - normalPercent, factor);
     }
 
-    protected static Vector2 Interpolate(Vector2 v1, Vector2 v2, double percent) {
+    protected static Vector2 Interpolate(Vector2 v1, Vector2 v2, float percent) {
         float x, y;
-        x = (float) (v1.X * (1 - percent) + v2.X * percent);
-        y = (float) (v1.Y * (1 - percent) + v2.Y * percent);
+        x = v1.X * (1 - percent) + v2.X * percent;
+        y = v1.Y * (1 - percent) + v2.Y * percent;
         return new Vector2(x, y);
     }
 
-    protected static Color Interpolate(Color c1, Color c2, double percent) {
-        return Color.Lerp(c1, c2, (float) percent);
+    protected static Color Interpolate(Color c1, Color c2, float percent) {
+        return Color.Lerp(c1, c2, percent);
     }
 }

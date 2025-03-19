@@ -54,19 +54,19 @@ public class FromWinAnimationState : TransientAnimationState {
     }
 
     private Rectangle winTilePos(Tile t) {
-        float factor = 1 - (float) FastEnd();
-        double scale = 96 + 304 * factor;
+        float factor = 1 - FastEnd();
+        float scale = 96 + 304 * factor;
         Vector2 pos = new Vector2(
-            ( 12 + t.Position.X * 100 * (1 - factor)),
-            (292 + t.Position.Y * 100 * (1 - factor))
+             12 + t.Position.X * 100 * (1 - factor),
+            292 + t.Position.Y * 100 * (1 - factor)
         );
         return new Rectangle(pos.ToPoint(), new Point((int) scale, (int) scale));
     }
 
-    private double cubicPercentComplete() {
+    private float cubicPercentComplete() {
         // Scales cubically from 0 to 1 as the percent goes from 0.5 to 1. 
-        double percent = PercentComplete();
-        percent -= 0.5;
+        float percent = PercentComplete();
+        percent -= 1/2;
         percent *= 2;
         return 1 - percent * percent * percent;
     }
@@ -96,7 +96,7 @@ public class FromWinAnimationState : TransientAnimationState {
     }
 
     public void DrawWinText() {
-        float opacity = (float) cubicPercentComplete();
+        float opacity = cubicPercentComplete();
         DrawAsset(Asset.BigFont, "YOU WIN!", new Vector2(20, 700), Color.Black * opacity);
         DrawAsset(Asset.Button, new Vector2(20, 720), Color.Red * opacity);
         DrawAsset(Asset.BigFont, "Play again", new Vector2(125, 750), Color.Red * opacity);

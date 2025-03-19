@@ -40,7 +40,7 @@ class FromGameAnimationState : TransientAnimationState {
     private Vector2 getGridPos() {
         // The top left corner of the grid, for rendering.
         float x = 10F;
-        float y = 290 + 710 * (float) (FastEnd());
+        float y = 290 + 710 * FastEnd();
         return new Vector2(x,y);
     }
 

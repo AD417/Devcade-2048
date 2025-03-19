@@ -9,7 +9,7 @@ public static class StyleMath {
     public static Color Background = new Color(251, 194, 27);
 
     // Color management
-    public static Color Interpolate(Color c1, Color c2, double percent) {
+    public static Color Interpolate(Color c1, Color c2, float percent) {
         int r, g, b;
         r = (int) (c1.R * (1 - percent) + c2.R * percent);
         g = (int) (c1.G * (1 - percent) + c2.G * percent);
@@ -19,7 +19,7 @@ public static class StyleMath {
 
     public static Color GetBackgroundColor() {
         if (Animation1.State != AnimationState1.InitFadeIn) return Background;
-        double opacity = Animation1.FastEnd(2);
+        float opacity = Animation1.FastEnd(2);
         return Interpolate(new Color(0,0,0), Background, opacity);
     }
 
@@ -57,10 +57,10 @@ public static class StyleMath {
     }
 
 
-    public static Vector2 Interpolate(Vector2 v1, Vector2 v2, double percent) {
+    public static Vector2 Interpolate(Vector2 v1, Vector2 v2, float percent) {
         float x, y;
-        x = (float) (v1.X * (1 - percent) + v2.X * percent);
-        y = (float) (v1.Y * (1 - percent) + v2.Y * percent);
+        x = v1.X * (1 - percent) + v2.X * percent;
+        y = v1.Y * (1 - percent) + v2.Y * percent;
         return new Vector2(x, y);
     }
 
@@ -76,18 +76,18 @@ public static class StyleMath {
         if (Animation1.State == AnimationState1.Moving) return 0;
         if (Animation1.State != AnimationState1.Spawning) return 96;
 
-        double scaleFactor = Animation1.PercentComplete();
+        float scaleFactor = Animation1.PercentComplete();
 
 
         if (t.MergedFrom is null) return (int) (96 * scaleFactor);
 
         scaleFactor *= 2;
-        if (scaleFactor > 1) scaleFactor = (2 - scaleFactor) * 0.25 + 1;
+        if (scaleFactor > 1) scaleFactor = (2 - scaleFactor) * 1/4 + 1;
         return (int) (96 * scaleFactor);
     }
 
     private static int ResetTileScale() {
-        double scaleFactor = 1 - Animation1.PercentComplete();
+        float scaleFactor = 1 - Animation1.PercentComplete();
         return (int) (96 * scaleFactor * scaleFactor);
     }
 
@@ -98,7 +98,7 @@ public static class StyleMath {
         if (t.PreviousPosition is null) return currentPos;
 
         Vector2 oldPos = ToScreenPosition((Vector2)t.PreviousPosition);
-        float percent = (float) Animation1.PercentComplete();
+        float percent = Animation1.PercentComplete();
 
         return oldPos * (1 - percent) + currentPos * percent;
     }
@@ -118,24 +118,24 @@ public static class StyleMath {
 
 
     // Win and Loss States
-    private static double WinScale() {
+    private static float WinScale() {
         if (!Animation1.StateIsAny(
             AnimationState1.ToWon, 
             AnimationState1.EasterEgg, 
             AnimationState1.ResetFromWin,
             AnimationState1.ContinueFromWin
         )) {
-            return 1.0;
+            return 1.0F;
         }
-        double percent = Animation1.PercentComplete();
+        float percent = Animation1.PercentComplete();
         if (Animation1.State == AnimationState1.ResetFromWin) {
             percent = 1 - percent;
-            return Math.Pow(percent, 3);
+            return MathF.Pow(percent, 3);
         }
         if (Animation1.State == AnimationState1.ContinueFromWin) {
-            return 1 - Math.Pow(percent, 3);
+            return 1 - MathF.Pow(percent, 3);
         }
-        return Math.Pow(percent, 3);
+        return MathF.Pow(percent, 3);
     }
 
     public static Rectangle PositionOfWinTile(Tile t) {

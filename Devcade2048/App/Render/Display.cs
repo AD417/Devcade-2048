@@ -207,7 +207,7 @@ public static class Display {
         if (TabHandler.CurrentTab.Id() != SelectedTab.Menu) return;
         Color brightness = StyleMath.GetInitialBrightness();
 
-        double percent = 0;
+        float percent = 0;
         if (Animation1.State == AnimationState1.FromTab) {
             percent = Animation1.FastEnd(2);
         }
@@ -269,7 +269,7 @@ public static class Display {
     }
 
     public static void Info() {
-        double percent = 0;
+        float percent = 0;
 
         if (Animation1.State == AnimationState1.ToTab) {
             percent = 1 - Animation1.FastStart(2);
@@ -299,7 +299,7 @@ public static class Display {
     }
 
     public static void Credits() {
-        double percent = 0;
+        float percent = 0;
 
         if (Animation1.State == AnimationState1.ToTab) {
             percent = 1 - Animation1.FastStart(2);

@@ -59,7 +59,7 @@ public class GameResetAnimationState : TransientAnimationState {
 
 
     private void DrawScore() {
-        float opacity = 4 * MathF.Abs((float) PercentComplete() - 0.75f);
+        float opacity = 4 * MathF.Abs(PercentComplete() - 0.75f);
         if (opacity > 1) opacity = 1;
         Color scoreColor = Color.Black * opacity;
 
@@ -87,7 +87,7 @@ public class GameResetAnimationState : TransientAnimationState {
     }
 
     public void DrawLossText() {
-        float opacity = (float) (1 - FastEnd());
+        float opacity = 1 - FastEnd();
         DrawAsset(Asset.BigFont, "GAME OVER!", new Vector2(20, 700), Color.Black * opacity);
         DrawAsset(Asset.Button, new Vector2(20, 720), Color.Red * opacity);
         DrawAsset(Asset.BigFont, "Try again", new Vector2(125, 750), Color.Red * opacity);

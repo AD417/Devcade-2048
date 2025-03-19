@@ -107,7 +107,7 @@ public class Manager {
     public void AddRandomTile() {
         if (!Grid.CellsAvailable()) return;
         int value, id;
-        if (RNG.NextDouble() < Config.FourChance) {
+        if (RNG.NextSingle() < Config.FourChance) {
             value = 1024;
             id = 9;
         } else {

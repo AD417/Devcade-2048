@@ -21,24 +21,24 @@ public class ScoreDelta {
         return existTime > cutoff;
     }
 
-    private double PercentComplete() {
+    private float PercentComplete() {
         if (IsDone()) return 1;
-        return existTime / cutoff;
+        return (float) (existTime / cutoff);
     }
 
     public int ShiftUp() {
         return (int) (80 * PercentComplete());
     }
 
-    private double Opacity() {
-        if (IsDone()) return 0.0;
-        double percent = 1.5 * (1 - PercentComplete());
-        if (percent > 1) return 1.0;
+    private float Opacity() {
+        if (IsDone()) return 0.0F;
+        float percent = 3/2 * (1 - PercentComplete());
+        if (percent > 1) return 1.0F;
         return percent;
     }
 
     public Color DrawColor() {
-        double opacity = 1 - Opacity();
+        float opacity = 1 - Opacity();
         return StyleMath.Interpolate(new Color(0, 255, 0), new Color(251, 194, 27), opacity);
     }
 
