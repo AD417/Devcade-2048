@@ -50,7 +50,7 @@ public class Manager {
     public Manager(int size) {
         this.size = size;
         // Setup();
-        State = GameState.Suspended;
+        State = GameState.Playing;
     }
 
     public void Continue() {
@@ -108,8 +108,8 @@ public class Manager {
         if (!Grid.CellsAvailable()) return;
         int value, id;
         if (RNG.NextDouble() < Config.FourChance) {
-            value = 4;
-            id = 1;
+            value = 1024;
+            id = 9;
         } else {
             value = 2;
             id = 0;

@@ -8,7 +8,7 @@ namespace Devcade2048.App;
 
 public static class InputManager {
     public static bool AnyButtonPressed() {
-        return Keyboard.GetState().IsKeyDown(Keys.Space)
+        return Keyboard.GetState().GetPressedKeyCount() > 0
             || Input.GetButton(1, Input.ArcadeButtons.A1)
             || Input.GetButton(1, Input.ArcadeButtons.A2)
             || Input.GetButton(1, Input.ArcadeButtons.A3)
@@ -49,7 +49,7 @@ public static class InputManager {
         return Manager.Direction.None;
     }
 
-    public static bool isButtonPressed(Button button) {
+    public static bool IsButtonPressed(Button button) {
         switch (button) {
             case Button.None: return !AnyButtonPressed();
             case Button.Red: 

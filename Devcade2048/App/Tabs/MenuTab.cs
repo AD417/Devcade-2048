@@ -20,20 +20,20 @@ public class MenuTab : ITab {
 
     public void Update(GameTime gameTime) {
 		if (!Animation1.AcceptInput()) return;
-		if (InputManager.isButtonPressed(Button.Red)) {
+		if (InputManager.IsButtonPressed(Button.Red)) {
 			Config.LoadGame = false;
 			StartGame();
 		}
-		if (InputManager.isButtonPressed(Button.White)) {
+		if (InputManager.IsButtonPressed(Button.White)) {
 			Config.LoadGame = true;
 			StartGame();
 		}
 
-		if (InputManager.isButtonPressed(Button.Blue)) {
+		if (InputManager.IsButtonPressed(Button.Blue)) {
 			GotoInfo();
 		}
 
-		if (InputManager.isButtonPressed(Button.Green)) {
+		if (InputManager.IsButtonPressed(Button.Green)) {
 			System.Console.WriteLine("HAI");
 			GotoCredits();
 		}

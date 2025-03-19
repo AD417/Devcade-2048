@@ -6,13 +6,13 @@ namespace Devcade2048.App.Render.Animation;
 public class GameWaitingAnimationState : WaitingAnimationState {
 
     public override AnimationState ProcessInput() {
-        if (InputManager.isButtonPressed(Button.Blue)) {
+        if (InputManager.IsButtonPressed(Button.Blue)) {
             return new FromGameAnimationState();
         }
         if (InputManager.GetStickDirection() != Manager.Direction.None) {
             if (Game.Move(InputManager.GetStickDirection())) return new MovingTileAnimationState();
         }
-        if (InputManager.isButtonPressed(Button.Red)) {
+        if (InputManager.IsButtonPressed(Button.Red)) {
             return new GameResetAnimationState(false);
         }
         return this;

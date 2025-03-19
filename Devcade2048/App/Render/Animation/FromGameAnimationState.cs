@@ -7,7 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 class FromGameAnimationState : TransientAnimationState {
     
     public FromGameAnimationState() : base(TransitionTime) {
-        Game.Export();
+        if (Game.State == GameState.Continuing || Game.State == GameState.Playing) {
+            Game.Export();
+        }
         HighScoreTracker.Save();
     }
 
@@ -24,7 +26,15 @@ class FromGameAnimationState : TransientAnimationState {
         Vector2 gridPos = getGridPos();
         DrawAsset(Asset.Grid, gridPos);
         DrawScore();
-        DrawAllTiles();
+        if (Game.State == GameState.Lost) {
+            DrawLossText();
+        }
+        if (Game.State == GameState.Won) {
+            DrawWinText();
+            DrawWinningTile();
+        } else {
+            DrawAllTiles();
+        }
     }
 
     private Vector2 getGridPos() {
@@ -40,17 +50,28 @@ class FromGameAnimationState : TransientAnimationState {
             if (t is null) return;
 
             Vector2 pos = new Vector2(
-                (2 + t.Position.X * 100),
-                (2 + t.Position.Y * 100)
+                2 + t.Position.X * 100,
+                2 + t.Position.Y * 100
             );
             pos += getGridPos();
             Rectangle location = new Rectangle(pos.ToPoint(), new Point(96,96));
 
-            Texture2D blob = Asset.Tile[t.TextureId];
+            Texture2D blob = determineBlobTexture(t);
 
             DrawAsset(blob, location, Color.White);
         }
         Game.Grid.EachCell((int _x, int _y, Tile t) => drawTile(t));
+    }
+
+    private Texture2D determineBlobTexture(Tile t) {
+        if (Game.State != GameState.Lost) return Asset.Tile[t.TextureId];
+        if (t.TextureId > 5) return Asset.LoseTile[1];
+        return Asset.LoseTile[0];
+    }
+
+    private void DrawWinningTile() {
+        Vector2 pos = getGridPos() + new Vector2(2,2);
+        DrawAsset(Asset.Tile[10], new Rectangle(pos.ToPoint(), new(400,400)));
     }
 
     private Color getTextColor() {
@@ -78,5 +99,25 @@ class FromGameAnimationState : TransientAnimationState {
             new Vector2(400 - highScoreWidth, 240), 
             scoreColor
         );
+    }
+
+    public void DrawLossText() {
+        if (PercentComplete() > 0.7) return;
+        DrawAsset(Asset.BigFont, "GAME OVER!", new Vector2(20, 700), Color.Black);
+        DrawAsset(Asset.Button, new Vector2(20, 720), Color.Red);
+        DrawAsset(Asset.BigFont, "Try again", new Vector2(125, 750), Color.Red);
+        DrawAsset(Asset.Button, new Vector2(20, 780), Color.Blue);
+        DrawAsset(Asset.BigFont, "Exit to Menu", new Vector2(125, 810), Color.Blue);
+    }
+
+    private void DrawWinText() {
+        if (PercentComplete() > 0.7) return;
+        DrawAsset(Asset.BigFont, "YOU WIN!", new Vector2(20, 700), Color.Black);
+        DrawAsset(Asset.Button, new Vector2(20, 720), Color.Red);
+        DrawAsset(Asset.BigFont, "Play again", new Vector2(125, 750), Color.Red);
+        DrawAsset(Asset.Button, new Vector2(20, 780), Color.Blue);
+        DrawAsset(Asset.BigFont, "Exit to Menu", new Vector2(125, 810), Color.Blue);
+        DrawAsset(Asset.Button, new Vector2(20, 840), Color.White);
+        DrawAsset(Asset.BigFont, "Continue", new Vector2(125, 870), Color.White);
     }
 }

@@ -1,3 +1,4 @@
+using Devcade;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -6,7 +7,16 @@ namespace Devcade2048.App.Render.Animation;
 public class SpawningAnimationState : TransientAnimationState {
     public SpawningAnimationState() : base(TileSpawnTime) {}
 
+    public override void Tick(GameTime gt) {
+        base.Tick(gt);
+        // If the user is pressing a button, make things go faster.
+        if (InputManager.AnyButtonPressed()) base.Tick(gt);
+    }
+
     public override AnimationState NextState() {
+        if (Game.State == GameState.Won) {
+            return new ToWinAnimationState();
+        }
         if (!Game.MovesAvailable()) {
             return new ToGameOverAnimationState();
         }

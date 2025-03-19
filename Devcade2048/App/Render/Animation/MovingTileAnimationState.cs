@@ -8,6 +8,11 @@ public class MovingTileAnimationState : TransientAnimationState {
     public MovingTileAnimationState() : base(TileMoveTime) {
     }
 
+    public override void Tick(GameTime gt) {
+        base.Tick(gt);
+        // If the user is pressing a button, make things go faster.
+        if (InputManager.AnyButtonPressed()) base.Tick(gt);
+    }
 
     public override AnimationState NextState()
     {

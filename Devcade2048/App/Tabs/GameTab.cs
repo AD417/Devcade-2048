@@ -43,17 +43,17 @@ public class GameTab : ITab {
 			// DebugRender.Write(GameData.Grid);
 		}
 
-		if (InputManager.isButtonPressed(Button.Red)) {
+		if (InputManager.IsButtonPressed(Button.Red)) {
 			Reset();
 		}
 
-		if (InputManager.isButtonPressed(Button.Blue)) {
+		if (InputManager.IsButtonPressed(Button.Blue)) {
 			EndGame();
 		}
 
 		if (
 			GameData.State == GameState.Won
-		 && InputManager.isButtonPressed(Button.White)
+		 && InputManager.IsButtonPressed(Button.White)
 		) {
 			Continue();
 		}

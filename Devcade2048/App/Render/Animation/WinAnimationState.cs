@@ -1,15 +1,17 @@
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Devcade2048.App.Render.Animation;
 
-public class GameOverAnimationState : WaitingAnimationState {
+public class WinAnimationState : WaitingAnimationState {
 
     public override AnimationState ProcessInput()
     {
         if (InputManager.IsButtonPressed(Button.Red)) {
-            return new GameResetAnimationState(true);
+            return new ResetWinAnimationState();
+        }
+        if (InputManager.IsButtonPressed(Button.White)) {
+            return new FromWinAnimationState();
         }
         if (InputManager.IsButtonPressed(Button.Blue)) {
             return new FromGameAnimationState();
@@ -17,43 +19,18 @@ public class GameOverAnimationState : WaitingAnimationState {
         return this;
     }
 
-
-
-
-
-    public override void Draw() {
+    public override void Draw()
+    {
         base.Draw();
 
-        DrawAsset(Asset.Grid, new Vector2(10, 290));
-        DrawAllTiles();
+        DrawWinningTile();
         DrawScore();
-        DrawLossText();
+        DrawWinText();
     }
 
-
-    private void DrawAllTiles() {
-
-        void drawTile(Tile t) {
-            if (t is null) return;
-
-            Vector2 pos = new Vector2(
-                ( 12 + t.Position.X * 100),
-                (292 + t.Position.Y * 100)
-            );
-            Rectangle location = new Rectangle(pos.ToPoint(), new Point(96,96));
-
-            Texture2D blob = determineBlobTexture(t);
-
-            DrawAsset(blob, location, Color.White);
-        }
-        Game.Grid.EachCell((int _x, int _y, Tile t) => drawTile(t));
+    private void DrawWinningTile() {
+        DrawAsset(Asset.Tile[10], new Rectangle(12, 292, 400, 400));
     }
-
-    private Texture2D determineBlobTexture(Tile t) {
-        if (t.TextureId > 5) return Asset.LoseTile[1];
-        return Asset.LoseTile[0];
-    }
-
 
     private void DrawScore() {
         Color scoreColor = Color.Black;
@@ -78,11 +55,13 @@ public class GameOverAnimationState : WaitingAnimationState {
         );
     }
 
-    public static void DrawLossText() {
-        DrawAsset(Asset.BigFont, "GAME OVER!", new Vector2(20, 700), Color.Black);
+    private void DrawWinText() {
+        DrawAsset(Asset.BigFont, "YOU WIN!", new Vector2(20, 700), Color.Black);
         DrawAsset(Asset.Button, new Vector2(20, 720), Color.Red);
-        DrawAsset(Asset.BigFont, "Try again", new Vector2(125, 750), Color.Red);
+        DrawAsset(Asset.BigFont, "Play again", new Vector2(125, 750), Color.Red);
         DrawAsset(Asset.Button, new Vector2(20, 780), Color.Blue);
         DrawAsset(Asset.BigFont, "Exit to Menu", new Vector2(125, 810), Color.Blue);
+        DrawAsset(Asset.Button, new Vector2(20, 840), Color.White);
+        DrawAsset(Asset.BigFont, "Continue", new Vector2(125, 870), Color.White);
     }
 }
