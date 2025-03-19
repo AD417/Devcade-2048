@@ -1,13 +1,14 @@
+using Devcade2048.App.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Devcade2048.App.Render.Animation;
+namespace Devcade2048.App.State;
 
-public abstract class AnimationState {
+public abstract class BaseState {
     
     protected static SpriteBatch Pen {get; private set; }
     protected static Manager Game {get; private set; }
-    public static readonly AnimationState InitialState = new FadeInAnimationState();
+    public static readonly BaseState InitialState = new FadeInState();
     public static readonly Color Background = new Color(251, 194, 27);
 
     public static void SetRendering(SpriteBatch pen, Manager game) {
@@ -15,7 +16,7 @@ public abstract class AnimationState {
         Game = game;
     }
 
-    public AnimationState() {
+    public BaseState() {
     }
 
     public virtual void Tick(GameTime gt) {
@@ -30,7 +31,7 @@ public abstract class AnimationState {
         return false;
     }
 
-    public virtual AnimationState NextState() {
+    public virtual BaseState NextState() {
         return this;
     }
 
@@ -39,7 +40,7 @@ public abstract class AnimationState {
         return false;
     }
 
-    public virtual AnimationState ProcessInput() {
+    public virtual BaseState ProcessInput() {
         return this;
     }
 

@@ -1,52 +1,41 @@
+using Devcade2048.App.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Devcade2048.App.Render.Animation;
+namespace Devcade2048.App.State;
 
-public class ToGameAnimationState : TransientAnimationState {
-    private bool ContinueSavedGame;
-    public ToGameAnimationState(bool continueSavedGame) : base(TransitionTime) {
-        ContinueSavedGame = continueSavedGame;
-        if (!continueSavedGame) {
-            Game.NewGame();
-        } else {
-            Game.LoadGame();
+public class GameWaitingState : WaitingState {
+
+    public override BaseState ProcessInput() {
+        if (InputManager.IsButtonPressed(Button.Blue)) {
+            return new FromGameState();
         }
-    }
-
-    public override AnimationState NextState() {
-        if (ContinueSavedGame) return new GameWaitingAnimationState();
-        return new SpawningAnimationState();
+        if (InputManager.GetStickDirection() != Manager.Direction.None) {
+            if (Game.Move(InputManager.GetStickDirection())) return new MovingTileState();
+        }
+        if (InputManager.IsButtonPressed(Button.Red)) {
+            return new GameResetState(false);
+        }
+        return this;
     }
 
 
 
     public override void Draw() {
         base.Draw();
-
-        Vector2 gridPos = getGridPos();
-        DrawAsset(Asset.Grid, gridPos);
+        DrawAsset(Asset.Grid, new Vector2(10, 290));
+        DrawAllTiles();
         DrawScore();
-        if (ContinueSavedGame) DrawAllTiles();
     }
-
-    private Vector2 getGridPos() {
-        // The top left corner of the grid, for rendering.
-        float x = 10F;
-        float y = 290 + 710 * (1 - FastStart());
-        return new Vector2(x,y);
-    }
-
     private void DrawAllTiles() {
 
         void drawTile(Tile t) {
             if (t is null) return;
 
             Vector2 pos = new Vector2(
-                (2 + t.Position.X * 100),
-                (2 + t.Position.Y * 100)
+                ( 12 + t.Position.X * 100),
+                (292 + t.Position.Y * 100)
             );
-            pos += getGridPos();
             Rectangle location = new Rectangle(pos.ToPoint(), new Point(96,96));
 
             Texture2D blob = Asset.Tile[t.TextureId];
@@ -56,12 +45,9 @@ public class ToGameAnimationState : TransientAnimationState {
         Game.Grid.EachCell((int _x, int _y, Tile t) => drawTile(t));
     }
 
-    private Color getTextColor() {
-        return Interpolate(Background, Color.Black, FastEnd(2));
-    }
 
     private void DrawScore() {
-        Color scoreColor = getTextColor();
+        Color scoreColor = Color.Black;
 
         string scoreStr = "Score: " + Game.Score.ToString().PadLeft(5);
         int scoreWidth = (int)Asset.BigFont.MeasureString(scoreStr).X;
@@ -82,4 +68,5 @@ public class ToGameAnimationState : TransientAnimationState {
             scoreColor
         );
     }
+
 }

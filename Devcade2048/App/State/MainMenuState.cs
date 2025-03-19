@@ -1,8 +1,9 @@
+using Devcade2048.App.Render;
 using Microsoft.Xna.Framework;
 
-namespace Devcade2048.App.Render.Animation;
+namespace Devcade2048.App.State;
 
-public class MainMenuAnimationState : WaitingAnimationState {
+public class MainMenuState : WaitingState {
 
     public override void Draw() {
         base.Draw();
@@ -34,18 +35,18 @@ public class MainMenuAnimationState : WaitingAnimationState {
         DrawAsset(Asset.Menu[3], new Vector2(219, 500));
     }
 
-  public override AnimationState ProcessInput() {
+  public override BaseState ProcessInput() {
     if (InputManager.IsButtonPressed(Button.Blue)) {
-        return new FromMenuAnimationState(Selection.Info);
+        return new FromMenuState(Selection.Info);
     }
     if (InputManager.IsButtonPressed(Button.Green)) {
-        return new FromMenuAnimationState(Selection.Credits);
+        return new FromMenuState(Selection.Credits);
     }
     if (InputManager.IsButtonPressed(Button.Red)) {
-        return new FromMenuAnimationState(Selection.Game);
+        return new FromMenuState(Selection.Game);
     }
     if (InputManager.IsButtonPressed(Button.White)) {
-        return new FromMenuAnimationState(Selection.Continue);
+        return new FromMenuState(Selection.Continue);
     }
     return this;
   }

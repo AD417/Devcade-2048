@@ -1,59 +1,63 @@
-using System;
+using Devcade2048.App.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Devcade2048.App.Render.Animation;
+namespace Devcade2048.App.State;
 
-public class GameOverAnimationState : WaitingAnimationState {
-
-    public override AnimationState ProcessInput()
-    {
-        if (InputManager.IsButtonPressed(Button.Red)) {
-            return new GameResetAnimationState(true);
-        }
-        if (InputManager.IsButtonPressed(Button.Blue)) {
-            return new FromGameAnimationState();
-        }
-        return this;
+public class MovingTileState : TransientState {
+    public MovingTileState() : base(TileMoveTime) {
     }
 
+    public override void Tick(GameTime gt) {
+        base.Tick(gt);
+        // If the user is pressing a button, make things go faster.
+        if (InputManager.AnyButtonPressed()) base.Tick(gt);
+    }
 
-
-
+    public override BaseState NextState()
+    {
+        return new SpawningState();
+    }
 
     public override void Draw() {
         base.Draw();
-
         DrawAsset(Asset.Grid, new Vector2(10, 290));
         DrawAllTiles();
         DrawScore();
-        DrawLossText();
     }
-
-
+    
     private void DrawAllTiles() {
 
         void drawTile(Tile t) {
             if (t is null) return;
+            if (t.MergedFrom != null) {
+                drawTile(t.MergedFrom[0]);
+                drawTile(t.MergedFrom[1]);
+            }
+            // New tiles aren't drawn in this state. They haven't spawned yet. 
+            if (t.PreviousPosition == null) return;
 
-            Vector2 pos = new Vector2(
-                ( 12 + t.Position.X * 100),
-                (292 + t.Position.Y * 100)
+            Vector2 pos = Interpolate(
+                toScreenPosition((Vector2) t.PreviousPosition), 
+                toScreenPosition(t.Position), 
+                PercentComplete()
             );
+            pos += new Vector2(10, 290);
             Rectangle location = new Rectangle(pos.ToPoint(), new Point(96,96));
 
-            Texture2D blob = determineBlobTexture(t);
+            Texture2D blob = Asset.Tile[t.TextureId];
 
             DrawAsset(blob, location, Color.White);
         }
         Game.Grid.EachCell((int _x, int _y, Tile t) => drawTile(t));
     }
 
-    private Texture2D determineBlobTexture(Tile t) {
-        if (t.TextureId > 5) return Asset.LoseTile[1];
-        return Asset.LoseTile[0];
+    private Vector2 toScreenPosition(Vector2 position) {
+        return new Vector2(
+            (2 + position.X * 100),
+            (2 + position.Y * 100)
+        );
     }
-
 
     private void DrawScore() {
         Color scoreColor = Color.Black;
@@ -76,13 +80,5 @@ public class GameOverAnimationState : WaitingAnimationState {
             new Vector2(400 - highScoreWidth, 240), 
             scoreColor
         );
-    }
-
-    public static void DrawLossText() {
-        DrawAsset(Asset.BigFont, "GAME OVER!", new Vector2(20, 700), Color.Black);
-        DrawAsset(Asset.Button, new Vector2(20, 720), Color.Red);
-        DrawAsset(Asset.BigFont, "Try again", new Vector2(125, 750), Color.Red);
-        DrawAsset(Asset.Button, new Vector2(20, 780), Color.Blue);
-        DrawAsset(Asset.BigFont, "Exit to Menu", new Vector2(125, 810), Color.Blue);
     }
 }

@@ -1,21 +1,21 @@
 using Devcade2048.App;
 using Devcade2048.App.Render;
-using Devcade2048.App.Render.Animation;
+using Devcade2048.App.State;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-class FromGameAnimationState : TransientAnimationState {
+class FromGameState : TransientState {
     
-    public FromGameAnimationState() : base(TransitionTime) {
+    public FromGameState() : base(TransitionTime) {
         if (Game.State == GameState.Continuing || Game.State == GameState.Playing) {
             Game.Export();
         }
         HighScoreTracker.Save();
     }
 
-    public override AnimationState NextState()
+    public override BaseState NextState()
     {
-        return new ToMenuAnimationState();
+        return new ToMenuState();
     }
 
 

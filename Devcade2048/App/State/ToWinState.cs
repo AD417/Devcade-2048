@@ -1,16 +1,16 @@
+using Devcade2048.App.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Devcade2048.App.Render.Animation;
+namespace Devcade2048.App.State;
 
-public class FromWinAnimationState : TransientAnimationState {
+public class ToWinState : TransientState {
 
-    public FromWinAnimationState() : base(GameEndingTime) {
+    public ToWinState() : base(GameEndingTime) {
     }
 
-    public override AnimationState NextState() {
-        Game.Continue();
-        return new GameWaitingAnimationState();
+    public override BaseState NextState() {
+        return new WinState();
     }
 
     public override void Draw() {
@@ -54,7 +54,7 @@ public class FromWinAnimationState : TransientAnimationState {
     }
 
     private Rectangle winTilePos(Tile t) {
-        float factor = 1 - FastEnd();
+        float factor = FastEnd();
         float scale = 96 + 304 * factor;
         Vector2 pos = new Vector2(
              12 + t.Position.X * 100 * (1 - factor),
@@ -68,7 +68,7 @@ public class FromWinAnimationState : TransientAnimationState {
         float percent = PercentComplete();
         percent -= 1/2;
         percent *= 2;
-        return 1 - percent * percent * percent;
+        return percent * percent * percent;
     }
 
 

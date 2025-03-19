@@ -1,18 +1,18 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Devcade2048.App.Render.Animation;
+namespace Devcade2048.App.State;
 
-public class ToTabAnimationState : TransientAnimationState {
-    MenuTabAnimationState substate;
+public class FromTabState : TransientState {
+    MenuTabState substate;
 
-    public ToTabAnimationState(Selection selection) : base(TransitionTime) {
-        substate = new MenuTabAnimationState(selection);
+    public FromTabState(MenuTabState state) : base(TransitionTime) {
+        substate = state;
     }
 
-    public override AnimationState NextState()
+    public override BaseState NextState()
     {
-        return substate;
+        return new ToMenuState();
     }
 
 
@@ -27,7 +27,7 @@ public class ToTabAnimationState : TransientAnimationState {
         // This backgroundColor pixel is stretched to cover everything. 
         Rectangle screen = new Rectangle(0, 0, gd.DisplayMode.Width, gd.DisplayMode.Height);
 
-        DrawAsset(uiCover, screen, Color.White * (1 - FastEnd()));
+        DrawAsset(uiCover, screen, Color.White * FastStart());
         base.Draw();
     }
 }

@@ -193,8 +193,6 @@ public class Manager {
                 HighScoreTracker.Save();
             }
             if (scoreDelta > 0) ScoreContainer.Add(scoreDelta);
-
-			Animation1.ChangeStateTo(AnimationState1.Moving);
             Actuate();
         }
         return moved;

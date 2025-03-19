@@ -4,8 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Devcade;
 using System;
 using Devcade2048.App.Render;
-using Devcade2048.App.Render.Animation;
-using Devcade2048.App.Tabs;
+using Devcade2048.App.State;
 using System.Threading.Tasks;
 
 // MAKE SURE YOU RENAME ALL PROJECT FILES FROM DevcadeGame TO YOUR YOUR GAME NAME
@@ -16,7 +15,7 @@ public class Game1 : Game
 	private GraphicsDeviceManager _graphics;
 	private SpriteBatch _spriteBatch;
 
-	private AnimationState animation = AnimationState.InitialState;
+	private BaseState animation = BaseState.InitialState;
 	
 	/// <summary>
 	/// Stores the window dimensions in a rectangle object for easy use
@@ -36,8 +35,6 @@ public class Game1 : Game
 		IsMouseVisible = false;
 
 		_GameData = new Manager(size: 4);
-
-		TabHandler.Initialize(_GameData);
 		// DebugRender.Write(_GameData.Grid);
 	}
 
@@ -80,7 +77,7 @@ public class Game1 : Game
 		_spriteBatch = new SpriteBatch(GraphicsDevice);
 
 		// Display.Initialize(_spriteBatch, _GameData);
-		AnimationState.SetRendering(_spriteBatch, _GameData);
+		BaseState.SetRendering(_spriteBatch, _GameData);
 		
 		// TODO: use this.Content to load your game content here
 		// ex:
@@ -112,7 +109,7 @@ public class Game1 : Game
 	/// <param name="gameTime">This is the gameTime object you can use to get the time since last frame.</param>
 	protected override void Update(GameTime gameTime)
 	{
-		Input.Update(); // Updates the state of the input library
+		Input.Update(); // Updates the BaseState of the input library
 
 		// Exit when both menu buttons are pressed (or escape for keyboard debugging)
 		// You can change this but it is suggested to keep the keybind of both menu
@@ -122,7 +119,6 @@ public class Game1 : Game
 			Input.GetButton(2, Input.ArcadeButtons.Menu)))
 		{
 			HighScoreTracker.Save();
-			TabHandler.Exit();
 			// Ensure the high score information is saved to disk.
             Task flusher = Persistence.Flush();
 			flusher.Wait();
@@ -131,10 +127,6 @@ public class Game1 : Game
 		}
 
 		// TODO: Add other update logic here
-		
-		// TabHandler.CurrentTab.Update(gameTime);
-		// TabHandler.CheckTabSwitching();
-
 		if (animation.IsAcceptingInput()) {
 			animation = animation.ProcessInput();
 		}
@@ -160,10 +152,6 @@ public class Game1 : Game
 		_spriteBatch.Begin();
 		
 		animation.Draw();
-
-		// Display.Title();
-
-		// TabHandler.CurrentTab.Draw(gameTime);
 		
 		_spriteBatch.End();
 

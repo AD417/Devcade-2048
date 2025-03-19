@@ -1,11 +1,11 @@
-using Devcade;
+using Devcade2048.App.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Devcade2048.App.Render.Animation;
+namespace Devcade2048.App.State;
 
-public class SpawningAnimationState : TransientAnimationState {
-    public SpawningAnimationState() : base(TileSpawnTime) {}
+public class SpawningState : TransientState {
+    public SpawningState() : base(TileSpawnTime) {}
 
     public override void Tick(GameTime gt) {
         base.Tick(gt);
@@ -13,14 +13,14 @@ public class SpawningAnimationState : TransientAnimationState {
         if (InputManager.AnyButtonPressed()) base.Tick(gt);
     }
 
-    public override AnimationState NextState() {
+    public override BaseState NextState() {
         if (Game.State == GameState.Won) {
-            return new ToWinAnimationState();
+            return new ToWinState();
         }
         if (!Game.MovesAvailable()) {
-            return new ToGameOverAnimationState();
+            return new ToGameOverState();
         }
-        return new GameWaitingAnimationState();
+        return new GameWaitingState();
     }
 
     public override void Draw() {

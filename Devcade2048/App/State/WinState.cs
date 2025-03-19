@@ -1,20 +1,20 @@
+using Devcade2048.App.Render;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
-namespace Devcade2048.App.Render.Animation;
+namespace Devcade2048.App.State;
 
-public class WinAnimationState : WaitingAnimationState {
+public class WinState : WaitingState {
 
-    public override AnimationState ProcessInput()
+    public override BaseState ProcessInput()
     {
         if (InputManager.IsButtonPressed(Button.Red)) {
-            return new ResetWinAnimationState();
+            return new ResetWinState();
         }
         if (InputManager.IsButtonPressed(Button.White)) {
-            return new FromWinAnimationState();
+            return new FromWinState();
         }
         if (InputManager.IsButtonPressed(Button.Blue)) {
-            return new FromGameAnimationState();
+            return new FromGameState();
         }
         return this;
     }

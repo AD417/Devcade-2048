@@ -1,9 +1,9 @@
-using System;
+using Devcade2048.App.Render;
 using Microsoft.Xna.Framework;
 
-namespace Devcade2048.App.Render.Animation;
+namespace Devcade2048.App.State;
 
-public class ToMenuAnimationState : TransientAnimationState {
+public class ToMenuState : TransientState {
     private static Vector2[][] blobPositions = new Vector2[][] {
         new Vector2[] { new(9, 300), new(-300, 300) },
         new Vector2[] { new(219, 300), new(530, 300) },
@@ -11,7 +11,7 @@ public class ToMenuAnimationState : TransientAnimationState {
         new Vector2[] { new(219, 500), new(530, 500) },
     };
 
-    public ToMenuAnimationState() : base(TransitionTime) {
+    public ToMenuState() : base(TransitionTime) {
     }
 
   public override void Draw() {
@@ -30,8 +30,8 @@ public class ToMenuAnimationState : TransientAnimationState {
         TextBox.WriteCenteredText(Pen, highScore, new Vector2(210, 200), Color.Black * opacity);
     }
 
-  public override AnimationState NextState()
+  public override BaseState NextState()
   {
-    return new MainMenuAnimationState();
+    return new MainMenuState();
   }
 }

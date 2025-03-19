@@ -1,17 +1,25 @@
+using Devcade2048.App.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Devcade2048.App.Render.Animation;
+namespace Devcade2048.App.State;
 
-public class ToGameOverAnimationState : TransientAnimationState {
+public class GameOverState : WaitingState {
 
-    public ToGameOverAnimationState() : base(GameEndingTime) {
-        HighScoreTracker.Save();
+    public override BaseState ProcessInput()
+    {
+        if (InputManager.IsButtonPressed(Button.Red)) {
+            return new GameResetState(true);
+        }
+        if (InputManager.IsButtonPressed(Button.Blue)) {
+            return new FromGameState();
+        }
+        return this;
     }
 
-    public override AnimationState NextState() {
-        return new GameOverAnimationState();
-    }
+
+
+
 
     public override void Draw() {
         base.Draw();
@@ -21,6 +29,7 @@ public class ToGameOverAnimationState : TransientAnimationState {
         DrawScore();
         DrawLossText();
     }
+
 
     private void DrawAllTiles() {
 
@@ -41,21 +50,8 @@ public class ToGameOverAnimationState : TransientAnimationState {
     }
 
     private Texture2D determineBlobTexture(Tile t) {
-        float percent = PercentComplete();
-        if (percent < 0.5) return Asset.Tile[t.TextureId];
-        int largestDeadTile = (int) (cubicPercentComplete() * 16); 
-        if (t.TextureId > largestDeadTile) return Asset.Tile[t.TextureId];
-        // There are 2 sizes of loss tiles. 
         if (t.TextureId > 5) return Asset.LoseTile[1];
         return Asset.LoseTile[0];
-    }
-
-    private float cubicPercentComplete() {
-        // Scales cubically from 0 to 1 as the percent goes from 0.5 to 1. 
-        float percent = PercentComplete();
-        percent -= 1/2;
-        percent *= 2;
-        return percent * percent * percent;
     }
 
 
@@ -82,12 +78,11 @@ public class ToGameOverAnimationState : TransientAnimationState {
         );
     }
 
-    public void DrawLossText() {
-        float opacity = cubicPercentComplete();
-        DrawAsset(Asset.BigFont, "GAME OVER!", new Vector2(20, 700), Color.Black * opacity);
-        DrawAsset(Asset.Button, new Vector2(20, 720), Color.Red * opacity);
-        DrawAsset(Asset.BigFont, "Try again", new Vector2(125, 750), Color.Red * opacity);
-        DrawAsset(Asset.Button, new Vector2(20, 780), Color.Blue * opacity);
-        DrawAsset(Asset.BigFont, "Exit to Menu", new Vector2(125, 810), Color.Blue * opacity);
+    public static void DrawLossText() {
+        DrawAsset(Asset.BigFont, "GAME OVER!", new Vector2(20, 700), Color.Black);
+        DrawAsset(Asset.Button, new Vector2(20, 720), Color.Red);
+        DrawAsset(Asset.BigFont, "Try again", new Vector2(125, 750), Color.Red);
+        DrawAsset(Asset.Button, new Vector2(20, 780), Color.Blue);
+        DrawAsset(Asset.BigFont, "Exit to Menu", new Vector2(125, 810), Color.Blue);
     }
 }

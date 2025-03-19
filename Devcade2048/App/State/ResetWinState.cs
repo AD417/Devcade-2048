@@ -1,16 +1,17 @@
 using System;
+using Devcade2048.App.Render;
 using Microsoft.Xna.Framework;
 
-namespace Devcade2048.App.Render.Animation;
+namespace Devcade2048.App.State;
 
-public class ResetWinAnimationState : TransientAnimationState {
+public class ResetWinState : TransientState {
 
-    public ResetWinAnimationState() : base(TransitionTime) {
+    public ResetWinState() : base(TransitionTime) {
     }
 
-    public override AnimationState NextState() {
+    public override BaseState NextState() {
         Game.Setup();
-        return new SpawningAnimationState();
+        return new SpawningState();
     }
 
     public override void Draw() {

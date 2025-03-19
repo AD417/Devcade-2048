@@ -1,9 +1,9 @@
-using System;
+using Devcade2048.App.Render;
 using Microsoft.Xna.Framework;
 
-namespace Devcade2048.App.Render.Animation;
+namespace Devcade2048.App.State;
 
-public class FromMenuAnimationState : TransientAnimationState {
+public class FromMenuState : TransientState {
     private static Vector2[][] blobPositions = new Vector2[][] {
         new Vector2[] { new(9, 300), new(-300, 300) },
         new Vector2[] { new(219, 300), new(530, 300) },
@@ -12,7 +12,7 @@ public class FromMenuAnimationState : TransientAnimationState {
     };
     private readonly Selection selection;
 
-    public FromMenuAnimationState(Selection selection) : base(TransitionTime) {
+    public FromMenuState(Selection selection) : base(TransitionTime) {
         this.selection = selection;
     }
 
@@ -33,14 +33,14 @@ public class FromMenuAnimationState : TransientAnimationState {
     }
 
 
-    public override AnimationState NextState()
+    public override BaseState NextState()
     {
         if (selection == Selection.Game) {
-            return new ToGameAnimationState(false);
+            return new ToGameState(false);
         }
         if (selection == Selection.Continue) {
-            return new ToGameAnimationState(true);
+            return new ToGameState(true);
         }
-        return new ToTabAnimationState(selection);
+        return new ToTabState(selection);
     }
 }

@@ -1,21 +1,21 @@
 using System;
-using System.Collections.Generic;
+using Devcade2048.App.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Devcade2048.App.Render.Animation;
+namespace Devcade2048.App.State;
 
-public class MenuTabAnimationState : WaitingAnimationState {
+public class MenuTabState : WaitingState {
 
     private readonly Selection selection;
 
-    public MenuTabAnimationState(Selection selection) {
+    public MenuTabState(Selection selection) {
         this.selection = selection;
     }
 
-  public override AnimationState ProcessInput()
+  public override BaseState ProcessInput()
   {
-    if (InputManager.AnyButtonPressed()) return new FromTabAnimationState(this);
+    if (InputManager.AnyButtonPressed()) return new FromTabState(this);
     return this;
   }
 

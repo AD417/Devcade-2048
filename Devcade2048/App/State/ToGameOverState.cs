@@ -1,22 +1,18 @@
-using System;
+using Devcade2048.App.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Devcade2048.App.Render.Animation;
+namespace Devcade2048.App.State;
 
-public class GameResetAnimationState : TransientAnimationState {
-    private bool gameLost;
+public class ToGameOverState : TransientState {
 
-    public GameResetAnimationState(bool gameLost) : base(TransitionTime) {
-        this.gameLost = gameLost;
+    public ToGameOverState() : base(GameEndingTime) {
+        HighScoreTracker.Save();
     }
 
-    public override AnimationState NextState() {
-        Game.Setup();
-        return new SpawningAnimationState();
+    public override BaseState NextState() {
+        return new GameOverState();
     }
-
-
 
     public override void Draw() {
         base.Draw();
@@ -24,10 +20,8 @@ public class GameResetAnimationState : TransientAnimationState {
         DrawAsset(Asset.Grid, new Vector2(10, 290));
         DrawAllTiles();
         DrawScore();
-        if (gameLost) DrawLossText();
+        DrawLossText();
     }
-
-
 
     private void DrawAllTiles() {
 
@@ -38,10 +32,7 @@ public class GameResetAnimationState : TransientAnimationState {
                 ( 12 + t.Position.X * 100),
                 (292 + t.Position.Y * 100)
             );
-
-            int scale = (int) (96 * (1 - FastEnd(2)));
-            pos += new Vector2(48 - scale/2, 48 - scale/2);
-            Rectangle location = new Rectangle(pos.ToPoint(), new Point(scale, scale));
+            Rectangle location = new Rectangle(pos.ToPoint(), new Point(96,96));
 
             Texture2D blob = determineBlobTexture(t);
 
@@ -51,20 +42,28 @@ public class GameResetAnimationState : TransientAnimationState {
     }
 
     private Texture2D determineBlobTexture(Tile t) {
-        if (!gameLost) return Asset.Tile[t.TextureId];
+        float percent = PercentComplete();
+        if (percent < 0.5) return Asset.Tile[t.TextureId];
+        int largestDeadTile = (int) (cubicPercentComplete() * 16); 
+        if (t.TextureId > largestDeadTile) return Asset.Tile[t.TextureId];
         // There are 2 sizes of loss tiles. 
         if (t.TextureId > 5) return Asset.LoseTile[1];
         return Asset.LoseTile[0];
     }
 
+    private float cubicPercentComplete() {
+        // Scales cubically from 0 to 1 as the percent goes from 0.5 to 1. 
+        float percent = PercentComplete();
+        percent -= 1/2;
+        percent *= 2;
+        return percent * percent * percent;
+    }
+
 
     private void DrawScore() {
-        float opacity = 4 * MathF.Abs(PercentComplete() - 0.75f);
-        if (opacity > 1) opacity = 1;
-        Color scoreColor = Color.Black * opacity;
+        Color scoreColor = Color.Black;
 
         string scoreStr = "Score: " + Game.Score.ToString().PadLeft(5);
-        if (PercentComplete() > 0.75) scoreStr = "Score: " + "0".PadLeft(5);
         int scoreWidth = (int)Asset.BigFont.MeasureString(scoreStr).X;
         DrawAsset(
             Asset.BigFont, 
@@ -72,8 +71,6 @@ public class GameResetAnimationState : TransientAnimationState {
             new Vector2(400 - scoreWidth, 190), 
             scoreColor
         );
-
-        scoreColor = Color.Black;
 
         string highScoreStr = 
             "Best: " + HighScoreTracker.HighScore.ToString().PadLeft(5);
@@ -87,12 +84,11 @@ public class GameResetAnimationState : TransientAnimationState {
     }
 
     public void DrawLossText() {
-        float opacity = 1 - FastEnd();
+        float opacity = cubicPercentComplete();
         DrawAsset(Asset.BigFont, "GAME OVER!", new Vector2(20, 700), Color.Black * opacity);
         DrawAsset(Asset.Button, new Vector2(20, 720), Color.Red * opacity);
         DrawAsset(Asset.BigFont, "Try again", new Vector2(125, 750), Color.Red * opacity);
         DrawAsset(Asset.Button, new Vector2(20, 780), Color.Blue * opacity);
         DrawAsset(Asset.BigFont, "Exit to Menu", new Vector2(125, 810), Color.Blue * opacity);
     }
-
 }

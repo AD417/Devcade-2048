@@ -1,9 +1,9 @@
 using System;
 using Microsoft.Xna.Framework;
 
-namespace Devcade2048.App.Render.Animation;
+namespace Devcade2048.App.State;
 
-public abstract class TransientAnimationState : AnimationState {
+public abstract class TransientState : BaseState {
 
 
     protected static readonly TimeSpan TransitionTime = TimeSpan.FromMilliseconds(1000);
@@ -14,7 +14,7 @@ public abstract class TransientAnimationState : AnimationState {
     internal TimeSpan Timer = new();
     internal TimeSpan MaxTime;
 
-    public TransientAnimationState(TimeSpan maxTime) : base() {
+    public TransientState(TimeSpan maxTime) : base() {
         MaxTime = maxTime;
     }
 
@@ -34,14 +34,14 @@ public abstract class TransientAnimationState : AnimationState {
         return PercentComplete() == 1.0;
     }
 
-  public override AnimationState ProcessInput()
+  public override BaseState ProcessInput()
   {
     return this;
   }
 
 
 
-    public abstract override AnimationState NextState();
+    public abstract override BaseState NextState();
 
     public float FastEnd(float factor = 3) {
         float normalPercent = PercentComplete();

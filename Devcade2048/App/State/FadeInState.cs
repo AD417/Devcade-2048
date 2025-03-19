@@ -2,12 +2,12 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Devcade2048.App.Render.Animation;
+namespace Devcade2048.App.State;
 
-public class FadeInAnimationState : TransientAnimationState {
-    private readonly MainMenuAnimationState substate = new MainMenuAnimationState();
+public class FadeInState : TransientState {
+    private readonly MainMenuState substate = new MainMenuState();
 
-    public FadeInAnimationState() : base(TransitionTime) {}
+    public FadeInState() : base(TransitionTime) {}
 
     public override void Draw() {
         // Draw the menu first. 
@@ -24,7 +24,7 @@ public class FadeInAnimationState : TransientAnimationState {
         DrawAsset(uiCover, screen, Color.Black * (1 - PercentComplete()));
     }
 
-    public override AnimationState NextState()
+    public override BaseState NextState()
     {
         return substate;
     }
