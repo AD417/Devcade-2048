@@ -74,6 +74,8 @@ class FromGameState : TransientState {
     }
 
     private void DrawLossText() {
+        // This ensures that the grid has covered them. 
+        // Thus, the text "seamlessly" dissappears under the grid.
         if (PercentComplete() > 0.7) return;
         DrawAsset(Asset.BigFont, "GAME OVER!", new Vector2(20, 700), Color.Black);
         DrawAsset(Asset.Button, new Vector2(20, 720), Color.Red);

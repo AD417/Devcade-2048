@@ -27,8 +27,9 @@ public class MenuTabState : WaitingState {
         DrawAsset(blob, top);
 
         string text = getTabText();
+        Color color = getColor();
         Rectangle region = new Rectangle(40, 350, 360, 600);
-        TextBox.DrawInArea(Pen, text, region, Color.White);
+        TextBox.DrawInArea(Pen, text, region, color);
     }
 
     private Texture2D getBlob() {
@@ -42,12 +43,39 @@ public class MenuTabState : WaitingState {
         }
     }
 
+    private Color getColor() {
+        switch (selection) {
+            case Selection.Info:
+                return Color.Blue;
+            case Selection.Credits:
+                return Color.DarkGreen;
+            default:
+                return Color.White;
+        }
+    }
+
     private string getTabText() {
         switch (selection) {
             case Selection.Info:
-                return "This is the CREDITS tab!";
+                return @"    2048, with blobs!
+    Use the joystick to move tiles up, down, left, and right to slide them around the grid.
+    When 2 identical tiles merge together, they combine into one! 
+    Get to 2048 to win!
+    
+    From the menu, press RED to begin, BLUE to see this info menu, and GREEN to see the credits.
+    In game, press RED to reset and BLUE to exit.
+    
+    (Press any button to return.)";
             case Selection.Credits:
-                return "This is the INFO tab!";
+                return @"   Original Game by Gabriele Cirulli.
+    Ported to the Devcade with help from:
+    - Noah Emke
+    - Ella Soccolli
+    - Jeremy Smart
+
+    Special Thanks to the Computer Science House for the Devcade and Documentation, and you, for playing.
+    
+    (Press Any button to return.)";
             default:
                 return "ERROR: Tab type '" + selection + "' has no string... how are we here?";
         }

@@ -55,7 +55,7 @@ public static class TextBox {
             }
         }
         DrawString(sb, Asset.SmallFont, line, pos, color);
-        return (int) (pos.Y - area.Top + 2 * size.Y);
+        return (int) (pos.Y - area.Top + size.Y);
     }
 
     public static void WriteCenteredText(SpriteBatch sb, string text, Vector2 pos, Color color) {
