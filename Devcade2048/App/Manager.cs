@@ -79,8 +79,8 @@ public class Manager {
             score = man.score;
 
         } catch (Exception e) {
-            Console.WriteLine("Whoops!");
-            Console.WriteLine(e);
+            Console.Error.WriteLine("Whoops! Can't load the game!");
+            Console.Error.WriteLine(e);
             NewGame();
         }
         State = GameState.Playing;
@@ -124,8 +124,7 @@ public class Manager {
     }
 
     public void Actuate() {
-        // string x = JsonSerializer.Serialize(this, new JsonSerializerOptions());
-        // Console.WriteLine(x);
+        // Nothing...?
     }
 
     public void PrepareTiles() {
@@ -254,8 +253,6 @@ public class Manager {
                 Vector2 vector = GetVector(dir);
                 Tile other = Grid.CellContent(cell + vector);
                 if (other != null && other.Value == tile.Value) {
-                    // Console.Write(cell);
-                    // Console.WriteLine(vector);
                     return true;
                 }
             }

@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Devcade2048.App.Render;
 
@@ -38,8 +39,7 @@ public class ScoreDelta {
     }
 
     public Color DrawColor() {
-        float opacity = 1 - Opacity();
-        return Color.Lerp(new Color(0, 255, 0), new Color(251, 194, 27), opacity);
+        return new Color(0, 191, 0) * Opacity();
     }
 
     public override string ToString() {

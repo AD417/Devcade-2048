@@ -15,8 +15,8 @@ public static class HighScoreTracker {
         try {
             HighScore = (await Persistence.Load<int>("2blob48", "highscore", null)).GetObject<int>(null);
         } catch (Exception e) {
-            Console.WriteLine("Whoops! Can't load the high score!");
-            Console.WriteLine(e);
+            Console.Error.WriteLine("Whoops! Can't load the high score!");
+            Console.Error.WriteLine(e);
             HighScore = 0;
         }
     }

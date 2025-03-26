@@ -106,7 +106,6 @@ public class Grid {
 
     public void InsertTile(Tile tile) {
         Vector2 pos = tile.Position;
-        // Console.WriteLine(pos);
         cells[(int)pos.X,(int)pos.Y] = tile;
     }
 

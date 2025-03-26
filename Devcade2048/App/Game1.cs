@@ -146,10 +146,9 @@ public class Game1 : Game {
 		GraphicsDevice.Clear(new Color(251, 194, 27));
 		
 		// Batches all the draw calls for this frame, and then performs them all at once
-		_spriteBatch.Begin();
+		_spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 		
 		animation.Draw();
-		System.Console.WriteLine(animation);
 		
 		_spriteBatch.End();
 

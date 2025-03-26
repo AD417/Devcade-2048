@@ -131,10 +131,12 @@ public abstract class BaseState {
     }
 
 	/// <summary>
-	/// Draw the game score and high score. 
+	/// Draw the game score and high score. Opacity can be controlled 
+    /// via <see cref="ScoreTextOpacity" />
 	/// </summary>
     protected virtual void DrawScore() {
-        Color scoreColor = Color.Black * ScoreTextOpacity();
+        float opacity = ScoreTextOpacity();
+        Color scoreColor = Color.Black * opacity;
 
         string scoreStr = "Score: " + Game.Score.ToString().PadLeft(5);
         int scoreWidth = (int)Asset.BigFont.MeasureString(scoreStr).X;
@@ -154,8 +156,24 @@ public abstract class BaseState {
             new Vector2(400 - highScoreWidth, 240), 
             scoreColor
         );
+
+        foreach(ScoreDelta score in ScoreContainer.Scores) {
+            string deltaStr = "+" + score.ToString();
+            int width = (int) Asset.BigFont.MeasureString(deltaStr).X;
+            Vector2 position = new Vector2(400 - width, 190 - score.ShiftUp());
+            DrawAsset(
+                Asset.BigFont, 
+                deltaStr, 
+                position, 
+                score.DrawColor() * opacity
+            );
+        }
     }
 
+	/// <summary>
+	/// Determine the opacity of the text used in <see cref="DrawScore" />
+	/// </summary>
+    /// <returns> A float between 0.0 and 1.0 inclusive. </returns>
     protected virtual float ScoreTextOpacity() {
         return 1.0F;
     }

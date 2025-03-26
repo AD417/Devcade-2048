@@ -6,7 +6,7 @@ namespace Devcade2048.App.State;
 
 public class ToGameOverState : TransientState {
 
-    public ToGameOverState() : base(GameEndingTime * 10) {
+    public ToGameOverState() : base(GameEndingTime) {
         HighScoreTracker.Save();
     }
 
