@@ -28,7 +28,7 @@ public class ResetWinState : TransientState {
         DrawAsset(Asset.Tile[10], new Rectangle(12 + scale/2, 292 + scale/2, 400 - scale, 400 - scale));
     }
 
-    private void DrawScore() {
+    protected override void DrawScore() {
         float opacity = 4 * MathF.Abs(PercentComplete() - 0.75f);
         if (opacity > 1) opacity = 1;
         Color scoreColor = Color.Black * opacity;

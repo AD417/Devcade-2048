@@ -5,8 +5,7 @@ namespace Devcade2048.App.State;
 
 public class WinState : WaitingState {
 
-    public override BaseState ProcessInput()
-    {
+    public override BaseState ProcessInput() {
         if (InputManager.IsButtonPressed(Button.Red)) {
             return new ResetWinState();
         }
@@ -19,8 +18,7 @@ public class WinState : WaitingState {
         return this;
     }
 
-    public override void Draw()
-    {
+    public override void Draw() {
         base.Draw();
 
         DrawWinningTile();
@@ -30,29 +28,6 @@ public class WinState : WaitingState {
 
     private void DrawWinningTile() {
         DrawAsset(Asset.Tile[10], new Rectangle(12, 292, 400, 400));
-    }
-
-    private void DrawScore() {
-        Color scoreColor = Color.Black;
-
-        string scoreStr = "Score: " + Game.Score.ToString().PadLeft(5);
-        int scoreWidth = (int)Asset.BigFont.MeasureString(scoreStr).X;
-        DrawAsset(
-            Asset.BigFont, 
-            scoreStr, 
-            new Vector2(400 - scoreWidth, 190), 
-            scoreColor
-        );
-
-        string highScoreStr = 
-            "Best: " + HighScoreTracker.HighScore.ToString().PadLeft(5);
-        int highScoreWidth = (int)Asset.BigFont.MeasureString(highScoreStr).X;
-        DrawAsset(
-            Asset.BigFont, 
-            highScoreStr, 
-            new Vector2(400 - highScoreWidth, 240), 
-            scoreColor
-        );
     }
 
     private void DrawWinText() {

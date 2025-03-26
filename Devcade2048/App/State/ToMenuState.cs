@@ -30,8 +30,7 @@ public class ToMenuState : TransientState {
         TextBox.WriteCenteredText(Pen, highScore, new Vector2(210, 200), Color.Black * opacity);
     }
 
-  public override BaseState NextState()
-  {
+  public override BaseState NextState() {
     return new MainMenuState();
   }
 }

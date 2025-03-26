@@ -14,8 +14,7 @@ public class MovingTileState : TransientState {
         if (InputManager.AnyButtonPressed()) base.Tick(gt);
     }
 
-    public override BaseState NextState()
-    {
+    public override BaseState NextState() {
         return new SpawningState();
     }
 
@@ -26,59 +25,31 @@ public class MovingTileState : TransientState {
         DrawScore();
     }
     
-    private void DrawAllTiles() {
-
-        void drawTile(Tile t) {
-            if (t is null) return;
-            if (t.MergedFrom != null) {
-                drawTile(t.MergedFrom[0]);
-                drawTile(t.MergedFrom[1]);
-            }
-            // New tiles aren't drawn in this state. They haven't spawned yet. 
-            if (t.PreviousPosition == null) return;
-
-            Vector2 pos = Interpolate(
-                toScreenPosition((Vector2) t.PreviousPosition), 
-                toScreenPosition(t.Position), 
-                PercentComplete()
-            );
-            pos += new Vector2(10, 290);
-            Rectangle location = new Rectangle(pos.ToPoint(), new Point(96,96));
-
-            Texture2D blob = Asset.Tile[t.TextureId];
-
-            DrawAsset(blob, location, Color.White);
+    protected override void DrawTile(Tile t) {
+        if (t is null) return;
+        if (t.MergedFrom != null) {
+            DrawTile(t.MergedFrom[0]);
+            DrawTile(t.MergedFrom[1]);
         }
-        Game.Grid.EachCell((int _x, int _y, Tile t) => drawTile(t));
+        // New tiles aren't drawn in this state. They haven't spawned yet. 
+        if (t.PreviousPosition == null) return;
+
+        Vector2 pos = Interpolate(
+            toScreenPosition((Vector2) t.PreviousPosition), 
+            toScreenPosition(t.Position), 
+            PercentComplete()
+        );
+        Rectangle location = new Rectangle(pos.ToPoint(), new Point(96,96));
+
+        Texture2D blob = Asset.Tile[t.TextureId];
+
+        DrawAsset(blob, location, Color.White);
     }
 
     private Vector2 toScreenPosition(Vector2 position) {
         return new Vector2(
-            (2 + position.X * 100),
-            (2 + position.Y * 100)
-        );
-    }
-
-    private void DrawScore() {
-        Color scoreColor = Color.Black;
-
-        string scoreStr = "Score: " + Game.Score.ToString().PadLeft(5);
-        int scoreWidth = (int)Asset.BigFont.MeasureString(scoreStr).X;
-        DrawAsset(
-            Asset.BigFont, 
-            scoreStr, 
-            new Vector2(400 - scoreWidth, 190), 
-            scoreColor
-        );
-
-        string highScoreStr = 
-            "Best: " + HighScoreTracker.HighScore.ToString().PadLeft(5);
-        int highScoreWidth = (int)Asset.BigFont.MeasureString(highScoreStr).X;
-        DrawAsset(
-            Asset.BigFont, 
-            highScoreStr, 
-            new Vector2(400 - highScoreWidth, 240), 
-            scoreColor
+             12 + position.X * 100,
+            292 + position.Y * 100
         );
     }
 }

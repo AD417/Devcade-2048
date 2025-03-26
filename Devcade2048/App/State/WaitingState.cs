@@ -4,14 +4,7 @@ using Microsoft.Xna.Framework;
 namespace Devcade2048.App.State;
 
 public abstract class WaitingState : BaseState {
-    public override bool IsAcceptingInput()
-    {
-        return true;
-    }
-
-    public override bool IsGameContinuing()
-    {
-        // TODO: Evaluate necessity of this.
+    public override bool IsAcceptingInput() {
         return true;
     }
 }

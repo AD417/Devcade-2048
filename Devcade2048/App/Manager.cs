@@ -67,6 +67,7 @@ public class Manager {
         score = 0;
         AddStartTiles();
         scoreDelta = 0;
+        State = GameState.Playing;
     }
 
     public void LoadGame() {
@@ -82,6 +83,7 @@ public class Manager {
             Console.WriteLine(e);
             NewGame();
         }
+        State = GameState.Playing;
     }
 
     public void Setup() {
@@ -163,8 +165,7 @@ public class Manager {
             Tile next = Grid.CellContent(positions.Next);
 
             if (next != null && next.Value == tile.Value && next.MergedFrom == null) {
-                Tile merged = new Tile(positions.Next, tile.TextureId + 1, tile.Value * 2)
-                {
+                Tile merged = new Tile(positions.Next, tile.TextureId + 1, tile.Value * 2) {
                     MergedFrom = new Tile[] { tile, next }
                 };
 

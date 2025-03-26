@@ -24,8 +24,7 @@ public class FadeInState : TransientState {
         DrawAsset(uiCover, screen, Color.Black * (1 - PercentComplete()));
     }
 
-    public override BaseState NextState()
-    {
+    public override BaseState NextState() {
         return substate;
     }
 }

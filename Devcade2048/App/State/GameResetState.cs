@@ -30,25 +30,21 @@ public class GameResetState : TransientState {
 
 
 
-    private void DrawAllTiles() {
+    protected override void DrawTile(Tile t) {
+        if (t is null) return;
 
-        void drawTile(Tile t) {
-            if (t is null) return;
+        Vector2 pos = new Vector2(
+             12 + t.Position.X * 100,
+            292 + t.Position.Y * 100
+        );
 
-            Vector2 pos = new Vector2(
-                ( 12 + t.Position.X * 100),
-                (292 + t.Position.Y * 100)
-            );
+        int scale = (int) (96 * (1 - FastEnd(2)));
+        pos += new Vector2(48 - scale/2, 48 - scale/2);
+        Rectangle location = new Rectangle(pos.ToPoint(), new Point(scale, scale));
 
-            int scale = (int) (96 * (1 - FastEnd(2)));
-            pos += new Vector2(48 - scale/2, 48 - scale/2);
-            Rectangle location = new Rectangle(pos.ToPoint(), new Point(scale, scale));
+        Texture2D blob = determineBlobTexture(t);
 
-            Texture2D blob = determineBlobTexture(t);
-
-            DrawAsset(blob, location, Color.White);
-        }
-        Game.Grid.EachCell((int _x, int _y, Tile t) => drawTile(t));
+        DrawAsset(blob, location, Color.White);
     }
 
     private Texture2D determineBlobTexture(Tile t) {
@@ -59,7 +55,7 @@ public class GameResetState : TransientState {
     }
 
 
-    private void DrawScore() {
+    protected override void DrawScore() {
         float opacity = 4 * MathF.Abs(PercentComplete() - 0.75f);
         if (opacity > 1) opacity = 1;
         Color scoreColor = Color.Black * opacity;

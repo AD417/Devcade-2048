@@ -13,16 +13,14 @@ public class MenuTabState : WaitingState {
         this.selection = selection;
     }
 
-  public override BaseState ProcessInput()
-  {
+  public override BaseState ProcessInput() {
     if (InputManager.AnyButtonPressed()) return new FromTabState(this);
     return this;
   }
 
 
 
-    public override void Draw()
-    {
+    public override void Draw() {
         base.Draw();
         Texture2D blob = getBlob();
         Vector2 top = new Vector2(114, 130);

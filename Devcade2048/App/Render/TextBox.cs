@@ -47,7 +47,6 @@ public static class TextBox {
             string newLine = line + " " + word;
             size = Asset.SmallFont.MeasureString(newLine);
             if (size.X > area.Width) {
-                // System.Console.WriteLine(line);
                 DrawString(sb, Asset.SmallFont, line, pos, color);
                 line = word;
                 pos.Y += size.Y + 1;
@@ -55,9 +54,7 @@ public static class TextBox {
                 line = newLine;
             }
         }
-        // System.Console.WriteLine(line);
         DrawString(sb, Asset.SmallFont, line, pos, color);
-        // System.Console.WriteLine();
         return (int) (pos.Y - area.Top + 2 * size.Y);
     }
 

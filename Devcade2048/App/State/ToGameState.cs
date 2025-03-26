@@ -16,7 +16,10 @@ public class ToGameState : TransientState {
     }
 
     public override BaseState NextState() {
-        if (ContinueSavedGame) return new GameWaitingState();
+        if (ContinueSavedGame) {
+            // If a user 
+            return new GameWaitingState();
+        }
         return new SpawningState();
     }
 
@@ -38,49 +41,22 @@ public class ToGameState : TransientState {
         return new Vector2(x,y);
     }
 
-    private void DrawAllTiles() {
+    protected override void DrawTile(Tile t) {
+        if (t is null) return;
 
-        void drawTile(Tile t) {
-            if (t is null) return;
+        Vector2 pos = new Vector2(
+            2 + t.Position.X * 100,
+            2 + t.Position.Y * 100
+        );
+        pos += getGridPos();
+        Rectangle location = new Rectangle(pos.ToPoint(), new Point(96,96));
 
-            Vector2 pos = new Vector2(
-                (2 + t.Position.X * 100),
-                (2 + t.Position.Y * 100)
-            );
-            pos += getGridPos();
-            Rectangle location = new Rectangle(pos.ToPoint(), new Point(96,96));
+        Texture2D blob = Asset.Tile[t.TextureId];
 
-            Texture2D blob = Asset.Tile[t.TextureId];
-
-            DrawAsset(blob, location, Color.White);
-        }
-        Game.Grid.EachCell((int _x, int _y, Tile t) => drawTile(t));
+        DrawAsset(blob, location, Color.White);
     }
 
-    private Color getTextColor() {
-        return Interpolate(Background, Color.Black, FastEnd(2));
-    }
-
-    private void DrawScore() {
-        Color scoreColor = getTextColor();
-
-        string scoreStr = "Score: " + Game.Score.ToString().PadLeft(5);
-        int scoreWidth = (int)Asset.BigFont.MeasureString(scoreStr).X;
-        DrawAsset(
-            Asset.BigFont, 
-            scoreStr, 
-            new Vector2(400 - scoreWidth, 190), 
-            scoreColor
-        );
-
-        string highScoreStr = 
-            "Best: " + HighScoreTracker.HighScore.ToString().PadLeft(5);
-        int highScoreWidth = (int)Asset.BigFont.MeasureString(highScoreStr).X;
-        DrawAsset(
-            Asset.BigFont, 
-            highScoreStr, 
-            new Vector2(400 - highScoreWidth, 240), 
-            scoreColor
-        );
+    protected override float ScoreTextOpacity() {
+        return FastEnd(2);
     }
 }

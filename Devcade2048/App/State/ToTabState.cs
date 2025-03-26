@@ -10,8 +10,7 @@ public class ToTabState : TransientState {
         substate = new MenuTabState(selection);
     }
 
-    public override BaseState NextState()
-    {
+    public override BaseState NextState() {
         return substate;
     }
 

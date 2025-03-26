@@ -33,8 +33,7 @@ public class FromMenuState : TransientState {
     }
 
 
-    public override BaseState NextState()
-    {
+    public override BaseState NextState() {
         if (selection == Selection.Game) {
             return new ToGameState(false);
         }

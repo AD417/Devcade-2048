@@ -5,8 +5,7 @@ using Microsoft.Xna.Framework;
 namespace Devcade2048.App;
 
 [Serializable]
-public class Tile
-{
+public class Tile {
     private Vector2 position;
     private readonly int value;
     private readonly int textureId;

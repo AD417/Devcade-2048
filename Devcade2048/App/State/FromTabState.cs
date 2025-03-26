@@ -10,8 +10,7 @@ public class FromTabState : TransientState {
         substate = state;
     }
 
-    public override BaseState NextState()
-    {
+    public override BaseState NextState() {
         return new ToMenuState();
     }
 

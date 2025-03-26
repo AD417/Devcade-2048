@@ -32,34 +32,30 @@ public class SpawningState : TransientState {
         DrawScore();
     }
 
-    private void DrawAllTiles() {
-
-        void drawTile(Tile t) {
-            if (t is null) return;
-            // This ensures that new tiles appear above old ones.
-            if (t.MergedFrom != null) {
-                drawTile(t.MergedFrom[0]);
-                drawTile(t.MergedFrom[1]);
-            }
-            // New tiles aren't drawn in this step. 
-            // They need to appear on top.
-            if (t.PreviousPosition == null) return;
-
-            Vector2 pos = toScreenPosition(t.Position); 
-            pos += new Vector2(10, 290);
-
-            Rectangle location = new Rectangle(pos.ToPoint(), new Point(96, 96));
-
-            Texture2D blob = Asset.Tile[t.TextureId];
-
-            DrawAsset(blob, location, Color.White);
+    protected override void DrawTile(Tile t) {
+        if (t is null) return;
+        // This ensures that new tiles appear above old ones.
+        if (t.MergedFrom != null) {
+            DrawTile(t.MergedFrom[0]);
+            DrawTile(t.MergedFrom[1]);
         }
-        Game.Grid.EachCell((int _x, int _y, Tile t) => drawTile(t));
+        // New tiles aren't drawn in this step. 
+        // They need to appear on top.
+        if (t.PreviousPosition == null) return;
+
+        Vector2 pos = toScreenPosition(t.Position); 
+        pos += new Vector2(10, 290);
+
+        Rectangle location = new Rectangle(pos.ToPoint(), new Point(96, 96));
+
+        Texture2D blob = Asset.Tile[t.TextureId];
+
+        DrawAsset(blob, location, Color.White);
     }
 
     private void DrawNewTiles() {
 
-        void drawTile(Tile t) {
+        void DrawTile(Tile t) {
             if (t is null) return;
             if (t.PreviousPosition != null) return;
 
@@ -75,7 +71,7 @@ public class SpawningState : TransientState {
 
             DrawAsset(blob, location, Color.White);
         }
-        Game.Grid.EachCell((int _x, int _y, Tile t) => drawTile(t));
+        Game.Grid.EachCell((int _x, int _y, Tile t) => DrawTile(t));
 
     }
 
@@ -94,29 +90,5 @@ public class SpawningState : TransientState {
         float x = PercentComplete();
         float y = -2.38F * x * x + 3.38F * x;
         return (int) (y * 96);
-    }
-
-
-    private void DrawScore() {
-        Color scoreColor = Color.Black;
-
-        string scoreStr = "Score: " + Game.Score.ToString().PadLeft(5);
-        int scoreWidth = (int)Asset.BigFont.MeasureString(scoreStr).X;
-        DrawAsset(
-            Asset.BigFont, 
-            scoreStr, 
-            new Vector2(400 - scoreWidth, 190), 
-            scoreColor
-        );
-
-        string highScoreStr = 
-            "Best: " + HighScoreTracker.HighScore.ToString().PadLeft(5);
-        int highScoreWidth = (int)Asset.BigFont.MeasureString(highScoreStr).X;
-        DrawAsset(
-            Asset.BigFont, 
-            highScoreStr, 
-            new Vector2(400 - highScoreWidth, 240), 
-            scoreColor
-        );
     }
 }

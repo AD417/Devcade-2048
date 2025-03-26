@@ -6,8 +6,7 @@ namespace Devcade2048.App.State;
 
 public class GameOverState : WaitingState {
 
-    public override BaseState ProcessInput()
-    {
+    public override BaseState ProcessInput() {
         if (InputManager.IsButtonPressed(Button.Red)) {
             return new GameResetState(true);
         }
@@ -31,51 +30,23 @@ public class GameOverState : WaitingState {
     }
 
 
-    private void DrawAllTiles() {
+    protected override void DrawTile(Tile t) {
+        if (t is null) return;
 
-        void drawTile(Tile t) {
-            if (t is null) return;
+        Vector2 pos = new Vector2(
+             12 + t.Position.X * 100,
+            292 + t.Position.Y * 100
+        );
+        Rectangle location = new Rectangle(pos.ToPoint(), new Point(96,96));
 
-            Vector2 pos = new Vector2(
-                ( 12 + t.Position.X * 100),
-                (292 + t.Position.Y * 100)
-            );
-            Rectangle location = new Rectangle(pos.ToPoint(), new Point(96,96));
+        Texture2D blob = determineBlobTexture(t);
 
-            Texture2D blob = determineBlobTexture(t);
-
-            DrawAsset(blob, location, Color.White);
-        }
-        Game.Grid.EachCell((int _x, int _y, Tile t) => drawTile(t));
+        DrawAsset(blob, location, Color.White);
     }
 
     private Texture2D determineBlobTexture(Tile t) {
         if (t.TextureId > 5) return Asset.LoseTile[1];
         return Asset.LoseTile[0];
-    }
-
-
-    private void DrawScore() {
-        Color scoreColor = Color.Black;
-
-        string scoreStr = "Score: " + Game.Score.ToString().PadLeft(5);
-        int scoreWidth = (int)Asset.BigFont.MeasureString(scoreStr).X;
-        DrawAsset(
-            Asset.BigFont, 
-            scoreStr, 
-            new Vector2(400 - scoreWidth, 190), 
-            scoreColor
-        );
-
-        string highScoreStr = 
-            "Best: " + HighScoreTracker.HighScore.ToString().PadLeft(5);
-        int highScoreWidth = (int)Asset.BigFont.MeasureString(highScoreStr).X;
-        DrawAsset(
-            Asset.BigFont, 
-            highScoreStr, 
-            new Vector2(400 - highScoreWidth, 240), 
-            scoreColor
-        );
     }
 
     public static void DrawLossText() {

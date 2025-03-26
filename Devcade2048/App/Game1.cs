@@ -10,8 +10,7 @@ using System.Threading.Tasks;
 // MAKE SURE YOU RENAME ALL PROJECT FILES FROM DevcadeGame TO YOUR YOUR GAME NAME
 namespace Devcade2048.App;
 
-public class Game1 : Game
-{
+public class Game1 : Game {
 	private GraphicsDeviceManager _graphics;
 	private SpriteBatch _spriteBatch;
 
@@ -144,14 +143,13 @@ public class Game1 : Game
 	/// <param name="gameTime">This is the gameTime object you can use to get the time since last frame.</param>
 	protected override void Draw(GameTime gameTime)
 	{
-		// System.Console.WriteLine(Animation1.State);
-		// GraphicsDevice.Clear(StyleMath.GetBackgroundColor());
 		GraphicsDevice.Clear(new Color(251, 194, 27));
 		
 		// Batches all the draw calls for this frame, and then performs them all at once
 		_spriteBatch.Begin();
 		
 		animation.Draw();
+		System.Console.WriteLine(animation);
 		
 		_spriteBatch.End();
 
