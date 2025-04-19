@@ -110,8 +110,8 @@ public class Manager {
         if (!Grid.CellsAvailable()) return;
         int value, id;
         if (RNG.NextSingle() < Config.FourChance) {
-            value = 1024;
-            id = 9;
+            value = 4;
+            id = 1;
         } else {
             value = 2;
             id = 0;

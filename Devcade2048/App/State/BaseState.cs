@@ -247,7 +247,7 @@ public abstract class BaseState {
             (int) (dim.X * 18 / 7),
             (int) (dim.Y * 18 / 7)
         );
-        pen.Draw(image, devcadePos, color);
+        Pen.Draw(image, devcadePos, color);
 #endif
         #endregion
     }
@@ -279,7 +279,7 @@ public abstract class BaseState {
             pos.Width * 18 / 7,
             pos.Height * 18 / 7
         );
-        pen.Draw(image, devcadePos, color);
+        Pen.Draw(image, devcadePos, color);
 #endif
         #endregion
     }
@@ -303,7 +303,7 @@ public abstract class BaseState {
             (int) (pos.X * 18.0f / 7.0f),
             (int) (pos.Y * 18.0f / 7.0f)
         );
-        pen.DrawString(
+        Pen.DrawString(
             spriteFont: font, 
             text: data, 
             position: actualPos, 

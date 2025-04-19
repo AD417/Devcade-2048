@@ -32,6 +32,7 @@ public class Game1 : Game {
 		_graphics = new GraphicsDeviceManager(this);
 		Content.RootDirectory = "Content";
 		IsMouseVisible = false;
+		IsFixedTimeStep = true;
 
 		_GameData = new Manager(size: 4);
 		// DebugRender.Write(_GameData.Grid);
